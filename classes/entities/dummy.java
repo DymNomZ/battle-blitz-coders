@@ -15,15 +15,32 @@ public class dummy {
     public int x_pos, y_pos, screen_x, screen_y, map_length, map_height;
     public int xx, yy;
     public int speed;
+    int delta_x, delta_y;//Delta means "change in"
 
     boolean colliding_left;
     boolean colliding_right;
     boolean colliding_top;
     boolean colliding_down;
 
+    public boolean isColliding_left(){
+        return colliding_left;
+    }
+
+    public boolean isColliding_right(){
+        return colliding_right;
+    }
+
+    public boolean isColliding_top(){
+        return colliding_top;
+    }
+
+    public boolean isColliding_down(){
+        return colliding_down;
+    }
+
     private boolean cameraNotTouchingEdge(){
-        return (x_pos > screen_x && x_pos < ((map_length * TILE_SIZE) - (screen_x + TILE_SIZE))
-                && (y_pos > screen_y && y_pos < ((map_height * TILE_SIZE) - (screen_y + TILE_SIZE))));
+        return (x_pos - 8 >= screen_x && x_pos + 8 <= ((map_length * TILE_SIZE) - (screen_x + TILE_SIZE))
+                && (y_pos - 8 >= screen_y && y_pos + 8 <= ((map_height * TILE_SIZE) - (screen_y + TILE_SIZE))));
     }
 
 
@@ -33,6 +50,30 @@ public class dummy {
 
     public int getY_pos(){
         return y_pos;
+    }
+
+    public void setX_pos(int x_pos){
+        this.x_pos = x_pos;
+    }
+
+    public void setY_pos(int y_pos){
+        this.y_pos = y_pos;
+    }
+
+    public int getDelta_x(){
+        return delta_x;
+    }
+
+    public int getDelta_y(){
+        return delta_y;
+    }
+
+    public void setDelta_x(int delta_x){
+        this.delta_x = delta_x;
+    }
+
+    public void setDelta_y(int delta_y){
+        this.delta_y = delta_y;
     }
 
     public int getSpeed(){
@@ -57,6 +98,8 @@ public class dummy {
 
     public dummy(int x, int y, int TILE_SIZE, int map_length, int map_height){
         this.speed = 8;
+        this.delta_x = 0;
+        this.delta_y = 0;
         this.map_length = map_length;
         this.map_height = map_height;
         this.TILE_SIZE = TILE_SIZE;
@@ -84,6 +127,7 @@ public class dummy {
         }
     }
 
+
     public void display_dummy(Graphics g, int TILE_SIZE, int SCREEN_WIDTH, int SCREEN_HEIGHT){
         if (cameraNotTouchingEdge()){
                 xx = screen_x;
@@ -110,11 +154,19 @@ public class dummy {
             }
     }
 
-
-    public void update_position(key_handler inputs){
+    public void update_position(){
+        if(!cameraNotTouchingEdge()){//SO if camera touching edge HAHHAAHAHAH
+            yy += delta_y;
+            xx += delta_x;
+        }
+        y_pos += (delta_y);
+        x_pos += (delta_x);
+        this.delta_y = 0;
+        this.delta_x = 0;
+    }
+    public void calculate_next_position(key_handler inputs){
         //check which key is pressed and add/subtract the corresponding value
-        int delta_x = 0, delta_y = 0;//Delta means "change in"
-        System.out.print("Current pos: x: " + x_pos + " y: " + y_pos + " | Screen pos: x: " + screen_x + " y: " + screen_y + ":");
+
         if(inputs.up_pressed || inputs.down_pressed || inputs.left_pressed || inputs.right_pressed){
 
             if(inputs.up_pressed)
@@ -137,12 +189,8 @@ public class dummy {
             if(colliding_top && inputs.up_pressed) delta_y = 0;
             if(colliding_down && inputs.down_pressed) delta_y = 0;
 
-            if(!cameraNotTouchingEdge()){//SO if camera touching edge HAHHAAHAHAH
-                yy += delta_y;
-                xx += delta_x;
-            }
-            y_pos += delta_y;
-            x_pos += delta_x;
+
+            //System.out.println("Current pos: x: " + x_pos + " y: " + y_pos + " | Screen pos: x: " + screen_x + " y: " + screen_y + ":" + "delta x: " + delta_x + "delta_y: "+ delta_y);
 
 //            if (cameraNotTouchingEdge()){
 //                if(inputs.up_pressed) y_pos -= 10;

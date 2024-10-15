@@ -64,59 +64,73 @@ public class panel extends JPanel {
     //COLLISION TEST
     void collisionCheck(){
         //Checks if the dummy is colliding with map border
-        int d_topHitbox = d.getY_pos() - (16 * SCALE);
-        int d_downHitBox = d.getY_pos() + (16 * SCALE);
-        int d_rightHitbox = d.getX_pos() + (16 * SCALE);
-        int d_leftHitbox = d.getX_pos() - (16 * SCALE);
-        System.out.println(" " + d_topHitbox + " " + d_downHitBox + " " + d_rightHitbox + " " + d_leftHitbox);
+        int halfScale = (DEF_DIMENSION * SCALE ) / 2;
+        System.out.println(d.getDelta_x() + " " + d.isColliding_left());
+        int d_topHitbox = d.getY_pos() - halfScale + d.getDelta_y();
+        int d_downHitBox = d.getY_pos() + halfScale + d.getDelta_y();
+        int d_rightHitbox = d.getX_pos() + halfScale + d.getDelta_x();
+        int d_leftHitbox = d.getX_pos() - halfScale + d.getDelta_x();
+
         boolean isColliding_r = false;
         boolean isColliding_l = false;
-        boolean isColliding_u = false;
+        boolean isColliding_t = false;
         boolean isColliding_d = false;
-	    isColliding_r = (d_rightHitbox >= EAST_MAP_BOUNDARY);
-	    isColliding_l = (d_leftHitbox <= WEST_MAP_BOUNDARY);
-	    isColliding_d = (d_downHitBox >= SOUTH_MAP_BOUNDARY);
-	    isColliding_u = (d_topHitbox <= NORTH_MAP_BOUNDARY);
-        int map_tiles[][] = new int[50][50];
-        map_tiles = map.getMap_tiles();
+
+	    isColliding_r = (d_rightHitbox > EAST_MAP_BOUNDARY);
+	    isColliding_l = (d_leftHitbox < WEST_MAP_BOUNDARY);
+	    isColliding_d = (d_downHitBox > SOUTH_MAP_BOUNDARY);
+	    isColliding_t = (d_topHitbox < NORTH_MAP_BOUNDARY);
+
+        int x_diff = 0, y_diff = 0;
+
+	    int[][] map_tiles = map.getMap_tiles();
         for(int i = 0;i < 50;i++){
             for(int j = 0;j < 50;j++){
                 if(map_tiles[i][j] == 4){
-                    int tile_xpos = ((j + 1) * DEF_DIMENSION * SCALE) - (DEF_DIMENSION/2) * SCALE;
-                    int tile_ypos = ((i + 1) * DEF_DIMENSION * SCALE) - (DEF_DIMENSION/2) * SCALE;
-                    boolean isSameRow = d_topHitbox < tile_ypos + ((DEF_DIMENSION/2) * SCALE) && d_downHitBox > tile_ypos - ((DEF_DIMENSION/2) * SCALE);
-                    boolean isSameCol = d_leftHitbox < tile_xpos + ((DEF_DIMENSION/2) * SCALE) && d_rightHitbox > tile_xpos - ((DEF_DIMENSION/2) * SCALE) ;
+                    int tile_xpos = ((j + 1) * DEF_DIMENSION * SCALE) - halfScale;
+                    int tile_ypos = ((i + 1) * DEF_DIMENSION * SCALE) - halfScale;
+                    boolean isSameRow = d_topHitbox < tile_ypos + (halfScale) && d_downHitBox > tile_ypos - ((DEF_DIMENSION/2) * SCALE);
+                    boolean isSameCol = d_leftHitbox < tile_xpos + (halfScale) && d_rightHitbox > tile_xpos - ((DEF_DIMENSION/2) * SCALE) ;
 
-                    if(!isColliding_l)
-                        isColliding_l = (d_leftHitbox <= tile_xpos + ((DEF_DIMENSION/2) * SCALE)  && isSameRow && d_leftHitbox >= tile_xpos - ((DEF_DIMENSION/2)*SCALE));
-                    if(!isColliding_r)
-                        isColliding_r = (d_rightHitbox >= tile_xpos - ((DEF_DIMENSION/2) * SCALE)  && isSameRow && d_rightHitbox <= tile_xpos + ((DEF_DIMENSION/2) * SCALE));
-                    if(!isColliding_u)
-                        isColliding_u = (d_topHitbox <= tile_ypos + ((DEF_DIMENSION/2) * SCALE)  && isSameCol && d_topHitbox >= tile_ypos - ((DEF_DIMENSION/2)*SCALE));
-                    if(!isColliding_d)
-                        isColliding_d = (d_downHitBox >= tile_ypos - ((DEF_DIMENSION/2) * SCALE) && isSameCol && d_downHitBox <= tile_ypos + ((DEF_DIMENSION/2)*SCALE));
+                    if(!isColliding_l && (d_leftHitbox <= tile_xpos + halfScale  && isSameRow && d_leftHitbox >= tile_xpos - halfScale)){
+	                    isColliding_l = true;
+                    }
+                    if(!isColliding_r && (d_rightHitbox >= tile_xpos - halfScale  && isSameRow && d_rightHitbox <= tile_xpos + halfScale)){
+	                    isColliding_r = true;
+
+                    }
+                    if(!isColliding_t &&  (d_topHitbox  <= tile_ypos + halfScale  && isSameCol && d_topHitbox >= tile_ypos - halfScale)){
+	                    isColliding_t = true;
+                    }
+                    if(!isColliding_d && (d_downHitBox >= tile_ypos - halfScale && isSameCol && d_downHitBox <= tile_ypos + halfScale)){
+                        isColliding_d = true;
+                    }
+
 
                 }
             }
         }
+
+
         d.setColliding_left(isColliding_l);
-        d.setColliding_right(isColliding_r);
-        d.setColliding_top(isColliding_u);
         d.setColliding_down(isColliding_d);
+        d.setColliding_top(isColliding_t);
+        d.setColliding_right(isColliding_r);
 
     }
 
 
     //this will listen to the timer, and I think the Timer class creates a thread?, maybe that's why we need to listen to it?
     //source: https://www.reddit.com/r/javahelp/comments/6d5rr4/threads_or_timer_for_java_game/
-    private ActionListener timer_listener = new ActionListener() {
+    private final ActionListener timer_listener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e){
             //we pass our key handler so that our dummy can check which keys are pressed
 
-            collisionCheck();
-            d.update_position(key_input);
 
+            d.calculate_next_position(key_input);
+            collisionCheck();
+            d.update_position();
             //repaint calls the paintComponent method again, so you can imagine, it redraws everything on the screen
             //basically updating what is displayed
             repaint();
