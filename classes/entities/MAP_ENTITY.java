@@ -1,6 +1,6 @@
 package classes.entities;
 
-public abstract class MAP_ENTITY {
+public abstract class MAP_ENTITY extends PANEL_ENTITY {
     private String name;
     private int hit_points;
     private int attack_stat = 0;

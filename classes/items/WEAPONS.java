@@ -12,7 +12,7 @@ public abstract class WEAPONS extends ITEM {
     }
 
     public int getDamage() { // Did this since item superclass didn't have way to return damage - FV
-        return damage;
+        return damage;  //is the damage variable not usable? -Raymond
     }
 
     public String getWeaponType() { // Added this; might be useful for later features -Ervin

@@ -11,6 +11,6 @@ public abstract class STAT_MODIFIERS extends ITEM{
     public static class AtkBoost extends STAT_MODIFIERS{
         public AtkBoost() {
             super("Atk Boost", 3, 400);
-        }
+        }   //what's the idea for this? thought stat mods would be actual items -Raymond
     }
 }

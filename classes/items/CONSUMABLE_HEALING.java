@@ -1,6 +1,6 @@
 package classes.items;
 
-public class CONSUMABLE_HEALING extends CONSUMABLE
+public abstract class CONSUMABLE_HEALING extends CONSUMABLE
 {
     private String healType;       //HOT, INSTA
     private int healAmount;
@@ -25,10 +25,29 @@ public class CONSUMABLE_HEALING extends CONSUMABLE
     {
         return this.healType;
     }
+    
     public int consumeHeal()
     {
-        consumeItem();          // subtracts 1 from item amount
-        if (healTime == 0) 
+        consumeItem();          
+         // why the if statement?    - Raymond 
+         /* 
+         FV:
+                Reply to Raymond:
+                
+                It's for instant healing. if healtime is 0, instant, so just return healamount. 
+                for the else statement, i made a space for someone to implement 
+                the "Heal over Time", and how to return it repeatedly 
+
+                It might make more sense for consumeHeal() to manipulate the character's health
+                over a period of time, rather than returning the healing the item performs.
+
+                Suggesting an idea for Instant and Periodical Heal: 
+                    1. Since character will be healed and damaged, there needs to be a manipulator method for the HP of the character.
+                    2. HP manipulation method may be takeDamage() with hp -= dmg for both healing and damage;
+                    3. For healing, pass a negative value to the manipulator function to increase HP.
+         */
+
+        if (healTime == 0)     
         {
             System.out.println("You used one " + this.getName() + " to heal " + this.healAmount + " hp!");
             return this.healAmount;
