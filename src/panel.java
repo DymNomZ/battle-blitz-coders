@@ -62,14 +62,14 @@ public class panel extends JPanel {
     dummy d = new dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
 
     //COLLISION TEST
-    void collisionCheck(){
+    public void collisionCheck(){
         //Checks if the dummy is colliding with map border
-        int halfScale = (DEF_DIMENSION * SCALE ) / 2;
+        int halfScale = TILE_SIZE / 2;
         System.out.println(d.getDelta_x() + " " + d.isColliding_left());
-        int d_topHitbox = d.getY_pos() - halfScale + d.getDelta_y();
-        int d_downHitBox = d.getY_pos() + halfScale + d.getDelta_y();
-        int d_rightHitbox = d.getX_pos() + halfScale + d.getDelta_x();
-        int d_leftHitbox = d.getX_pos() - halfScale + d.getDelta_x();
+        int d_topHitbox = d.getY_pos() - halfScale + d.getDelta_y() + 4;
+        int d_downHitBox = d.getY_pos() + halfScale + d.getDelta_y() - 4;
+        int d_rightHitbox = d.getX_pos() + halfScale + d.getDelta_x() - 4;
+        int d_leftHitbox = d.getX_pos() - halfScale + d.getDelta_x() + 4;
 
         boolean isColliding_r = false;
         boolean isColliding_l = false;
@@ -119,6 +119,7 @@ public class panel extends JPanel {
 
     }
 
+    panel p = this;
 
     //this will listen to the timer, and I think the Timer class creates a thread?, maybe that's why we need to listen to it?
     //source: https://www.reddit.com/r/javahelp/comments/6d5rr4/threads_or_timer_for_java_game/
@@ -128,9 +129,15 @@ public class panel extends JPanel {
             //we pass our key handler so that our dummy can check which keys are pressed
 
 
-            d.calculate_next_position(key_input);
-            collisionCheck();
-            d.update_position();
+            /*  Naay chance mo glitch ang position sa dummy inig abot niya sa border2 sa map
+             *  gi update ra nako ang position sa dummy every dimension (x, y) kay para murag sequential iyang pag check sa collision
+             *  tho kaisa ramn sha gi repaint so mura ra shag ni diagonal sa players
+             *  - Lil Z
+             */
+
+
+
+            d.calculate_next_position(key_input, p);
             //repaint calls the paintComponent method again, so you can imagine, it redraws everything on the screen
             //basically updating what is displayed
             repaint();

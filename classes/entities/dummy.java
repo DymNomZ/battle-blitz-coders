@@ -2,8 +2,11 @@ package classes.entities;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
+
 import src.key_handler;
+import src.panel;
 
 public class dummy {
     final public int MAX_X;
@@ -164,33 +167,41 @@ public class dummy {
         this.delta_y = 0;
         this.delta_x = 0;
     }
-    public void calculate_next_position(key_handler inputs){
+
+    public void calculate_next_position(key_handler inputs, panel pan){
         //check which key is pressed and add/subtract the corresponding value
+        System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
 
         if(inputs.up_pressed || inputs.down_pressed || inputs.left_pressed || inputs.right_pressed){
 
-            if(inputs.up_pressed)
+            if(inputs.up_pressed == inputs.down_pressed) delta_y = 0;
+            else if(inputs.up_pressed)
                 delta_y = -speed;
-            if(inputs.down_pressed)
+            else if(inputs.down_pressed)
                 delta_y = speed;
-            if(inputs.up_pressed == inputs.down_pressed)
-                delta_y = 0;
 
-            if(inputs.left_pressed)
-                delta_x = -speed;
-            if(inputs.right_pressed)
-                delta_x = speed;
-            if(inputs.right_pressed == inputs.left_pressed){
-                delta_x = 0;
-            }
+            pan.collisionCheck();
 
-            if(colliding_left && inputs.left_pressed) delta_x = 0;
-            if(colliding_right && inputs.right_pressed) delta_x = 0;
             if(colliding_top && inputs.up_pressed) delta_y = 0;
             if(colliding_down && inputs.down_pressed) delta_y = 0;
 
+            //update_position();
 
-            //System.out.println("Current pos: x: " + x_pos + " y: " + y_pos + " | Screen pos: x: " + screen_x + " y: " + screen_y + ":" + "delta x: " + delta_x + "delta_y: "+ delta_y);
+            if(inputs.right_pressed == inputs.left_pressed){
+                delta_x = 0;
+            }
+            else if(inputs.left_pressed)
+                delta_x = -speed;
+            else if(inputs.right_pressed)
+                delta_x = speed;
+
+            pan.collisionCheck();
+
+            if(colliding_left && inputs.left_pressed) delta_x = 0;
+            if(colliding_right && inputs.right_pressed) delta_x = 0;
+
+            update_position();
+
 
 //            if (cameraNotTouchingEdge()){
 //                if(inputs.up_pressed) y_pos -= 10;
