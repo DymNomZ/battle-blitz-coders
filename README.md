@@ -1,10 +1,12 @@
 # Java-2D-Game-Collab
 Simple 2D Game made with friends just for fun and learning purposes.
 
-**Notes:**
-Dymes:
-I'll put comments in lines that I wrote and end it with my name
-i.e. //this here is foo_bar() it does things - Dymes
-To compile and run at the same time do "java name.java"
-Doing "java name" will run but not compile your latest changes
-To compile only do "javac name.java"
+**Notes:**<br>
+
+"So apparently File opening in Java dili mo work inig export to .jar<br>
+According to StackOverflow, need nako e global variable <br>
+That means na as of now, kay need pa ninyo e clone then run it that way<br>
+I'll get it it to work, in the mean time inana lang sa inyo pag use." - Dymes<br><br>
+
+**Link to the map editor repo:**<br>
+https://github.com/DymNomZ/j2dc-map-editor

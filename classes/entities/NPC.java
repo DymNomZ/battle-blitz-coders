@@ -1,6 +1,6 @@
 package classes.entities;
 
-public abstract class NPC extends MAP_ENTITY{
+public abstract class NPC extends MapEntity{
 
     public NPC(String name, int id){
         super(name, id);

@@ -1,5 +1,5 @@
 package classes.entities;
 
-public class ENEMY extends MAP_ENTITY{
+public class Enemy extends MapEntity{
     //to implement shi
 }

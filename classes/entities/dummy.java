@@ -2,13 +2,11 @@ package classes.entities;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
+import src.KeyHandler;
+import src.Panel;
 
-import src.key_handler;
-import src.panel;
-
-public class dummy {
+public class Dummy {
     final public int MAX_X;
     final public int MAX_Y;
     final public int MIN_X = 0;
@@ -99,19 +97,17 @@ public class dummy {
         this.colliding_down = colliding_down;
     }
 
-    public dummy(int x, int y, int TILE_SIZE, int map_length, int map_height){
+    public Dummy(int x, int y, int TILE_SIZE, int map_length, int map_height){
         this.speed = 8;
         this.delta_x = 0;
         this.delta_y = 0;
         this.map_length = map_length;
         this.map_height = map_height;
         this.TILE_SIZE = TILE_SIZE;
-        //FIXED IT! Jesus Christ, swapped scren_width and screen_height on panel.java
+
         x_pos = (map_height * TILE_SIZE) / 2;
         y_pos = (map_length * TILE_SIZE) / 2;
-        //These variables will be where our sprite will be displayed, which will be at the center
-        //We get this by subtracting the corods with half the tile size to offset the sprite to give the illusion that it is perfectly at the center
-        //Cause you know how pixels are printed starting at the top most corner
+        
         MAX_X = TILE_SIZE * map_length;
         MAX_Y = TILE_SIZE * map_height;
 
@@ -131,11 +127,11 @@ public class dummy {
     }
 
 
-    public void display_dummy(Graphics g, int TILE_SIZE, int SCREEN_WIDTH, int SCREEN_HEIGHT){
+    public void displayDummy(Graphics g, int TILE_SIZE, int SCREEN_WIDTH, int SCREEN_HEIGHT){
         if (cameraNotTouchingEdge()){
                 xx = screen_x;
                 yy = screen_y;
-                //System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
+                System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
                 g.drawImage(
                     sprite, 
                     (screen_x - (TILE_SIZE/2)), (screen_y - (TILE_SIZE/2)), 
@@ -143,7 +139,7 @@ public class dummy {
                     null)
                 ;
             }else{
-                //System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
+                System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
                 if(yy < 0) yy = 0;
                 else if(yy > 640) yy = SCREEN_HEIGHT;
                 if(xx < 0) xx = 0;
@@ -157,7 +153,7 @@ public class dummy {
             }
     }
 
-    public void update_position(){
+    public void updatePosition(){
         if(!cameraNotTouchingEdge()){//SO if camera touching edge HAHHAAHAHAH
             yy += delta_y;
             xx += delta_x;
@@ -168,9 +164,9 @@ public class dummy {
         this.delta_x = 0;
     }
 
-    public void calculate_next_position(key_handler inputs, panel pan){
+    public void calculateNextPosition(KeyHandler inputs, Panel pan){
         //check which key is pressed and add/subtract the corresponding value
-        System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
+        //System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
 
         if(inputs.up_pressed || inputs.down_pressed || inputs.left_pressed || inputs.right_pressed){
 
@@ -200,26 +196,7 @@ public class dummy {
             if(colliding_left && inputs.left_pressed) delta_x = 0;
             if(colliding_right && inputs.right_pressed) delta_x = 0;
 
-            update_position();
-
-
-//            if (cameraNotTouchingEdge()){
-//                if(inputs.up_pressed) y_pos -= 10;
-//                else if(inputs.down_pressed) y_pos += 10;
-//                else if(inputs.left_pressed) x_pos -= 10;
-//                else if(inputs.right_pressed) x_pos += 10;
-//
-//            } else {
-//                if(inputs.up_pressed)yy -= 10;
-//                else if(inputs.down_pressed) yy += 10;
-//                else if(inputs.left_pressed) xx -= 10;
-//                else if(inputs.right_pressed) xx += 10;
-//                if(inputs.up_pressed) y_pos -= 10;
-//                else if(inputs.down_pressed) y_pos += 10;
-//                else if(inputs.left_pressed) x_pos -= 10;
-//                else if(inputs.right_pressed) x_pos += 10;
-//            }
-
+            updatePosition();
 
         }
     }

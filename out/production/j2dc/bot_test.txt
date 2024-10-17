@@ -1,2 +1,0 @@
-bot_test 1: FAILED: Did not read IDs
-bot_test 2: FAILES: Compared name string variable to "DymNomz" instead of "DymNomZ"
