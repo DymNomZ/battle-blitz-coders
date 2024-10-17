@@ -1,8 +1,8 @@
 package classes.entities;
 
-public abstract class PLAYER extends MAP_ENTITY {
+public abstract class Player extends MapEntity {
 
-    public PLAYER(
+    public Player(
         String name, 
         int hit_points, int attack_stat, 
         float haste,
@@ -11,7 +11,7 @@ public abstract class PLAYER extends MAP_ENTITY {
         super(name, hit_points, attack_stat, haste, defense_stat, id);
     }
 
-    public static class TOPE extends PLAYER{
+    public static class TOPE extends Player{
 
         public TOPE(){
             super(
@@ -22,7 +22,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class DYMES extends PLAYER{
+    public static class DYMES extends Player{
 
         public DYMES(){
             super(
@@ -33,7 +33,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class RAYMOND extends PLAYER{
+    public static class RAYMOND extends Player{
 
         public RAYMOND(){
             super(
@@ -44,7 +44,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class LANCE extends PLAYER{
+    public static class LANCE extends Player{
 
         public LANCE(){
             super(
@@ -55,7 +55,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class KP extends PLAYER{
+    public static class KP extends Player{
 
         public KP(){
             super(
@@ -66,7 +66,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class JJ extends PLAYER{
+    public static class JJ extends Player{
 
         public JJ(){
             super(
@@ -77,7 +77,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class FATEFUL extends PLAYER{
+    public static class FATEFUL extends Player{
 
         public FATEFUL(){
             super(
@@ -88,7 +88,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class ZILLION extends PLAYER{
+    public static class ZILLION extends Player{
 
         public ZILLION(){
             super(
@@ -99,7 +99,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class SETH extends PLAYER{
+    public static class SETH extends Player{
 
         public SETH(){
             super(
@@ -110,7 +110,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class HANNAH extends PLAYER{
+    public static class HANNAH extends Player{
 
         public HANNAH(){
             super(
@@ -121,7 +121,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class KURTTY extends PLAYER{
+    public static class KURTTY extends Player{
 
         public KURTTY(){
             super(
@@ -132,7 +132,7 @@ public abstract class PLAYER extends MAP_ENTITY {
             
     }
 
-    public static class ERVIN extends PLAYER{
+    public static class ERVIN extends Player{
 
         public ERVIN(){
             super(

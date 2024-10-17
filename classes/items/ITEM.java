@@ -1,8 +1,12 @@
 package classes.items;
 
-public abstract class ITEM {
+public abstract class Item {
     private String name;
+<<<<<<< HEAD
+    private boolean is_stackable;
+=======
     private boolean isStackable;
+>>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
     private int quantity; // suggest to move to only CONSUMABLE since no reason to give weapons and stat
                           // mods quantity since limited to only 1? -Raymond
     private String item_type; // why isn't this visible? - FV
@@ -12,20 +16,28 @@ public abstract class ITEM {
                          // I'm in favor of moving quality to the WEAPONS subclass - FV
     private int id;
 
+<<<<<<< HEAD
+    public Item(String name, String item_type, int quality, int id) // for weapons and stat-modifiers -Raymond
+=======
     public ITEM(String name, String item_type, int quality, int id) // for weapons and stat-modifiers -Raymond
+>>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
     {
         this.name = name;
-        this.isStackable = false;
+        this.is_stackable = false;
         this.quantity = 1;
         this.item_type = item_type;
         this.quality = quality;
         this.id = id;
     }
 
+<<<<<<< HEAD
+    public Item(String name, int quantity, String item_type, int id) // for consumables -Raymond
+=======
     public ITEM(String name, int quantity, String item_type, int id) // for consumables -Raymond
+>>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
     {
         this.name = name;
-        this.isStackable = true;
+        this.is_stackable = true;
         this.quantity = quantity;
         this.item_type = item_type;
         this.quality = 1;
@@ -41,8 +53,8 @@ public abstract class ITEM {
         return name;
     }
 
-    public boolean isStackable() {
-        return isStackable;
+    public boolean isIs_stackable() {
+        return is_stackable;
     }
 
     public int getId() {
