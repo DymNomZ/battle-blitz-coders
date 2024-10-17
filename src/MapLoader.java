@@ -73,7 +73,7 @@ public class MapLoader {
             //Check print
             System.out.println(loaded_tile_data.size());
             for(Tile t : loaded_tile_data){
-                System.out.println(t.name + " " + t.index);
+                System.out.println(t.name + " " + t.tileType);
             }
 
             zip_file.close();

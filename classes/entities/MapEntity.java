@@ -1,10 +1,6 @@
 package classes.entities;
 
-<<<<<<< HEAD:classes/entities/MapEntity.java
 public abstract class MapEntity extends PanelEntity {
-=======
-public abstract class MAP_ENTITY extends PANEL_ENTITY {
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf:classes/entities/MAP_ENTITY.java
     private String name;
     private int hit_points;
     private int attack_stat = 0;
@@ -15,6 +11,7 @@ public abstract class MAP_ENTITY extends PANEL_ENTITY {
 
     public MapEntity(){}
     public MapEntity(String name, int hit_points, int attack_stat, float haste, int defense_stat, int id){
+        super();
         this.name = name;
         this.hit_points = hit_points;
         this.attack_stat = attack_stat;

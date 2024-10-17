@@ -15,6 +15,7 @@ public class MapConstructor {
     int map_height, map_length;
     int recent_x = 0, recent_y = 0;
 
+
     String map_path;
 
     public MapConstructor(String path){
@@ -54,7 +55,7 @@ public class MapConstructor {
                 //check which tile in tile data matches index
                 if(map_indexes[i][j] != 0){
                     for(Tile td : tile_data){
-                        if(td.index == map_indexes[i][j]){
+                        if(td.tileType == map_indexes[i][j]){
                             tiles[i][j] = td;
                             break;
                         }
@@ -65,6 +66,9 @@ public class MapConstructor {
                     
             }
         }
+    }
+    void mapCollision(){
+        
     }
 
     void displayTiles(

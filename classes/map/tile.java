@@ -7,21 +7,21 @@ public class Tile {
 
     public BufferedImage image = null;
     public String path, name;
-    public int index = 0;
+    public int tileType = 0;
 
-    public Tile(String path, int index, String name){
+    public Tile(String path, int tileType, String name){
         try {
             image = ImageIO.read(getClass().getResourceAsStream(path));
         } catch (IOException e) {
             System.out.println("Error loading tile image");
         }
-        this.index = index;
+        this.tileType = tileType;
         this.name = name;
     }
 
-    public Tile(int index, String name, BufferedImage image){
+    public Tile(int tileType, String name, BufferedImage image){
         this.image = image;
-        this.index = index;
+        this.tileType = tileType;
         this.name = name;
     }
 }

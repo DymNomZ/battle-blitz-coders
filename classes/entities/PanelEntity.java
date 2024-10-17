@@ -1,13 +1,26 @@
 package classes.entities;
 
+import java.awt.image.BufferedImage;
+
 /*  Super class for all entities
- *  This class differs from MAP_ENTITY by its JPanel specific methods and data
+ *  This class differs from MapEntity by its JPanel specific methods and data
  *                                                                    - Lil Z
  */
 public abstract class PanelEntity {
-    protected int x, y;
+    public int x, y, width, height;
+    BufferedImage buffer;
+    public PanelEntity(){}
+    public PanelEntity(int x, int y, int width, int height, BufferedImage buffer){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.buffer = buffer;
+    }
 
-    public void update_position() throws UnsupportedOperationException {
+
+
+    public void updatePosition() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not implemented");
     }
 

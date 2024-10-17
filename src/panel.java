@@ -4,10 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import classes.entities.Dummy;
+import classes.entities.Dummy_sus;
 
 
 public class Panel extends JPanel {
@@ -37,7 +39,7 @@ public class Panel extends JPanel {
         this.setFocusable(true);
         this.addKeyListener(key_input);
 
-        map = new MapConstructor("assets/maps/dummy_map.zip");
+        map = new MapConstructor("assets/maps/test_pattern_map.zip");
 
         max_map_row = map.getMap_height();
         max_map_col = map.getMap_length();
@@ -45,11 +47,11 @@ public class Panel extends JPanel {
 
     //temporary
     Dummy d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
+    Dummy_sus d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, "../../assets/sprites/fidget_spinner.png");
 
     //COLLISION TEST
     public void collisionCheck(){
         //Checks if the dummy is colliding with map border
-<<<<<<< HEAD
         int half_scale = TILE_SIZE / 2;
         //System.out.println(d.getDelta_x() + " " + d.isColliding_left());
         int d_top_hitbox = d.getY_pos() - half_scale + d.getDelta_y() + 4;
@@ -90,48 +92,6 @@ public class Panel extends JPanel {
                     }
                     if(!is_colliding_d && (d_down_hitBox >= tile_ypos - half_scale && is_same_col && d_down_hitBox <= tile_ypos + half_scale)){
                         is_colliding_d = true;
-=======
-        int halfScale = TILE_SIZE / 2;
-        System.out.println(d.getDelta_x() + " " + d.isColliding_left());
-        int d_topHitbox = d.getY_pos() - halfScale + d.getDelta_y() + 4;
-        int d_downHitBox = d.getY_pos() + halfScale + d.getDelta_y() - 4;
-        int d_rightHitbox = d.getX_pos() + halfScale + d.getDelta_x() - 4;
-        int d_leftHitbox = d.getX_pos() - halfScale + d.getDelta_x() + 4;
-
-        boolean isColliding_r = false;
-        boolean isColliding_l = false;
-        boolean isColliding_t = false;
-        boolean isColliding_d = false;
-
-	    isColliding_r = (d_rightHitbox > EAST_MAP_BOUNDARY);
-	    isColliding_l = (d_leftHitbox < WEST_MAP_BOUNDARY);
-	    isColliding_d = (d_downHitBox > SOUTH_MAP_BOUNDARY);
-	    isColliding_t = (d_topHitbox < NORTH_MAP_BOUNDARY);
-
-        int x_diff = 0, y_diff = 0;
-
-	    int[][] map_tiles = map.getMap_tiles();
-        for(int i = 0;i < 50;i++){
-            for(int j = 0;j < 50;j++){
-                if(map_tiles[i][j] == 4){
-                    int tile_xpos = ((j + 1) * DEF_DIMENSION * SCALE) - halfScale;
-                    int tile_ypos = ((i + 1) * DEF_DIMENSION * SCALE) - halfScale;
-                    boolean isSameRow = d_topHitbox < tile_ypos + (halfScale) && d_downHitBox > tile_ypos - ((DEF_DIMENSION/2) * SCALE);
-                    boolean isSameCol = d_leftHitbox < tile_xpos + (halfScale) && d_rightHitbox > tile_xpos - ((DEF_DIMENSION/2) * SCALE) ;
-
-                    if(!isColliding_l && (d_leftHitbox <= tile_xpos + halfScale  && isSameRow && d_leftHitbox >= tile_xpos - halfScale)){
-	                    isColliding_l = true;
-                    }
-                    if(!isColliding_r && (d_rightHitbox >= tile_xpos - halfScale  && isSameRow && d_rightHitbox <= tile_xpos + halfScale)){
-	                    isColliding_r = true;
-
-                    }
-                    if(!isColliding_t &&  (d_topHitbox  <= tile_ypos + halfScale  && isSameCol && d_topHitbox >= tile_ypos - halfScale)){
-	                    isColliding_t = true;
-                    }
-                    if(!isColliding_d && (d_downHitBox >= tile_ypos - halfScale && isSameCol && d_downHitBox <= tile_ypos + halfScale)){
-                        isColliding_d = true;
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
                     }
 
 
@@ -140,7 +100,6 @@ public class Panel extends JPanel {
         }
 
 
-<<<<<<< HEAD
         d.setColliding_left(is_colliding_l);
         d.setColliding_down(is_colliding_d);
         d.setColliding_top(is_colliding_t);
@@ -149,16 +108,6 @@ public class Panel extends JPanel {
     }
 
     Panel p = this;
-=======
-        d.setColliding_left(isColliding_l);
-        d.setColliding_down(isColliding_d);
-        d.setColliding_top(isColliding_t);
-        d.setColliding_right(isColliding_r);
-
-    }
-
-    panel p = this;
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
 
     //this will listen to the timer, and I think the Timer class creates a thread?, maybe that's why we need to listen to it?
     //source: https://www.reddit.com/r/javahelp/comments/6d5rr4/threads_or_timer_for_java_game/
@@ -176,11 +125,7 @@ public class Panel extends JPanel {
 
 
 
-<<<<<<< HEAD
             d.calculateNextPosition(key_input, p);
-=======
-            d.calculate_next_position(key_input, p);
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
             //repaint calls the paintComponent method again, so you can imagine, it redraws everything on the screen
             //basically updating what is displayed
             repaint();

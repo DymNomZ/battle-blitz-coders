@@ -2,16 +2,9 @@ package classes.entities;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-<<<<<<< HEAD
 import src.KeyHandler;
 import src.Panel;
-=======
-
-import src.key_handler;
-import src.panel;
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
 
 public class Dummy {
     final public int MAX_X;
@@ -134,11 +127,7 @@ public class Dummy {
     }
 
 
-<<<<<<< HEAD
     public void displayDummy(Graphics g, int TILE_SIZE, int SCREEN_WIDTH, int SCREEN_HEIGHT){
-=======
-    public void display_dummy(Graphics g, int TILE_SIZE, int SCREEN_WIDTH, int SCREEN_HEIGHT){
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
         if (cameraNotTouchingEdge()){
                 xx = screen_x;
                 yy = screen_y;
@@ -164,11 +153,7 @@ public class Dummy {
             }
     }
 
-<<<<<<< HEAD
     public void updatePosition(){
-=======
-    public void update_position(){
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
         if(!cameraNotTouchingEdge()){//SO if camera touching edge HAHHAAHAHAH
             yy += delta_y;
             xx += delta_x;
@@ -179,15 +164,9 @@ public class Dummy {
         this.delta_x = 0;
     }
 
-<<<<<<< HEAD
     public void calculateNextPosition(KeyHandler inputs, Panel pan){
         //check which key is pressed and add/subtract the corresponding value
         //System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
-=======
-    public void calculate_next_position(key_handler inputs, panel pan){
-        //check which key is pressed and add/subtract the corresponding value
-        System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
 
         if(inputs.up_pressed || inputs.down_pressed || inputs.left_pressed || inputs.right_pressed){
 
@@ -211,17 +190,6 @@ public class Dummy {
                 delta_x = -speed;
             else if(inputs.right_pressed)
                 delta_x = speed;
-<<<<<<< HEAD
-=======
-
-            pan.collisionCheck();
-
-            if(colliding_left && inputs.left_pressed) delta_x = 0;
-            if(colliding_right && inputs.right_pressed) delta_x = 0;
-
-            update_position();
-
->>>>>>> fac42dfe06377e896ba9cdff40761a80fd8761bf
 
             pan.collisionCheck();
 
