@@ -131,7 +131,7 @@ public class Dummy {
         if (cameraNotTouchingEdge()){
                 xx = screen_x;
                 yy = screen_y;
-                //System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
+                System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
                 g.drawImage(
                     sprite, 
                     (screen_x - (TILE_SIZE/2)), (screen_y - (TILE_SIZE/2)), 
@@ -139,7 +139,7 @@ public class Dummy {
                     null)
                 ;
             }else{
-                //System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
+                System.out.println("xx: " + xx + " yy: " + yy + " x pos: " + x_pos + " y pos: " + y_pos);
                 if(yy < 0) yy = 0;
                 else if(yy > 640) yy = SCREEN_HEIGHT;
                 if(xx < 0) xx = 0;

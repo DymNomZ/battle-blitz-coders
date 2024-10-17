@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -21,16 +20,21 @@ public class Panel extends JPanel {
     public final int SCREEN_HEIGHT = SCREEN_TILE_SIZE * MAX_SCREEN_ROW;
 
     //kani sila ba ang max_map row and col siguro e public ang BOUNDARIES pud kay mag lahi2 per map
-    public int max_map_row = 50, max_map_col = 50;
+    public int max_map_row, max_map_col;
 
     public final int NORTH_MAP_BOUNDARY = 0;
     public final int WEST_MAP_BOUNDARY = 0;
-    public final int SOUTH_MAP_BOUNDARY = max_map_row * TILE_SIZE;
-    public final int EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
+    public final int SOUTH_MAP_BOUNDARY;
+    public final int EAST_MAP_BOUNDARY;
 
     MapConstructor map;
     
     KeyHandler key_input = new KeyHandler();
+
+    //temporary
+    Dummy d;
+    Dummy_sus d1;
+
     
     public Panel(){
 
@@ -39,15 +43,18 @@ public class Panel extends JPanel {
         this.setFocusable(true);
         this.addKeyListener(key_input);
 
-        map = new MapConstructor("assets/maps/test_pattern_map.zip");
+        map = new MapConstructor("assets/maps/field_test.zip");
 
         max_map_row = map.getMap_height();
         max_map_col = map.getMap_length();
-    }
 
-    //temporary
-    Dummy d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
-    Dummy_sus d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, "../../assets/sprites/fidget_spinner.png");
+        SOUTH_MAP_BOUNDARY = max_map_row * TILE_SIZE;
+        EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
+
+        d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
+        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, "../../assets/sprites/fidget_spinner.png");
+    
+    }
 
     //COLLISION TEST
     public void collisionCheck(){
@@ -74,7 +81,7 @@ public class Panel extends JPanel {
 	    int[][] map_tiles = map.getMap_indexes();
         for(int i = 0;i < map_tiles.length;i++){
             for(int j = 0;j < map_tiles[i].length;j++){
-                if(map_tiles[i][j] == 4){
+                if(map_tiles[i][j] == 4 || map_tiles[i][j] == 5){
                     int tile_xpos = ((j + 1) * DEF_DIMENSION * SCALE) - half_scale;
                     int tile_ypos = ((i + 1) * DEF_DIMENSION * SCALE) - half_scale;
                     boolean is_same_row = d_top_hitbox < tile_ypos + (half_scale) && d_down_hitBox > tile_ypos - ((DEF_DIMENSION/2) * SCALE);
