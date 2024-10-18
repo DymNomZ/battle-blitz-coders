@@ -8,6 +8,7 @@ public class KeyHandler implements KeyListener {
     public boolean down_pressed = false;
     public boolean left_pressed = false;
     public boolean right_pressed = false;
+    public boolean lShift_pressed = false;
 
     @Override
     public void keyPressed(KeyEvent e){
@@ -18,6 +19,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S -> down_pressed = true;
             case KeyEvent.VK_A -> left_pressed = true;
             case KeyEvent.VK_D -> right_pressed = true;
+            case KeyEvent.VK_SHIFT -> lShift_pressed = true;
         }
     }
 
@@ -29,6 +31,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S -> down_pressed = false;
             case KeyEvent.VK_A -> left_pressed = false;
             case KeyEvent.VK_D -> right_pressed = false;
+            case KeyEvent.VK_SHIFT -> lShift_pressed = false;
         }
     }
 
