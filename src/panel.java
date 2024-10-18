@@ -34,7 +34,6 @@ public class Panel extends JPanel {
     //temporary
     Dummy d;
     Dummy_sus d1;
-
     
     public Panel(){
 
@@ -43,7 +42,7 @@ public class Panel extends JPanel {
         this.setFocusable(true);
         this.addKeyListener(key_input);
 
-        map = new MapConstructor("assets/maps/field_test.zip");
+        map = new MapConstructor("assets/maps/field_test.zip", SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE);
 
         max_map_row = map.getMap_height();
         max_map_col = map.getMap_length();
@@ -52,8 +51,7 @@ public class Panel extends JPanel {
         EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
 
         d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
-        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, "../../assets/sprites/fidget_spinner.png");
-    
+        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE);
     }
 
     //COLLISION TEST
@@ -123,16 +121,10 @@ public class Panel extends JPanel {
         public void actionPerformed(ActionEvent e){
             //we pass our key handler so that our dummy can check which keys are pressed
 
-
-            /*  Naay chance mo glitch ang position sa dummy inig abot niya sa border2 sa map
-             *  gi update ra nako ang position sa dummy every dimension (x, y) kay para murag sequential iyang pag check sa collision
-             *  tho kaisa ramn sha gi repaint so mura ra shag ni diagonal sa players
-             *  - Lil Z
-             */
-
-
-
-            d.calculateNextPosition(key_input, p);
+            //d.calculateNextPosition(key_input, p);
+            d1.move(key_input);
+            map.verifyEntityPosition(d1);
+            
             //repaint calls the paintComponent method again, so you can imagine, it redraws everything on the screen
             //basically updating what is displayed
             repaint();
@@ -143,12 +135,15 @@ public class Panel extends JPanel {
         Timer timer = new Timer(10, timer_listener);
         timer.start();
     }
-    
+
     @Override
     public void paintComponent(Graphics g){
 
         super.paintComponent(g);
-        map.displayTiles(g, TILE_SIZE, d, SCREEN_HEIGHT, SCREEN_WIDTH);
-        d.displayDummy(g, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT);
+        map.view(d1);
+        //map.displayTiles(g, TILE_SIZE, d, SCREEN_HEIGHT, SCREEN_WIDTH);
+        //d.displayDummy(g, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT);
+        map.displayTiles(g);
+        d1.display(g, map.camera);
     }
 }
