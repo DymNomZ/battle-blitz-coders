@@ -20,7 +20,11 @@ public abstract class MapEntity extends PanelEntity {
         this.id = id;
     }
 
+<<<<<<< HEAD
+    //Temporary to display enemies - Set H
+=======
     //Temporary to display enemies
+>>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
     public MapEntity(String name, int x, int y, int side){
         super(x,y,side,side);
         this.name = name;

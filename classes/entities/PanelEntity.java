@@ -1,6 +1,7 @@
 package classes.entities;
 
 import java.awt.Graphics;
+import src.Panel;
 import java.awt.image.BufferedImage;
 
 /*  Super class for all entities
@@ -13,6 +14,11 @@ public abstract class PanelEntity {
     BufferedImage buffer;
 
     public PanelEntity() {
+        x = 0;
+        y = 0;
+        width = Panel.TILE_SIZE;
+        height = Panel.TILE_SIZE;
+        buffer = null;
     } // Added default kay muerror sa MapEntity -Ervin
 
     public PanelEntity(int x, int y, int width, int height) {
@@ -48,6 +54,10 @@ public abstract class PanelEntity {
     public void moveAbsolute(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    protected boolean loadSprite(String fileName) {
+        return false;
     }
 
     public void display(Graphics g, CameraEntity cam) {

@@ -16,11 +16,11 @@ import classes.entities.Enemy;
 
 public class Panel extends JPanel {
 
-    public final int SCALE = 2, DEF_DIMENSION = 32;
-    public final int TILE_SIZE = DEF_DIMENSION * SCALE;
-    public final int MAX_SCREEN_ROW = 10, MAX_SCREEN_COL = 20, SCREEN_TILE_SIZE = 64;
-    public final int SCREEN_WIDTH = SCREEN_TILE_SIZE * MAX_SCREEN_COL;
-    public final int SCREEN_HEIGHT = SCREEN_TILE_SIZE * MAX_SCREEN_ROW;
+    public static final int SCALE = 2, DEF_DIMENSION = 32;
+    public static final int TILE_SIZE = DEF_DIMENSION * SCALE;
+    public static final int MAX_SCREEN_ROW = 10, MAX_SCREEN_COL = 20, SCREEN_TILE_SIZE = 64;
+    public static final int SCREEN_WIDTH = SCREEN_TILE_SIZE * MAX_SCREEN_COL;
+    public static final int SCREEN_HEIGHT = SCREEN_TILE_SIZE * MAX_SCREEN_ROW;
 
     //kani sila ba ang max_map row and col siguro e public ang BOUNDARIES pud kay mag lahi2 per map
     public int max_map_row, max_map_col;
@@ -58,8 +58,13 @@ public class Panel extends JPanel {
         d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE);
 
         //temporary adding enemies
+<<<<<<< HEAD
+        enemies.add(new Enemy.Brit(1600,1600,TILE_SIZE));
+        enemies.add(new Enemy.Soviet(1700,65,TILE_SIZE));
+=======
         enemies.add(new Enemy.Brit(164,64,TILE_SIZE));
         enemies.add(new Enemy.Soviet(278,89, TILE_SIZE));
+>>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
     }
 
     //COLLISION TEST
@@ -133,6 +138,12 @@ public class Panel extends JPanel {
             //d.calculateNextPosition(key_input, p);
             d1.move(key_input);
             map.verifyEntityPosition(d1);
+
+
+            for(Enemy enemy : enemies){
+                enemy.moveTowardsEntity(d1);
+                map.verifyEntityPosition(enemy);
+            }
             
             //repaint calls the paintComponent method again, so you can imagine, it redraws everything on the screen
             //basically updating what is displayed

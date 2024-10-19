@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class Enemy extends MapEntity {
     // to implement shi
+    private int speed;
     private String enemy_type; // For melee, ranged, boss types -Ervin
     public Enemy(String name,
             String enemy_type,
@@ -21,6 +22,40 @@ public class Enemy extends MapEntity {
     public Enemy(String name, int x, int y, int side, String enemy_type){
         super(name,x,y,side);
         this.enemy_type = enemy_type;
+    }
+
+
+    public Enemy(String name, int x, int y, int side, String enemy_type){
+        super(name,x,y,side);
+        this.enemy_type = enemy_type;
+        this.speed = 2;
+    }
+    /*
+    * Calculates the angle relative to the x-axis a straight line from
+    * this entity to given entity e would form.
+    * The value might look wrong at first (i.e why it is negative or positive)
+    * mostly because our 0,0 is at the top left - Set H
+    *
+    */
+    public double calculateAngle(PanelEntity e){
+        double x_diff = e.x - x;
+        double y_diff = e.y - y;
+        double angle_radians = (Math.atan2(y_diff,x_diff));
+
+        return angle_radians;
+    }
+
+    /*
+     * Will make this entity move towards a given PanelEntity.
+     * As of now the movement looks weird because we are dealing with
+     * movements of value of integers, not double, so it is less
+     * precise - Set H
+     */
+
+    public void moveTowardsEntity(PanelEntity e){
+        double angle_radians = calculateAngle(e);
+        deltaY = (int)Math.floor(Math.sin(angle_radians) * speed);
+        deltaX = (int)Math.floor(Math.cos(angle_radians) * speed);
     }
 
 

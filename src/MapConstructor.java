@@ -93,13 +93,21 @@ public class MapConstructor {
          * 
          * pixelsOnTile: represents the number of pixels of the entity's current position to the
          *               base point (0, 0) position of the current tile. This can also be known
+<<<<<<< HEAD
+         *               as the offset of the entity from current tile's top left corner
+=======
          *               as the offset of the entity from current's tile top left corner
+>>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
          *          
          *               Example each tile of the map have 32x32 dimension, and the position of the entity
          *               in relation to the pixels is (64, 33). The value for pixelsOnTile on both
          *               dimensions is (0, 1).
          * 
+<<<<<<< HEAD
+         * offTile:      This is the main factor of detecting whether we should check the next tile or not.
+=======
          * offTile:      This is the main factor of detecting whether we should check the next tile or not
+>>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
          *               This is the sum of pixelsOnTile and the speed/movement of an entity. Why you ask?
          *               If the value of this variable a negative value, this represents that we must check
          *               the tile before it. If the value is greater than the tile width, then we must check

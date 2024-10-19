@@ -41,5 +41,6 @@ public class Dummy_sus extends PanelEntity{
 		} else {
 			speed = 8;
 		}
+		System.out.println("Delta X: " + deltaX + " Delta Y: " + deltaY);
 	}
 }
