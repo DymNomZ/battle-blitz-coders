@@ -4,11 +4,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import classes.entities.Dummy;
 import classes.entities.Dummy_sus;
+import classes.entities.Enemy;
 
 
 public class Panel extends JPanel {
@@ -34,7 +37,8 @@ public class Panel extends JPanel {
     //temporary
     Dummy d;
     Dummy_sus d1;
-    
+    List<Enemy> enemies = new ArrayList<>();
+
     public Panel(){
 
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -50,11 +54,16 @@ public class Panel extends JPanel {
         SOUTH_MAP_BOUNDARY = max_map_row * TILE_SIZE;
         EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
 
-        d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
+        //d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
         d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE);
+
+        //temporary adding enemies
+        enemies.add(new Enemy.Brit(164,64,TILE_SIZE));
+        enemies.add(new Enemy.Soviet(278,89, TILE_SIZE));
     }
 
     //COLLISION TEST
+    @Deprecated
     public void collisionCheck(){
         //Checks if the dummy is colliding with map border
         int half_scale = TILE_SIZE / 2;
@@ -141,9 +150,14 @@ public class Panel extends JPanel {
 
         super.paintComponent(g);
         map.view(d1);
+
         //map.displayTiles(g, TILE_SIZE, d, SCREEN_HEIGHT, SCREEN_WIDTH);
         //d.displayDummy(g, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT);
+
         map.displayTiles(g);
         d1.display(g, map.camera);
+        for(Enemy e : enemies){
+            e.display(g, map.camera);
+        }
     }
 }

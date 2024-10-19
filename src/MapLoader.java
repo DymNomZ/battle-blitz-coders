@@ -2,10 +2,7 @@ package src;
 
 import classes.map.Tile;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -73,7 +70,7 @@ public class MapLoader {
             //Check print
             System.out.println(loaded_tile_data.size());
             for(Tile t : loaded_tile_data){
-                System.out.println(t.name + " " + t.tileType);
+                System.out.println(t.name + " " + t.tile_type + " " + t.is_solid);
             }
 
             zip_file.close();
@@ -95,8 +92,9 @@ public class MapLoader {
 
             loaded_tile_data.add(
                 new Tile(
+                    tile_name, tile_image,
                     tile_data_indexes[curr_idx][0], 
-                    tile_name, tile_image
+                    (tile_data_indexes[curr_idx][1] == 1)
                 )
             );
 
@@ -115,12 +113,13 @@ public class MapLoader {
             tile_data_stream = zip.getInputStream(tile_data);
             reader = new BufferedReader(new InputStreamReader(tile_data_stream));
 
+            String line = reader.readLine();
             int td_h = 0;
-            int td_l = 1; //constant 1 cause only indexes for now, no solid data and others
+            int td_l = line.length() / 2;
 
-            while ((reader.readLine()) != null){
+            do{
                 td_h++;
-            }
+            }while ((reader.readLine()) != null);
 
             reader.close();
 

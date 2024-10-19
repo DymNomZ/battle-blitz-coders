@@ -20,6 +20,12 @@ public abstract class MapEntity extends PanelEntity {
         this.id = id;
     }
 
+    //Temporary to display enemies
+    public MapEntity(String name, int x, int y, int side){
+        super(x,y,side,side);
+        this.name = name;
+    }
+
     public MapEntity(String name, int id){
         this.name = name;
         this.hit_points = INFINITE;

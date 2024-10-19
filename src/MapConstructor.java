@@ -1,12 +1,11 @@
 package src;
+import classes.entities.CameraEntity;
 import classes.entities.Dummy;
 import classes.entities.PanelEntity;
 import classes.map.Tile;
 import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.util.ArrayList;
-
-import classes.entities.CameraEntity;
 
 public class MapConstructor {
 
@@ -60,13 +59,16 @@ public class MapConstructor {
                 //check which tile in tile data matches index
                 if(map_indexes[i][j] != 0){
                     for(Tile td : tile_data){
-                        if(td.tileType == map_indexes[i][j]){
+                        if(td.tile_type == map_indexes[i][j]){
                             tiles[i][j] = td;
                             break;
                         }
                     }
                 }else{
-                    tiles[i][j] = new Tile("../../assets/map_tiles/void.png", 0, "void");
+                    tiles[i][j] = new Tile(
+                        "../../assets/map_tiles/void.png", "void",
+                        0, false
+                    );
                 }
                     
             }
@@ -75,42 +77,86 @@ public class MapConstructor {
 
     // Will not support speed that is == to tileSize or higher
     public void verifyEntityPosition(PanelEntity e){
+        
+        /* "Quick" summary of this bulshet below
+         * 
+         * Collisions are check sequentially... x dimension first and then y dimension
+         * As trying to move an entity diagonally will have a high chance of having this entity
+         * unable to check tiles in corners
+         * 
+         * This function will also check for map border collisions... If u want to move an entity
+         * without the restrictions of the collisions, use the PanelEntity.moveAbsolute or change
+         * the x and y coordinates directly without setting the deltaX and deltaY variables.
+         * Collision will only verify those in deltaX and deltaY
+         * 
+         * Two major variables are present in both dimensions namely: pixelsOnTile and offTile
+         * 
+         * pixelsOnTile: represents the number of pixels of the entity's current position to the
+         *               base point (0, 0) position of the current tile. This can also be known
+         *               as the offset of the entity from current's tile top left corner
+         *          
+         *               Example each tile of the map have 32x32 dimension, and the position of the entity
+         *               in relation to the pixels is (64, 33). The value for pixelsOnTile on both
+         *               dimensions is (0, 1).
+         * 
+         * offTile:      This is the main factor of detecting whether we should check the next tile or not
+         *               This is the sum of pixelsOnTile and the speed/movement of an entity. Why you ask?
+         *               If the value of this variable a negative value, this represents that we must check
+         *               the tile before it. If the value is greater than the tile width, then we must check
+         *               the tile after entity or the current tile. Any value that does not apply to the
+         *               conditions above are ignored as they are expected to not collide a new tile.
+         *               However, if the position of the entity is sitting at the base point (0, 0) of the
+         *               current tile and this variable is greater than 0, we must still check the tile next
+         *               of the current tile.
+         * 
+         * 
+         * Since the tiles we used are placed in a 2D array, variables offXTile and offYTile are utitlize to
+         * get the index of the tile to check. In any possibilty that an Entity is moving between two tiles,
+         * we must check two tiles opposite to the current dimension we are calculating. If the first tile
+         * is a solid, there is no need to check for the second tile since it is already given the entity
+         * must not move there.
+         * "two tiles opposite to the current diemension" means that if we are curently checking for x dimension,
+         * we must check for tile[offYTile][offXTile] and tile[offYTile + 1][offXTile]. To check whether we have
+         * to check two tiles in this situation, y % tileSize > 0 will tell us just that.. also opposite to the
+         * current dimension
+         * 
+         */
+
+
         if (e.deltaX != 0) {
-            int offTile = (e.x % tileSize) + e.deltaX;
+            int pixelsOnTile = e.x % tileSize;
+            int offTile = pixelsOnTile + e.deltaX;
 
             if (e.x + e.deltaX < 0) {
                 e.x = 0;
-            } else if (e.x + e.width + e.deltaX > (map_length * tileSize)) {
+            } else if (e.x + e.width + e.deltaX >= (map_length * tileSize)) {
                 e.x = (map_length * tileSize) - e.width;
-            } else if (offTile > 0 && offTile < tileSize) {
+            } else if (pixelsOnTile != 0 && offTile >= 0 && offTile <= tileSize) {
                 e.x += e.deltaX;
             } else {
                 int offXTile;
 
-                if (offTile >= tileSize) {
+                if (offTile > tileSize || (pixelsOnTile == 0 && offTile > 0)) {
                     offXTile = (e.x + e.deltaX + e.width) / tileSize;
                 } else {
                     offXTile = (e.x + e.deltaX) / tileSize;
                 }
 
                 int offYTile = e.y / tileSize;
+                e.x += e.deltaX;
 
-                System.out.println(map_indexes[offYTile][offXTile] + " ");
-
-                if (map_indexes[offYTile][offXTile] == 4 || map_indexes[offYTile][offXTile] == 5) {
+                if (tiles[offYTile][offXTile].is_solid) {
                     if (offTile < 0) {
-                        e.x += e.deltaX - offTile;
+                        e.x -= offTile;
                     } else {
-                        e.x += e.deltaX - tileSize + (e.x % tileSize);
+                        e.x -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaX;
                     }
-                } else if (e.y % tileSize > 0 && (map_indexes[offYTile + 1][offXTile] == 4 || map_indexes[offYTile + 1][offXTile] == 5)) {
+                } else if (e.y % tileSize > 0 && (tiles[offYTile + 1][offXTile].is_solid)) {
                     if (offTile < 0) {
-                        e.x += e.deltaX - offTile;
+                        e.x -= offTile;
                     } else {
-                        e.x += e.deltaX - tileSize + (e.x % tileSize);
+                        e.x -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaX;
                     }
-                } else {
-                    e.x += e.deltaX;
                 }
             }
 
@@ -118,18 +164,19 @@ public class MapConstructor {
         }
 
         if (e.deltaY != 0) {
-            int offTile = (e.y % tileSize) + e.deltaY;
+            int pixelsOnTile = e.y % tileSize;
+            int offTile = pixelsOnTile + e.deltaY;
 
             if (e.y + e.deltaY < 0) {
                 e.y = 0;
-            } else if (e.y + e.height + e.deltaY > (map_height * tileSize)) {
+            } else if (e.y + e.height + e.deltaY >= (map_height * tileSize)) {
                 e.y = (map_height * tileSize) - e.height;
-            } else if (offTile >= 0 && offTile <= tileSize) {
+            } else if (pixelsOnTile != 0 && offTile >= 0 && offTile <= tileSize) {
                 e.y += e.deltaY;
             } else {
                 int offYTile;
 
-                if (offTile >= tileSize) {
+                if (offTile > tileSize || (pixelsOnTile == 0 && offTile > 0)) {
                     offYTile = (e.y + e.deltaY + e.height) / tileSize;
                 } else {
                     offYTile = (e.y + e.deltaY) / tileSize;
@@ -138,17 +185,17 @@ public class MapConstructor {
                 int offXTile = e.x / tileSize;
                 e.y += e.deltaY;
 
-                if (map_indexes[offYTile][offXTile] == 4 || map_indexes[offYTile][offXTile] == 5) {
+                if (tiles[offYTile][offXTile].is_solid) {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= e.y % tileSize;
+                        e.y -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaY;
                     }
-                } else if (e.y % tileSize > 0 && (map_indexes[offYTile][offXTile + 1] == 4 || map_indexes[offYTile][offXTile + 1] == 5)) {
+                } else if (e.x % tileSize > 0 && (tiles[offYTile][offXTile + 1].is_solid)) {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= e.y % tileSize;
+                        e.y -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaY;
                     }
                 }
             }
@@ -200,6 +247,7 @@ public class MapConstructor {
         }
     }
 
+    @Deprecated
     void displayTiles(
         Graphics g, int TILE_SIZE, Dummy d, 
         int SCREEN_HEIGHT, int SCREEN_WIDTH){

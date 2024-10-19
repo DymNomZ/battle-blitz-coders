@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import src.KeyHandler;
 import src.Panel;
-
+@Deprecated
 public class Dummy {
     final public int MAX_X;
     final public int MAX_Y;
@@ -176,7 +176,7 @@ public class Dummy {
             else if(inputs.down_pressed)
                 delta_y = speed;
 
-            pan.collisionCheck();
+            //pan.collisionCheck();
 
             if(colliding_top && inputs.up_pressed) delta_y = 0;
             if(colliding_down && inputs.down_pressed) delta_y = 0;
@@ -191,7 +191,7 @@ public class Dummy {
             else if(inputs.right_pressed)
                 delta_x = speed;
 
-            pan.collisionCheck();
+            //pan.collisionCheck();
 
             if(colliding_left && inputs.left_pressed) delta_x = 0;
             if(colliding_right && inputs.right_pressed) delta_x = 0;

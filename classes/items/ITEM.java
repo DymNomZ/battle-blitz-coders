@@ -14,20 +14,20 @@ public abstract class Item {
     // for this to reduce clutter -Ervin
     private int id;
 
+    public Item(String name, String item_type, int quantity, int id) // for consumables -Raymond
+    {
+        this.name = name;
+        this.is_stackable = true;
+        this.quantity = quantity;
+        this.item_type = item_type;
+        this.id = id;
+    }
+
     public Item(String name, String item_type, int id) // for weapons and stat-modifiers -Raymond
     {
         this.name = name;
         this.is_stackable = false;
         this.quantity = 1;
-        this.item_type = item_type;
-        this.id = id;
-    }
-
-    public Item(String name, int quantity, String item_type, int id) // for consumables -Raymond
-    {
-        this.name = name;
-        this.is_stackable = true;
-        this.quantity = quantity;
         this.item_type = item_type;
         this.id = id;
     }
