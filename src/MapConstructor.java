@@ -19,10 +19,8 @@ public class MapConstructor {
 
     public CameraEntity camera;
     String map_path;
-    int tileSize;
 
-    public MapConstructor(String path, int screenWidth, int screenHeight, int tileSize){
-        this.tileSize = tileSize;
+    public MapConstructor(String path, int screenWidth, int screenHeight){
         map_path = path;
 
         map_loader = new MapLoader();
@@ -75,7 +73,7 @@ public class MapConstructor {
         }
     }
 
-    // Will not support speed that is == to tileSize or higher
+    // Will not support speed that is == to Panel.TILE_SIZE or higher
     public void verifyEntityPosition(PanelEntity e){
         
         /* "Quick" summary of this bulshet below
@@ -93,21 +91,13 @@ public class MapConstructor {
          * 
          * pixelsOnTile: represents the number of pixels of the entity's current position to the
          *               base point (0, 0) position of the current tile. This can also be known
-<<<<<<< HEAD
          *               as the offset of the entity from current tile's top left corner
-=======
-         *               as the offset of the entity from current's tile top left corner
->>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
          *          
          *               Example each tile of the map have 32x32 dimension, and the position of the entity
          *               in relation to the pixels is (64, 33). The value for pixelsOnTile on both
          *               dimensions is (0, 1).
          * 
-<<<<<<< HEAD
          * offTile:      This is the main factor of detecting whether we should check the next tile or not.
-=======
-         * offTile:      This is the main factor of detecting whether we should check the next tile or not
->>>>>>> 808f0c0f554982d7ca92a1c3a13b1c00376d627c
          *               This is the sum of pixelsOnTile and the speed/movement of an entity. Why you ask?
          *               If the value of this variable a negative value, this represents that we must check
          *               the tile before it. If the value is greater than the tile width, then we must check
@@ -125,45 +115,45 @@ public class MapConstructor {
          * must not move there.
          * "two tiles opposite to the current diemension" means that if we are curently checking for x dimension,
          * we must check for tile[offYTile][offXTile] and tile[offYTile + 1][offXTile]. To check whether we have
-         * to check two tiles in this situation, y % tileSize > 0 will tell us just that.. also opposite to the
+         * to check two tiles in this situation, y % Panel.TILE_SIZE > 0 will tell us just that.. also opposite to the
          * current dimension
          * 
          */
 
 
         if (e.deltaX != 0) {
-            int pixelsOnTile = e.x % tileSize;
+            int pixelsOnTile = e.x % Panel.TILE_SIZE;
             int offTile = pixelsOnTile + e.deltaX;
 
             if (e.x + e.deltaX < 0) {
                 e.x = 0;
-            } else if (e.x + e.width + e.deltaX >= (map_length * tileSize)) {
-                e.x = (map_length * tileSize) - e.width;
-            } else if (pixelsOnTile != 0 && offTile >= 0 && offTile <= tileSize) {
+            } else if (e.x + e.width + e.deltaX >= (map_length * Panel.TILE_SIZE)) {
+                e.x = (map_length * Panel.TILE_SIZE) - e.width;
+            } else if (pixelsOnTile != Panel.TILE_SIZE - e.width && offTile >= 0 && offTile <= e.width) {
                 e.x += e.deltaX;
             } else {
                 int offXTile;
 
-                if (offTile > tileSize || (pixelsOnTile == 0 && offTile > 0)) {
-                    offXTile = (e.x + e.deltaX + e.width) / tileSize;
+                if (offTile > e.width || (pixelsOnTile == Panel.TILE_SIZE - e.width && offTile > Panel.TILE_SIZE - e.width)) {
+                    offXTile = (e.x + e.deltaX + e.width) / Panel.TILE_SIZE;
                 } else {
-                    offXTile = (e.x + e.deltaX) / tileSize;
+                    offXTile = (e.x + e.deltaX) / Panel.TILE_SIZE;
                 }
 
-                int offYTile = e.y / tileSize;
+                int offYTile = e.y / Panel.TILE_SIZE;
                 e.x += e.deltaX;
 
                 if (tiles[offYTile][offXTile].is_solid) {
                     if (offTile < 0) {
                         e.x -= offTile;
                     } else {
-                        e.x -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaX;
+                        e.x -= pixelsOnTile != Panel.TILE_SIZE - e.width ? offTile - e.width : e.deltaX;
                     }
-                } else if (e.y % tileSize > 0 && (tiles[offYTile + 1][offXTile].is_solid)) {
+                } else if (e.y % Panel.TILE_SIZE > 0 && (tiles[offYTile + 1][offXTile].is_solid)) {
                     if (offTile < 0) {
                         e.x -= offTile;
                     } else {
-                        e.x -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaX;
+                        e.x -= pixelsOnTile != Panel.TILE_SIZE - e.width ? offTile - e.width : e.deltaX;
                     }
                 }
             }
@@ -172,38 +162,38 @@ public class MapConstructor {
         }
 
         if (e.deltaY != 0) {
-            int pixelsOnTile = e.y % tileSize;
+            int pixelsOnTile = e.y % Panel.TILE_SIZE;
             int offTile = pixelsOnTile + e.deltaY;
 
             if (e.y + e.deltaY < 0) {
                 e.y = 0;
-            } else if (e.y + e.height + e.deltaY >= (map_height * tileSize)) {
-                e.y = (map_height * tileSize) - e.height;
-            } else if (pixelsOnTile != 0 && offTile >= 0 && offTile <= tileSize) {
+            } else if (e.y + e.height + e.deltaY >= (map_height * Panel.TILE_SIZE)) {
+                e.y = (map_height * Panel.TILE_SIZE) - e.height;
+            } else if (pixelsOnTile != Panel.TILE_SIZE - e.height && offTile >= 0 && offTile <= e.height) {
                 e.y += e.deltaY;
             } else {
                 int offYTile;
 
-                if (offTile > tileSize || (pixelsOnTile == 0 && offTile > 0)) {
-                    offYTile = (e.y + e.deltaY + e.height) / tileSize;
+                if (offTile > e.height || (pixelsOnTile == Panel.TILE_SIZE - e.height && offTile > Panel.TILE_SIZE - e.height)) {
+                    offYTile = (e.y + e.deltaY + e.height) / Panel.TILE_SIZE;
                 } else {
-                    offYTile = (e.y + e.deltaY) / tileSize;
+                    offYTile = (e.y + e.deltaY) / Panel.TILE_SIZE;
                 }
 
-                int offXTile = e.x / tileSize;
+                int offXTile = e.x / Panel.TILE_SIZE;
                 e.y += e.deltaY;
 
                 if (tiles[offYTile][offXTile].is_solid) {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaY;
+                        e.y -= pixelsOnTile != Panel.TILE_SIZE - e.height ? offTile - e.height : e.deltaY;
                     }
-                } else if (e.x % tileSize > 0 && (tiles[offYTile][offXTile + 1].is_solid)) {
+                } else if (e.x % Panel.TILE_SIZE > 0 && (tiles[offYTile][offXTile + 1].is_solid)) {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= pixelsOnTile != 0 ? offTile - tileSize : e.deltaY;
+                        e.y -= pixelsOnTile != Panel.TILE_SIZE - e.height ? offTile - e.height : e.deltaY;
                     }
                 }
             }
@@ -215,19 +205,19 @@ public class MapConstructor {
     // Note: x and y not centered
     public void view(int x, int y) {
         camera.x = Math.max(x, 0);
-        camera.x = Math.min(camera.x, (map_length * tileSize) - camera.width);
+        camera.x = Math.min(camera.x, (map_length * Panel.TILE_SIZE) - camera.width);
 
         camera.y = Math.max(y, 0);
-        camera.y = Math.min(camera.y, (map_height * tileSize) - camera.height);
+        camera.y = Math.min(camera.y, (map_height * Panel.TILE_SIZE) - camera.height);
     }
 
     // Note: center to entity
     public void view(PanelEntity e) {
         camera.x = Math.max(0, e.x - ((camera.width / 2) - (e.width / 2) - 2));
-        camera.x = Math.min(camera.x, (map_length * tileSize) - camera.width);
+        camera.x = Math.min(camera.x, (map_length * Panel.TILE_SIZE) - camera.width);
     
         camera.y = Math.max(0, e.y - ((camera.height / 2) - (e.height / 2)));
-        camera.y = Math.min(camera.y, (map_height * tileSize) - camera.height);
+        camera.y = Math.min(camera.y, (map_height * Panel.TILE_SIZE) - camera.height);
     }
 
     public void displayEntity(PanelEntity e, Graphics g) {
@@ -239,17 +229,17 @@ public class MapConstructor {
     }
 
     public void displayTiles(Graphics g) {
-        int leftStart = Math.max((camera.x / tileSize) - 1, 0);
-        int topStart = Math.max((camera.y / tileSize) - 1, 0);
-        int rightEnd = Math.min(((camera.x + camera.width) / tileSize) + 1, map_length);
-        int bottomEnd = Math.min(((camera.y + camera.height) / tileSize) + 1, map_height);
+        int leftStart = Math.max((camera.x / Panel.TILE_SIZE) - 1, 0);
+        int topStart = Math.max((camera.y / Panel.TILE_SIZE) - 1, 0);
+        int rightEnd = Math.min(((camera.x + camera.width) / Panel.TILE_SIZE) + 1, map_length);
+        int bottomEnd = Math.min(((camera.y + camera.height) / Panel.TILE_SIZE) + 1, map_height);
 
         while (topStart < bottomEnd) {
             for (int i = leftStart; i < rightEnd; i++) {
-                int tileX = (i * tileSize) - camera.x;
-                int tileY = (topStart * tileSize) - camera.y;
+                int tileX = (i * Panel.TILE_SIZE) - camera.x;
+                int tileY = (topStart * Panel.TILE_SIZE) - camera.y;
 
-                g.drawImage(tiles[topStart][i].image, tileX, tileY, tileSize, tileSize, null);
+                g.drawImage(tiles[topStart][i].image, tileX, tileY, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
             }
             topStart++;
         }

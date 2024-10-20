@@ -10,6 +10,9 @@ public class KeyHandler implements KeyListener {
     public boolean right_pressed = false;
     public boolean lShift_pressed = false;
 
+    public boolean spawn_enemy = false;
+    public boolean kill_enemy = false;
+
     @Override
     public void keyPressed(KeyEvent e){
         
@@ -20,6 +23,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_A -> left_pressed = true;
             case KeyEvent.VK_D -> right_pressed = true;
             case KeyEvent.VK_SHIFT -> lShift_pressed = true;
+            case KeyEvent.VK_N -> spawn_enemy = true;
+            case KeyEvent.VK_H -> kill_enemy = true;
         }
     }
 
@@ -32,6 +37,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_A -> left_pressed = false;
             case KeyEvent.VK_D -> right_pressed = false;
             case KeyEvent.VK_SHIFT -> lShift_pressed = false;
+            case KeyEvent.VK_N -> spawn_enemy = false;
+            case KeyEvent.VK_H -> kill_enemy = false;
         }
     }
 

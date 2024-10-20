@@ -9,7 +9,20 @@ import java.awt.image.BufferedImage;
  *                                                                    - Lil Z
  */
 public abstract class PanelEntity {
+    /* Explanation for each variable:
+     * - x and y are the position of the top-leftmost pixel of the panel
+     *
+     * - x_pos_center and y_pos_center as of now, no uses but can be used to hold the center
+     *   point of any PanelEntity
+     *
+     *  - width is the number of pixels horizontally, height is the number of pixels vertically
+     *  - deltaX and deltaY are used to change the x and y variables respectively
+     *
+     *  - buffer is used to store the sprite (might change in the future)
+     *  - Set H
+     */
     public int x, y, width, height;
+    public int x_pos_center, y_pos_center;
     public int deltaX, deltaY;
     BufferedImage buffer;
 
@@ -48,6 +61,10 @@ public abstract class PanelEntity {
     public void move(int offsetX, int offsetY) {
         deltaX = offsetX;
         deltaY = offsetY;
+    }
+    public void updateCenterPosition(){
+        x_pos_center = x + (width / 2);
+        y_pos_center = y + (height / 2);
     }
 
     // move like a sigma male, disregarding all bondaries of this world

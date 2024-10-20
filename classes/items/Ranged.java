@@ -33,7 +33,7 @@ public class Ranged extends Weapons {
         return radius;
     }
 
-    // Setters would be nice later if there are more power-ups lol bur for now nah
+    // Setters would be nice later if there are more power-ups lol but for now nah
 
     /*
      * Still referring to FV's sample implementation for weapon subclass;

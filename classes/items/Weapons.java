@@ -20,4 +20,8 @@ public abstract class Weapons extends Item {
     public String getWeapon_type() { // Added this; might be useful for later features -Ervin
         return weapon_type;
     }
+
+    public int getQuality() {
+        return quality;
+    }
 }

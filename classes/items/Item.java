@@ -2,7 +2,7 @@ package classes.items;
 
 public abstract class Item {
     private String name;
-    private boolean is_stackable;
+    private boolean stackable; // Changed is_stackable to stackable -Ervin
     private int quantity; // suggest to move to only CONSUMABLE since no reason to give weapons and stat
                           // mods quantity since limited to only 1? -Raymond
     private String item_type; // why isn't this visible? - FV
@@ -17,7 +17,7 @@ public abstract class Item {
     public Item(String name, String item_type, int quantity, int id) // for consumables -Raymond
     {
         this.name = name;
-        this.is_stackable = true;
+        this.stackable = true;
         this.quantity = quantity;
         this.item_type = item_type;
         this.id = id;
@@ -26,7 +26,7 @@ public abstract class Item {
     public Item(String name, String item_type, int id) // for weapons and stat-modifiers -Raymond
     {
         this.name = name;
-        this.is_stackable = false;
+        this.stackable = false;
         this.quantity = 1;
         this.item_type = item_type;
         this.id = id;
@@ -42,8 +42,8 @@ public abstract class Item {
         return name;
     }
 
-    public boolean isIs_stackable() {
-        return is_stackable;
+    public boolean isStackable() {
+        return stackable;
     }
 
     public int getId() {

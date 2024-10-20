@@ -1,9 +1,8 @@
 package classes.entities;
 
-import src.KeyHandler;
-
-import javax.imageio.ImageIO;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import src.KeyHandler;
 
 public class Dummy_sus extends PanelEntity{
 	int speed = 8;
