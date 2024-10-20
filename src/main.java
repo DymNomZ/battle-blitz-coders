@@ -17,6 +17,7 @@ public class Main {
         main_window.setLocationRelativeTo(null);
         main_window.setVisible(true);
         
-        main_panel.start_clock();
+        // main_panel.start_clock();
+        main_panel.start_main_thread();
     }
 }
