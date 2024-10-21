@@ -120,21 +120,21 @@ public class MapConstructor {
          * 
          */
 
-
         if (e.deltaX != 0) {
             int pixelsOnTile = e.x % Panel.TILE_SIZE;
             int offTile = pixelsOnTile + e.deltaX;
+            int offPixelOnTile = Panel.TILE_SIZE - e.width;
 
             if (e.x + e.deltaX < 0) {
                 e.x = 0;
             } else if (e.x + e.width + e.deltaX >= (map_length * Panel.TILE_SIZE)) {
                 e.x = (map_length * Panel.TILE_SIZE) - e.width;
-            } else if (pixelsOnTile != Panel.TILE_SIZE - e.width && offTile >= 0 && offTile <= e.width) {
+            } else if (offTile >= 0 && ((pixelsOnTile < offPixelOnTile && offTile <= offPixelOnTile) || (pixelsOnTile > offPixelOnTile && offTile <= Panel.TILE_SIZE + offPixelOnTile))) {
                 e.x += e.deltaX;
             } else {
                 int offXTile;
 
-                if (offTile > e.width || (pixelsOnTile == Panel.TILE_SIZE - e.width && offTile > Panel.TILE_SIZE - e.width)) {
+                if (offTile >= 0) {
                     offXTile = (e.x + e.deltaX + e.width) / Panel.TILE_SIZE;
                 } else {
                     offXTile = (e.x + e.deltaX) / Panel.TILE_SIZE;
@@ -147,13 +147,21 @@ public class MapConstructor {
                     if (offTile < 0) {
                         e.x -= offTile;
                     } else {
-                        e.x -= pixelsOnTile != Panel.TILE_SIZE - e.width ? offTile - e.width : e.deltaX;
+                        if (pixelsOnTile == offPixelOnTile) {
+                            e.x -= e.deltaX;
+                        } else {
+                            e.x -= offTile - (offPixelOnTile == 0 ? Panel.TILE_SIZE : offPixelOnTile);
+                        }
                     }
-                } else if (e.y % Panel.TILE_SIZE > 0 && (tiles[offYTile + 1][offXTile].is_solid)) {
+                } else if (e.y % Panel.TILE_SIZE > Panel.TILE_SIZE - e.height && (tiles[offYTile + 1][offXTile].is_solid)) {
                     if (offTile < 0) {
                         e.x -= offTile;
                     } else {
-                        e.x -= pixelsOnTile != Panel.TILE_SIZE - e.width ? offTile - e.width : e.deltaX;
+                        if (pixelsOnTile == offPixelOnTile) {
+                            e.x -= e.deltaX;
+                        } else {
+                            e.x -= offTile - (offPixelOnTile == 0 ? Panel.TILE_SIZE : offPixelOnTile);
+                        }
                     }
                 }
             }
@@ -164,17 +172,18 @@ public class MapConstructor {
         if (e.deltaY != 0) {
             int pixelsOnTile = e.y % Panel.TILE_SIZE;
             int offTile = pixelsOnTile + e.deltaY;
+            int offPixelOnTile = Panel.TILE_SIZE - e.height;
 
             if (e.y + e.deltaY < 0) {
                 e.y = 0;
             } else if (e.y + e.height + e.deltaY >= (map_height * Panel.TILE_SIZE)) {
                 e.y = (map_height * Panel.TILE_SIZE) - e.height;
-            } else if (pixelsOnTile != Panel.TILE_SIZE - e.height && offTile >= 0 && offTile <= e.height) {
+            } else if (offTile >= 0 && ((pixelsOnTile < offPixelOnTile && offTile <= offPixelOnTile) || (pixelsOnTile > offPixelOnTile && offTile <= Panel.TILE_SIZE + offPixelOnTile))) {
                 e.y += e.deltaY;
             } else {
                 int offYTile;
 
-                if (offTile > e.height || (pixelsOnTile == Panel.TILE_SIZE - e.height && offTile > Panel.TILE_SIZE - e.height)) {
+                if (offTile >= 0) {
                     offYTile = (e.y + e.deltaY + e.height) / Panel.TILE_SIZE;
                 } else {
                     offYTile = (e.y + e.deltaY) / Panel.TILE_SIZE;
@@ -187,13 +196,21 @@ public class MapConstructor {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= pixelsOnTile != Panel.TILE_SIZE - e.height ? offTile - e.height : e.deltaY;
+                        if (pixelsOnTile == offPixelOnTile) {
+                            e.y -= e.deltaY;
+                        } else {
+                            e.y -= offTile - (offPixelOnTile == 0 ? Panel.TILE_SIZE : offPixelOnTile);
+                        }
                     }
-                } else if (e.x % Panel.TILE_SIZE > 0 && (tiles[offYTile][offXTile + 1].is_solid)) {
+                } else if (e.x % Panel.TILE_SIZE > Panel.TILE_SIZE - e.width && (tiles[offYTile][offXTile + 1].is_solid)) {
                     if (offTile < 0) {
                         e.y -= offTile;
                     } else {
-                        e.y -= pixelsOnTile != Panel.TILE_SIZE - e.height ? offTile - e.height : e.deltaY;
+                        if (pixelsOnTile == offPixelOnTile) {
+                            e.y -= e.deltaY;
+                        } else {
+                            e.y -= offTile - (offPixelOnTile == 0 ? Panel.TILE_SIZE : offPixelOnTile);
+                        }
                     }
                 }
             }

@@ -1,8 +1,8 @@
 package classes.entities;
 
 import java.awt.Graphics;
-import src.Panel;
 import java.awt.image.BufferedImage;
+import src.Panel;
 
 /*  Super class for all entities
  *  This class differs from MapEntity by its JPanel specific methods and data
@@ -55,6 +55,15 @@ public abstract class PanelEntity {
         this.y = 0;
         this.width = width;
         this.height = height;
+        this.buffer = null;
+    }
+
+    //for item entity
+    public PanelEntity(int x, int y, char ignore){
+        this.x = x;
+        this.y = y;
+        this.width = Panel.TILE_SIZE;
+        this.height = Panel.TILE_SIZE;
         this.buffer = null;
     }
 

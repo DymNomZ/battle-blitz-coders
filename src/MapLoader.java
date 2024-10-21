@@ -68,10 +68,10 @@ public class MapLoader {
             curr_idx = 0;
 
             //Check print
-            System.out.println(loaded_tile_data.size());
-            for(Tile t : loaded_tile_data){
-                System.out.println(t.name + " " + t.tile_type + " " + t.is_solid);
-            }
+            // System.out.println(loaded_tile_data.size());
+            // for(Tile t : loaded_tile_data){
+            //     System.out.println(t.name + " " + t.tile_type + " " + t.is_solid);
+            // }
 
             zip_file.close();
 

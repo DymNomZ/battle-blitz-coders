@@ -8,7 +8,7 @@ public class Dummy_sus extends PanelEntity{
 	int speed = 8;
 
 	public Dummy_sus(int screenWidth, int screenHeight, int side){
-		super(screenWidth, screenHeight, side, side);
+		super(screenWidth, screenHeight, side - 20, side - 20);
 
 		try{
 			this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/fidget_spinner.png"));
@@ -40,6 +40,5 @@ public class Dummy_sus extends PanelEntity{
 		} else {
 			speed = 8;
 		}
-		System.out.println("Delta X: " + deltaX + " Delta Y: " + deltaY);
 	}
 }

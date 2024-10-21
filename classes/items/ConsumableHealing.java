@@ -1,21 +1,31 @@
 package classes.items;
 
+import classes.items.Ranged.Calculator;
+import classes.items.Ranged.Mouse;
+import classes.sprites.ItemSprites;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+
 public abstract class ConsumableHealing extends Consumable
 {
     private String heal_type;       //HOT, INSTA
     private int heal_amount;
     private int heal_time;       //for HOT items
 
-    public ConsumableHealing(String name, int quantity, int id, int heal_amount, int heal_time)   //HOT
+    public ConsumableHealing(){
+        super();
+    }
+
+    public ConsumableHealing(String name, int quantity, int id, int heal_amount, int heal_time, BufferedImage sprite)   //HOT
     {
-        super(name, quantity, "HEALING", id);       //item type can still be specified more if necessary -Raymond
+        super(name, quantity, "HEALING", id, sprite);       //item type can still be specified more if necessary -Raymond
         this.heal_type = "HOT";
         this.heal_amount = heal_amount;
         this.heal_time = heal_time; 
     }
-    public ConsumableHealing(String name, int quantity, int id, int heal_amount)   //INSTA
+    public ConsumableHealing(String name, int quantity, int id, int heal_amount, BufferedImage sprite)   //INSTA
     {
-        super(name, quantity, "HEALING", id);       //item type can still be specified more if necessary -Raymond
+        super(name, quantity, "HEALING", id, sprite);       //item type can still be specified more if necessary -Raymond
         this.heal_type = "INSTA";
         this.heal_amount = heal_amount;
         this.heal_time = 0;
@@ -70,42 +80,42 @@ public abstract class ConsumableHealing extends Consumable
     {
         public Hotcake(int quantity)
         {
-            super("Hotcake", quantity, 200, 20); //add id
+            super("Hotcake", quantity, 200, 20, ItemSprites.ConsumableHealing.HOTCAKE); //add id
         }
     }
     public static class GrabDelivery extends ConsumableHealing  //HOT
     {
         public GrabDelivery(int quantity)
         {
-            super("Grab Delivery", quantity, 201, 5, 30);
+            super("Grab Delivery", quantity, 201, 5, 30, ItemSprites.ConsumableHealing.GRAB);
         }
     }
     public static class Pizza extends ConsumableHealing
     {
         public Pizza(int quantity)
         {
-            super("Pizza", quantity, 202, 30);
+            super("Pizza", quantity, 202, 30, ItemSprites.ConsumableHealing.PIZZA);
         }
     }
     public class BandAid extends ConsumableHealing
     {
         public BandAid(int quantity)
         {
-            super("Band-Aid", quantity, 203, 5, 10);
+            super("Band-Aid", quantity, 203, 5, 10, ItemSprites.ConsumableHealing.BAND_AID);
         }
     }
     public class CupNoodles extends ConsumableHealing
     {
         public CupNoodles(int quantity)
         {
-            super("Cup Noodles", quantity, 204, 10, 15);
+            super("Cup Noodles", quantity, 204, 10, 15, ItemSprites.ConsumableHealing.CUP_NOODLES);
         }
     }
     public class Chips extends ConsumableHealing
     {
         public Chips(int quantity)
         {
-            super("Chips", quantity, 205, 20);
+            super("Chips", quantity, 205, 20, ItemSprites.ConsumableHealing.CHIPS);
         }
     }
 }

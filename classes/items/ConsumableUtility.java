@@ -1,9 +1,13 @@
 package classes.items;
 
+import java.awt.image.BufferedImage;
+
+import classes.sprites.ItemSprites;
+
 public class ConsumableUtility extends Consumable {
 
-	public ConsumableUtility(String name, int quantity, int id) {
-		super(name, quantity, "UTILITY", id); // item_type placeholder name
+	public ConsumableUtility(String name, int quantity, int id, BufferedImage sprite) {
+		super(name, quantity, "UTILITY", id, sprite); // item_type placeholder name
 	}
 
 	// honestly have no idea how to implement consume HAHAHAAHAHAH - Set H
@@ -19,21 +23,21 @@ public class ConsumableUtility extends Consumable {
 	public static class EnergyDrink extends ConsumableUtility // implements statBuffer??
 	{
 		public EnergyDrink(int quantity) {
-			super("Energy Drink", quantity, 300); // add id
+			super("Energy Drink", quantity, 300, ItemSprites.ConsumableUtility.ENERGY_DRINK); // add id
 		}
 	}
 
 	public static class IceCream extends ConsumableUtility // implements crowdController??
 	{
 		public IceCream(int quantity) {
-			super("Ice Cream", quantity, 301); // add id
+			super("Ice Cream", quantity, 301, ItemSprites.ConsumableUtility.ICE_CREAM); // add id
 		}
 	}
 
 	public static class FusRoDah extends ConsumableUtility // implements attacker??
 	{
-		public FusRoDah(int quantity) {
-			super("FUS RO DAH", quantity, 302); // add id
+		public FusRoDah(int quantity) {                         // temp lang sang energy drink wa pay fusrodah - dymes
+			super("FUS RO DAH", quantity, 302, ItemSprites.ConsumableUtility.ENERGY_DRINK); // add id
 		}
 	}
 }

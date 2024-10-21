@@ -1,5 +1,7 @@
 package classes.items;
 
+import java.awt.image.BufferedImage;
+
 public abstract class Item {
     private String name;
     private boolean stackable; // Changed is_stackable to stackable -Ervin
@@ -13,29 +15,40 @@ public abstract class Item {
     // Moved quality var to weapons class, if goods na we can delete the comments
     // for this to reduce clutter -Ervin
     private int id;
+    private BufferedImage sprite;
 
-    public Item(String name, String item_type, int quantity, int id) // for consumables -Raymond
+    public Item() {
+
+    }
+
+    public Item(String name, String item_type, int quantity, int id, BufferedImage sprite) // for consumables -Raymond
     {
         this.name = name;
         this.stackable = true;
         this.quantity = quantity;
         this.item_type = item_type;
         this.id = id;
+        this.sprite = sprite;
     }
 
-    public Item(String name, String item_type, int id) // for weapons and stat-modifiers -Raymond
+    public Item(String name, String item_type, int id, BufferedImage sprite) // for weapons and stat-modifiers -Raymond
     {
         this.name = name;
         this.stackable = false;
         this.quantity = 1;
         this.item_type = item_type;
         this.id = id;
+        this.sprite = sprite;
     }
 
     // what's the idea for this? -Raymond
     // I don't know either, I'll change it to quantity += amount - FV
     protected void setQuantity(int amount) {
         quantity += amount;
+    }
+
+    public BufferedImage getSprite(){
+        return sprite;
     }
 
     public String getName() {

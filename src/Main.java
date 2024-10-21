@@ -1,5 +1,5 @@
 package src;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,6 +11,12 @@ public class Main {
         main_window.setTitle("2D Game Title");
 
         Panel main_panel = new Panel();
+        main_panel.setLayout(null);
+
+        JTextArea controls_display = new JTextArea("W A S D - Movement Controls\nShift - Increase Movement Speed\nN - Spawn Random Enemy\nH - Kill Random Enemy",3,3);
+        controls_display.setBounds(10, 10, 200, 70);
+        controls_display.setEditable(false);
+        main_panel.add(controls_display);
 
         main_window.add(main_panel);
         main_window.pack();
