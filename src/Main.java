@@ -13,10 +13,20 @@ public class Main {
         Panel main_panel = new Panel();
         main_panel.setLayout(null);
 
-        JTextArea controls_display = new JTextArea(
-            "W A S D - Movement Controls\nShift - Increase Movement Speed\nN - Spawn Random Enemy\nH - Kill Random Enemy\nP - Debug Print Hotbar Items"
+        JTextArea controls_display;
+        controls_display = new JTextArea(
+            """
+                W A S D - Movement Controls
+                Shift - Increase Movement Speed
+                N - Spawn Random Enemy
+                H - Kill Enemy within range (+- TILE_SIZE[64])
+                P - Debug Print Hotbar Items
+                Q - Drop Item
+                1-5 Hotbar Slots
+            """
             ,3,3);
-        controls_display.setBounds(10, 10, 200, 80);
+            
+        controls_display.setBounds(10, 10, 200, 120);
         controls_display.setEditable(false);
         main_panel.add(controls_display);
 

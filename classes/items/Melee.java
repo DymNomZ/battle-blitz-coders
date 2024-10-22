@@ -22,7 +22,7 @@ public class Melee extends Weapons {
      */
 
     public Item getRandom(){
-        int num = new Random().nextInt(1, 7);
+        int num = new Random().nextInt(1, 8);
         Item m = null;
 
         switch(num){

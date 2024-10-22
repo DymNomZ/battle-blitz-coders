@@ -1,7 +1,7 @@
 package classes.entities;
 
 import classes.items.Item;
-import classes.items.Melee;
+import classes.sprites.GUISprites;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.util.Random;
@@ -19,14 +19,14 @@ public class Dummy_sus extends PanelEntity{
 		super(screenWidth, screenHeight, side - 30, side - 30);
 
 		//full inv with stick temporarily
-		while(curr_slot != 5){
-			hotbar_items[curr_slot] = new Melee.Stick();
-			curr_slot++;
-		}
-		curr_slot = 0;
+		// while(curr_slot != 5){
+		// 	hotbar_items[curr_slot] = new Melee.Stick();
+		// 	curr_slot++;
+		// }
+		// curr_slot = 0;
 
 		try{
-			this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/fidget_spinner.png"));
+			this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/character_sprites/fidget_spinner.png"));
 		}catch(IOException e){
 			System.out.println("Suck deez nuts");
 		}
@@ -39,38 +39,45 @@ public class Dummy_sus extends PanelEntity{
 	public void printHotbarItems(){
 		if(inputs.debug_print){
 			for(int i = 0; i < 5; i++){
-				if(hotbar_items != null) System.out.print(hotbar_items[i].getName() + " ");
+				if(hotbar_items[i] != null) System.out.print(hotbar_items[i].getName() + " ");
 				else System.out.print("null ");
 			}
 			System.out.println();
-			System.out.println("Current slot free: " + curr_slot);
+			System.out.println("Current slot free: " + (curr_slot + 1));
+			System.out.println("Selected slot: " + (selected_slot + 1));
 			System.out.println("Hotbar item size: " + size);
 			inputs.debug_print = false;
 		}
 	}
 
 	public ItemEntity dropItems(){
-		Item dropped = new Melee.Stick();
+
+		int key = new Random().nextInt(0, 100);
 
 		if(inputs.drop_item){
+			if(size != 0){
+				Item dropped;
 
-			if(!(hotbar_items[selected_slot] instanceof Melee.Stick)){
-				dropped = hotbar_items[selected_slot];
-				hotbar_items[selected_slot] = new Melee.Stick();
-				if(size != 0) size--;
+				inputs.drop_item = false;
+
+				if((hotbar_items[selected_slot] != null)){
+					
+					dropped = hotbar_items[selected_slot];
+					hotbar_items[selected_slot] = null;
+
+					System.out.println(selected_slot + " " + dropped.getName());
+					
+					size--;
+
+					if(selected_slot <= curr_slot) curr_slot = selected_slot;
+					else findNextFree();
+
+					return new ItemEntity(key, x, y, dropped, false);
+				}
 			}
-				
-			System.out.println(selected_slot);
-
-			System.out.println(dropped.getName());
 		} 
 
-		inputs.drop_item = false;
-
-		return new ItemEntity(
-					new Random().nextInt(0, 100),
-					x, y, dropped, false
-				);
+		return new ItemEntity(key, x, y, false);
 	}
 
 	public int getSize(){
@@ -78,17 +85,23 @@ public class Dummy_sus extends PanelEntity{
 	}
 
 	public void addItem(Item item){
-		//traverse until stick
-		
-		while(!(hotbar_items[curr_slot] instanceof Melee.Stick)){
-			curr_slot++;
-			if(curr_slot >= 5) curr_slot = 0;
-		}
 
-		hotbar_items[curr_slot++] = item;
+		
+		hotbar_items[curr_slot] = item;
 		if(curr_slot >= 5) curr_slot = 0;
 
 		size++;
+
+		if(size != 5) findNextFree();
+	}
+
+	private void findNextFree(){
+		//traverse until stick
+		while((hotbar_items[curr_slot] != null)){
+			//System.out.println("Traversing");
+			curr_slot++;
+			if(curr_slot >= 5) curr_slot = 0;
+		}
 	}
 
 	private void hotbarSlotHandler(){
@@ -103,12 +116,20 @@ public class Dummy_sus extends PanelEntity{
 	}
 
 	public void displayHotbarItems(Graphics g){
-		int draw_start = 400;
+		int draw_start = 448;
+		int count = 0;
 		for(Item i : hotbar_items){
-			if(!(i instanceof Melee.Stick)){
+			if(count == selected_slot){
+				g.drawImage(
+					GUISprites.Hotbar.SELECTED, draw_start, Panel.SCREEN_HEIGHT - 100, 
+					Panel.TILE_SIZE, Panel.TILE_SIZE, null
+				);
+			}
+			if((i != null)){
 				i.display(g, draw_start, Panel.SCREEN_HEIGHT - 100);
 			}
-			draw_start += 100;
+			count++;
+			draw_start += (Panel.TILE_SIZE + (Panel.TILE_SIZE / 4));
 		}
 	}
 

@@ -30,7 +30,7 @@ public class Ranged extends Weapons {
     }
 
     public Item getRandom(){
-        int num = new Random().nextInt(1, 8);
+        int num = new Random().nextInt(1, 9);
         Item m = null;
 
         switch(num){

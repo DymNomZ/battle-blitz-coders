@@ -20,8 +20,8 @@ public class Enemy extends MapEntity {
         this.enemy_type = enemy_type;
     }
 
-    public Enemy(String name, int x, int y, int side, String enemy_type) {
-        super(name, x, y, side);
+    public Enemy(String name, int x, int y, int side, String enemy_type, int key) {
+        super(name, x, y, side, key);
         this.enemy_type = enemy_type;
         this.speed = 2;
     }
@@ -83,10 +83,10 @@ public class Enemy extends MapEntity {
 
     // temporary enemies just reuse code - SET H
     public static class Brit extends Enemy {
-        public Brit(int x, int y, int side) {
-            super("Brit", x, y, side, "Brit Temporary Enemy");
+        public Brit(int x, int y, int side, int key) {
+            super("Brit", x, y, side, "Brit Temporary Enemy", key);
             try {
-                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/bo_o_ov_wa_er.png"));
+                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/bo_o_ov_wa_er.png"));
             } catch (IOException e) {
                 System.out.println("Suck deez british nuts");
             }
@@ -95,10 +95,10 @@ public class Enemy extends MapEntity {
     }
 
     public static class Soviet extends Enemy {
-        public Soviet(int x, int y, int side) {
-            super("Soviet", x, y, side, "Soviet Temporary Enemy");
+        public Soviet(int x, int y, int side, int key) {
+            super("Soviet", x, y, side, "Soviet Temporary Enemy", key);
             try {
-                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/our_enemy.png"));
+                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/our_enemy.png"));
             } catch (IOException e) {
                 System.out.println("Suck deez soviet nuts");
             }

@@ -3,29 +3,33 @@ package classes.entities;
 import classes.items.Item;
 import classes.items.Melee;
 import classes.items.Ranged;
+import java.awt.image.BufferedImage;
 import src.Panel;
 
 public class ItemEntity extends PanelEntity {
     
     Item item;
-    public int key;
     public boolean is_pickable = true;
 
     public ItemEntity(int key, int x, int y, int kind){
 
-        super(x, y, 'o');
-        this.key = key;
+        super(x, y, key);
         checkKind(kind);
         this.buffer = item.getSprite();
     }
 
     public ItemEntity(int key, int x, int y, Item item, boolean is_pickable){
 
-        super(x, y, 'o');
-        this.key = key;
+        super(x, y, key);
         this.item = item;
         this.is_pickable = is_pickable;
         this.buffer = item.getSprite();
+    }
+
+    public ItemEntity(int key, int x, int y, boolean is_pickable){
+
+        super(x, y, key);
+        this.is_pickable = is_pickable;
     }
 
     private void checkKind(int kind){
@@ -40,7 +44,12 @@ public class ItemEntity extends PanelEntity {
         return item;
     }
 
+    public void setSprite(BufferedImage buffer){
+        this.buffer = buffer;
+    }
+
     //temp touching function, ikik this guy will be deprecated soon XD - Dymes
+    @Override
     public boolean checkIfTouching(Dummy_sus d1){
         
         int dx2 = d1.x + Panel.TILE_SIZE;

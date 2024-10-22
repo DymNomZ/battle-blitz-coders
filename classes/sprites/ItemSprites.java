@@ -26,9 +26,6 @@ public class ItemSprites {
                 SOCK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/sock_1.png"));
                 BOOK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/SOCSCI_book_1.png"));
                 STICK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/stick_1.png"));
-
-                System.out.println("SUCCESSSS");
-    
             } catch (IOException e) {
                 System.out.println("Error loading Melee sprites");
             }
@@ -37,7 +34,7 @@ public class ItemSprites {
         
     }
 
-    public final class Ranged {
+    public static class Ranged {
 
         public static BufferedImage ALCOHOL_GUN;
         public static BufferedImage PENCIL_GUN;
@@ -48,18 +45,17 @@ public class ItemSprites {
         public static BufferedImage PAPER_AIRPLANE;
         public static BufferedImage EXPLOSIVE_MOUSE;
 
-        public Ranged(){
-            super();
+        static{
 
             try {
-                ALCOHOL_GUN = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/alcohol_gun_1.png"));
-                PENCIL_GUN = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/pencil_gun_1.png"));
-                PEN_GUN = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/pen_shotgun_1.png"));
-                CALCULATOR = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/calculator_1.png"));
-                POKE_BALL = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/poke_ball_1.png"));
-                SAMSUNG = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/samsung_1.png"));
-                PAPER_AIRPLANE = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/paper_airplane_1.png"));
-                EXPLOSIVE_MOUSE = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/weapons_ranged/explosive_mouse_1.png"));
+                ALCOHOL_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/alcohol_gun_1.png"));
+                PENCIL_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/pencil_gun_1.png"));
+                PEN_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/pen_shotgun_1.png"));
+                CALCULATOR = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/calculator_1.png"));
+                POKE_BALL = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/poke_ball_1.png"));
+                SAMSUNG = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/samsung_1.png"));
+                PAPER_AIRPLANE = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/paper_airplane_1.png"));
+                EXPLOSIVE_MOUSE = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/explosive_mouse_1.png"));
             } catch (IOException e) {
                 System.out.println("Error loading Weapon sprites");
             }

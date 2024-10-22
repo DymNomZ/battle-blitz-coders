@@ -24,6 +24,7 @@ public abstract class PanelEntity {
     public int x, y, width, height;
     public int x_pos_center, y_pos_center;
     public int deltaX, deltaY;
+    public int key;
     BufferedImage buffer;
 
     public PanelEntity() {
@@ -33,6 +34,15 @@ public abstract class PanelEntity {
         height = Panel.TILE_SIZE;
         buffer = null;
     } // Added default kay muerror sa MapEntity -Ervin
+
+    public PanelEntity(int x, int y, int width, int height, int key) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.key = key;
+        this.buffer = null;
+    }
 
     public PanelEntity(int x, int y, int width, int height) {
         this.x = x;
@@ -59,11 +69,12 @@ public abstract class PanelEntity {
     }
 
     //for item entity
-    public PanelEntity(int x, int y, char ignore){
+    public PanelEntity(int x, int y, int key){
         this.x = x;
         this.y = y;
         this.width = Panel.TILE_SIZE;
         this.height = Panel.TILE_SIZE;
+        this.key = key;
         this.buffer = null;
     }
 
@@ -93,6 +104,24 @@ public abstract class PanelEntity {
             g.drawRect(x - cam.x, y - cam.y, width, height);
             System.err.println("[Warning: PanelEntity] Displaying without image/sprite attached");
         }
+    }
+
+    //temp touching function, ikik this guy will be deprecated soon XD - Dymes
+    //used in temporary attacking
+    public boolean checkIfTouching(Dummy_sus d1){
+        
+        int dx = d1.x - Panel.TILE_SIZE;
+        int dy = d1.y - Panel.TILE_SIZE;
+        int dx2 = d1.x + (Panel.TILE_SIZE * 2);
+        int dy2 = d1.y + (Panel.TILE_SIZE * 2);
+
+        int x1 = x - Panel.TILE_SIZE;
+        int y1 = y - Panel.TILE_SIZE;
+        int x2 = x + (Panel.TILE_SIZE * 2);
+        int y2 = y + (Panel.TILE_SIZE) * 2;
+        
+        return !(dy > y2 || y1 > dy2) && !(dx > x2 || x1 > dx2);
+
     }
 
     // returns int, but i actually dont know why... i just feel like it must be int
