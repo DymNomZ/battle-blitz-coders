@@ -1,6 +1,9 @@
 package classes.items;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import src.Panel;
 
 public abstract class Item {
     private String name;
@@ -96,6 +99,10 @@ public abstract class Item {
             // removeItem(); - Who's willing to implement removeItem() function? - FV
         }
 
+    }
+
+    public void display(Graphics g, int x, int y){
+        g.drawImage(sprite, x, y, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
     }
 
 }

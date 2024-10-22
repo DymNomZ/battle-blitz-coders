@@ -5,13 +5,11 @@ import classes.entities.Enemy;
 import classes.entities.ItemEntity;
 import classes.items.Item;
 import classes.items.Melee;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.Year;
 import java.util.*;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -50,6 +48,7 @@ public class Panel extends JPanel implements Runnable {
 
     List<Enemy> enemies = new ArrayList<>();
     List<Item> hotbar_items = new ArrayList<>();
+    List<Integer> collected_items_keys = new ArrayList<>();
 
     public Panel(){
 
@@ -64,7 +63,7 @@ public class Panel extends JPanel implements Runnable {
         EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
 
         //d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
-        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE);
+        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, key_input);
 
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
@@ -95,7 +94,6 @@ public class Panel extends JPanel implements Runnable {
             if(delta >= 1){
                 update();
                 repaint();
-                spawn_check();
                 delta--;
                 draw_count++;
             }
@@ -109,9 +107,19 @@ public class Panel extends JPanel implements Runnable {
 
     public void update(){
         //From here on out, place here updating methods ie. player pos, etc. - Dymes
-        d1.move(key_input);
+        d1.move();
         map.verifyEntityPosition(d1);
+        d1.printHotbarItems();
+        spawn_check();
+        checkIfDropping();
+    }
 
+    public void checkIfDropping(){
+        ItemEntity dropped = d1.dropItems();
+        
+        if(!(dropped.getItem() instanceof Melee.Stick)){
+            drop_items.put(dropped.key, dropped);
+        }
     }
 
     public void spawn_check(){
@@ -133,11 +141,12 @@ public class Panel extends JPanel implements Runnable {
             //random spawning, equal chances lmao
             Enemy enemy;
             if(new Random().nextInt(1, 3) == 1){
-                enemy = new Enemy.Brit(x_coords, y_coords, TILE_SIZE);
+                //d1 coords lang sa kapoy pangita HAHAHAHAHA - dymes
+                enemy = new Enemy.Brit(d1.x, d1.y, TILE_SIZE);
                 System.out.println("Spawned new Brit");
             }
             else{
-                enemy = new Enemy.Soviet(x_coords, y_coords, TILE_SIZE);
+                enemy = new Enemy.Soviet(d1.x, d1.y, TILE_SIZE);
                 System.out.println("Spawned new Soviet");
             }
 
@@ -148,23 +157,33 @@ public class Panel extends JPanel implements Runnable {
 
         //temporary killing via queue
         if(key_input.kill_enemy && !enemy_id_queue.isEmpty()){
-            Integer id = enemy_id_queue.poll();
-            Enemy e = spawned_enemies.get(id);
+            try{
+                Integer id = enemy_id_queue.poll();
+                Enemy e = spawned_enemies.get(id);
 
-            //drop item
-            System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
-            drop_items.put(
-                new Random().nextInt(0, 100),
-                new ItemEntity(e.x, e.y, new Random().nextInt(1, 2))
-            );
+                //drop item
+                System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
+                int range = 64;
+                int random_x = new Random().nextInt(0, range * 2) - range;
+                int random_y = new Random().nextInt(0, range * 2) - range;
+                int item_key = new Random().nextInt(0, 100);
+                drop_items.put(item_key,
+                    new ItemEntity(
+                        item_key,
+                        e.x + random_x, 
+                        e.y + random_y, 
+                    new Random().nextInt(1, 2))
+                );
 
-            System.out.println("Dropped Item count: " + drop_items.size());
+                System.out.println("Dropped Item count: " + drop_items.size());
 
-            spawned_enemies.remove(id);
+                spawned_enemies.remove(id);
+            } catch (NullPointerException n){
+                System.out.println("Killing Null Enemy!");
+            }
 
             key_input.kill_enemy = false;
         }
-
 
     }
 
@@ -180,6 +199,7 @@ public class Panel extends JPanel implements Runnable {
 
         map.displayTiles(g);
         d1.display(g, map.camera);
+        d1.displayHotbarItems(g);
 
         for(Enemy e : spawned_enemies.values()){
             try{
@@ -196,6 +216,26 @@ public class Panel extends JPanel implements Runnable {
                 System.out.println("Trying to Render Null Item!!");
             }
         }
+
+        for(ItemEntity item : drop_items.values()){
+            //if collected
+            if(item.checkIfTouching(d1) && d1.getSize() != 5 && item.is_pickable && !(item.getItem() instanceof Melee.Stick)){
+                collected_items_keys.add(item.key);
+                d1.addItem(item.getItem());
+            }
+            //if just dropped, don't pick
+            if(!item.checkIfTouching(d1) && !item.is_pickable && !(item.getItem() instanceof Melee.Stick)){
+                item.is_pickable = true;
+            }
+        }
+
+        //remove collected items
+        for(Integer key : collected_items_keys){
+            drop_items.remove(key);
+        }
+
+        //System.out.println("Remaining items on ground: " + drop_items.size());
+
     }
 
     //Thank you for your service 💪 - Dym
@@ -206,7 +246,7 @@ public class Panel extends JPanel implements Runnable {
             
             //we pass our key handler so that our dummy can check which keys are pressed
 
-            d1.move(key_input);
+            d1.move();
             map.verifyEntityPosition(d1);
 
 
@@ -214,7 +254,7 @@ public class Panel extends JPanel implements Runnable {
                 enemy.moveTowardsEntity(d1);
                 map.verifyEntityPosition(enemy);
             }
-            
+
             repaint();
         }
         

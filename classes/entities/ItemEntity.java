@@ -3,15 +3,28 @@ package classes.entities;
 import classes.items.Item;
 import classes.items.Melee;
 import classes.items.Ranged;
+import src.Panel;
 
 public class ItemEntity extends PanelEntity {
     
     Item item;
+    public int key;
+    public boolean is_pickable = true;
 
-    public ItemEntity(int x, int y, int kind){
+    public ItemEntity(int key, int x, int y, int kind){
 
         super(x, y, 'o');
+        this.key = key;
         checkKind(kind);
+        this.buffer = item.getSprite();
+    }
+
+    public ItemEntity(int key, int x, int y, Item item, boolean is_pickable){
+
+        super(x, y, 'o');
+        this.key = key;
+        this.item = item;
+        this.is_pickable = is_pickable;
         this.buffer = item.getSprite();
     }
 
@@ -22,5 +35,26 @@ public class ItemEntity extends PanelEntity {
         }
         System.out.println("Item: " + item.getName());
     }
+
+    public Item getItem(){
+        return item;
+    }
+
+    //temp touching function, ikik this guy will be deprecated soon XD - Dymes
+    public boolean checkIfTouching(Dummy_sus d1){
+        
+        int dx2 = d1.x + Panel.TILE_SIZE;
+        int dy2 = d1.y + Panel.TILE_SIZE;
+        int x2 = x + Panel.TILE_SIZE;
+        int y2 = y + Panel.TILE_SIZE;
+
+        // System.out.println("Item coords x: " + x + " y: " + y + " x2: " + x2 + " y2: " + y2);
+        // System.out.println("D1 coords x: " + d1.x + " y: " + d1.y + " x2: " + dx2 + " y2: " + dy2);
+
+        //Simple touching rectangle
+        return !(d1.y > y2 || y > dy2) && !(d1.x > x2 || x > dx2);
+
+    }
+
 }
 
