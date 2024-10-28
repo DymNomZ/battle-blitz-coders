@@ -1,5 +1,7 @@
 package classes.entities;
 
+import java.awt.image.BufferedImage;
+
 public abstract class MapEntity extends PanelEntity {
     private String name;
     private int hit_points;
@@ -26,7 +28,21 @@ public abstract class MapEntity extends PanelEntity {
         this.name = name;
     }
 
-    public MapEntity(String name, int id){
+    //hit point test - dym
+    public MapEntity(String name, int hit_points, int x, int y, int side, int key){
+        super(x,y,side,side, key);
+        this.name = name;
+        this.hit_points = hit_points;
+    }
+
+    //for dummy d1
+    public MapEntity(int hit_points, int x, int y, int width, int height){
+        super(x, y, width, height);
+        this.hit_points = hit_points;
+    }
+
+    public MapEntity(String name, int id, int x, int y, BufferedImage sprite){
+        super(x, y, sprite);
         this.name = name;
         this.hit_points = INFINITE;
         this.defense_stat = INFINITE;
@@ -39,6 +55,12 @@ public abstract class MapEntity extends PanelEntity {
 
     public int getHit_points() {
         return hit_points;
+    }
+
+    //hit point test - dym
+    public void setHit_points(int damage) {
+        hit_points -= damage;
+        System.out.println(hit_points);
     }
 
     public int getId() {

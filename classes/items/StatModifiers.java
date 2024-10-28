@@ -1,7 +1,6 @@
 package classes.items;
 import classes.sprites.ItemSprites;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 public abstract class StatModifiers extends Item {
     // TO IMPLEMENT

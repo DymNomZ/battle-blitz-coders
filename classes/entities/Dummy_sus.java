@@ -9,21 +9,14 @@ import javax.imageio.ImageIO;
 import src.KeyHandler;
 import src.Panel;
 
-public class Dummy_sus extends PanelEntity{
+public class Dummy_sus extends MapEntity{
 
-	private KeyHandler inputs;
+	private final KeyHandler inputs;
 	private Item hotbar_items[] = new Item[5];
 	int speed = 8, curr_slot = 0, selected_slot = 0, size = 0;
 
-	public Dummy_sus(int screenWidth, int screenHeight, int side, KeyHandler inputs){
-		super(screenWidth, screenHeight, side - 30, side - 30);
-
-		//full inv with stick temporarily
-		// while(curr_slot != 5){
-		// 	hotbar_items[curr_slot] = new Melee.Stick();
-		// 	curr_slot++;
-		// }
-		// curr_slot = 0;
+	public Dummy_sus(int hit_points, int screenWidth, int screenHeight, int side, KeyHandler inputs){
+		super(hit_points, screenWidth, screenHeight, side - 30, side - 30);
 
 		try{
 			this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/character_sprites/fidget_spinner.png"));
@@ -52,7 +45,7 @@ public class Dummy_sus extends PanelEntity{
 
 	public ItemEntity dropItems(){
 
-		int key = new Random().nextInt(0, 100);
+		int item_entity_key = new Random().nextInt(0, 100);
 
 		if(inputs.drop_item){
 			if(size != 0){
@@ -72,13 +65,18 @@ public class Dummy_sus extends PanelEntity{
 					if(selected_slot <= curr_slot) curr_slot = selected_slot;
 					else findNextFree();
 
-					return new ItemEntity(key, x, y, dropped, false);
+					return new ItemEntity(item_entity_key, x, y, dropped, false);
 				}
 			}
 		} 
 
-		return new ItemEntity(key, x, y, false);
+		return new ItemEntity(item_entity_key, x, y, false);
 	}
+
+	//temp damage
+    public int attack(){
+        return 10;
+    }
 
 	public int getSize(){
 		return size;

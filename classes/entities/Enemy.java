@@ -1,12 +1,31 @@
 package classes.entities;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.io.IOException;
+import java.util.Random;
 import javax.imageio.ImageIO;
 
-public class Enemy extends MapEntity {
+public abstract class Enemy extends MapEntity {
     // to implement shi
     private int speed;
-    private String enemy_type; // For melee, ranged, boss types -Ervin
+    private final String enemy_type; // For melee, ranged, boss types -Ervin
+
+    //maybe temporary timer var kay idk a better way HAHAHAHAH - Set H
+    private int movement_internal_timer = 0;
+    private double angle;
+    private boolean is_going_to_move;
+
+    public int getMovement_internal_timer(){
+        return movement_internal_timer;
+    }
+
+    public void decrementMovementInternalTimer(int value){
+        movement_internal_timer -= value;
+        if(movement_internal_timer <= 0) movement_internal_timer = 0;
+        if(movement_internal_timer == 0) is_going_to_move = false;
+    }
 
     public Enemy(String name,
             String enemy_type,
@@ -18,6 +37,13 @@ public class Enemy extends MapEntity {
         super(name, hit_points, attack_stat, haste, defense_stat, id); // Murag di man needed ang haste stat sa enemy
                                                                        // guro? -Ervin
         this.enemy_type = enemy_type;
+    }
+
+    //hit point test - dym
+    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, int key) {
+        super(name, hit_points, x, y, side, key);
+        this.enemy_type = enemy_type;
+        this.speed = 2;
     }
 
     public Enemy(String name, int x, int y, int side, String enemy_type, int key) {
@@ -40,29 +66,8 @@ public class Enemy extends MapEntity {
         this.speed = speed;
     }
 
-    /*
-     * Calculates the distance of this object
-     * and a given PanelEntity in pixel units - Set H
-     *
-     */
-    public double calculateDistance(PanelEntity e){
-        return Math.sqrt(Math.pow((this.x - e.x),2) + Math.pow((this.y - e.y),2));
-    }
 
-    /*
-     * Calculates the angle relative to the x-axis a straight line from
-     * this entity to given entity e would form.
-     * The value might look wrong at first (i.e why it is negative or positive)
-     * mostly because our 0,0 is at the top left - Set H
-     *
-     */
-    public double calculateAngle(PanelEntity e) {
-        double x_diff = e.x - x;
-        double y_diff = e.y - y;
-        double angle_radians = (Math.atan2(y_diff, x_diff));
 
-        return angle_radians;
-    }
 
     /*
      * Will make this entity move towards a given PanelEntity.
@@ -72,19 +77,68 @@ public class Enemy extends MapEntity {
      * precise - Set H
      */
 
-    public void moveTowardsEntity(PanelEntity e) {
-        double angle_radians = calculateAngle(e);
+    public void executeEnemyBehavior(PanelEntity e) {
+        if(isWithinRange(300,70,e)){
+            moveTowardsEntity(calculateAngle(e));
+        } else if(!isWithinRange(300,-1,e) && movement_internal_timer == 0){
+            roamRandom();
+        } else {
+            move();
+        }
+    }
+    public void moveTowardsEntity(double angle_radians){
 
-        if(this.calculateDistance(e) < 300 && this.calculateDistance(e) > 70){
-            deltaY = (int) Math.floor(Math.sin(angle_radians) * speed);
-            deltaX = (int) Math.floor(Math.cos(angle_radians) * speed);
+        deltaY = (int) Math.floor(Math.sin(angle_radians) * speed);
+        deltaX = (int) Math.floor(Math.cos(angle_radians) * speed);
+    }
+    /*
+    * This function will return false if the given PanelEntity is
+    * too close or too far defined by outer_range and inner_range
+    * respectively - Set H
+    */
+    public boolean isWithinRange(int outer_range, int inner_range, PanelEntity e){
+        return this.calculateDistance(e) < outer_range && this.calculateDistance(e) > inner_range;
+    }
+    public void roamRandom(){
+
+        double rand_angle = new Random().nextDouble(0.0, 3.14159 * 2) - 3.14159;
+        is_going_to_move = new Random().nextBoolean();
+        if(is_going_to_move){
+            System.out.println("I am about to move");
+            this.angle = rand_angle;
+
+        }
+        movement_internal_timer = new Random().nextInt(1,5);
+    }
+    public void move(){
+        if(is_going_to_move){
+            deltaY = (int) Math.floor(Math.sin(angle) * speed);
+            deltaX = (int) Math.floor(Math.cos(angle) * speed);
+        }
+    }
+
+    //for enemies
+    public int attack(){
+        return 10;
+    }
+
+    @Override
+    public void display(Graphics g, CameraEntity cam) {
+        if (buffer != null) {
+            g.setFont(new Font("Consolas", Font.PLAIN, 30));
+            g.setColor(Color.BLACK);
+            g.drawString(String.format("%d", getHit_points()), x - cam.x, (y - cam.y) - 30);
+            g.drawImage(buffer, x - cam.x, y - cam.y, width, height, null);
+        } else {
+            g.drawRect(x - cam.x, y - cam.y, width, height);
+            System.err.println("[Warning: PanelEntity] Displaying without image/sprite attached");
         }
     }
 
     // temporary enemies just reuse code - SET H
     public static class Brit extends Enemy {
         public Brit(int x, int y, int side, int key) {
-            super("Brit", x, y, side, "Brit Temporary Enemy", key);
+            super("Brit",100,  x, y, side, "Brit Temporary Enemy", key);
             try {
                 this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/bo_o_ov_wa_er.png"));
             } catch (IOException e) {
@@ -96,7 +150,7 @@ public class Enemy extends MapEntity {
 
     public static class Soviet extends Enemy {
         public Soviet(int x, int y, int side, int key) {
-            super("Soviet", x, y, side, "Soviet Temporary Enemy", key);
+            super("Soviet", 100, x, y, side, "Soviet Temporary Enemy", key);
             try {
                 this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/our_enemy.png"));
             } catch (IOException e) {

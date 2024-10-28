@@ -26,7 +26,7 @@ public class Main {
             """
             ,3,3);
             
-        controls_display.setBounds(10, 10, 200, 120);
+        controls_display.setBounds(10, 10, 300, 120);
         controls_display.setEditable(false);
         main_panel.add(controls_display);
 
@@ -35,7 +35,6 @@ public class Main {
         main_window.setLocationRelativeTo(null);
         main_window.setVisible(true);
         
-        // main_panel.start_clock();
         main_panel.start_main_thread();
     }
 }

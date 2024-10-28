@@ -78,6 +78,15 @@ public abstract class PanelEntity {
         this.buffer = null;
     }
 
+    //for NPCs
+    public PanelEntity(int x, int y, BufferedImage buffer){
+        this.x = x;
+        this.y = y;
+        this.width = Panel.TILE_SIZE;
+        this.height = Panel.TILE_SIZE;
+        this.buffer = buffer;
+    }
+
     public void move(int offsetX, int offsetY) {
         deltaX = offsetX;
         deltaY = offsetY;
@@ -108,7 +117,7 @@ public abstract class PanelEntity {
 
     //temp touching function, ikik this guy will be deprecated soon XD - Dymes
     //used in temporary attacking
-    public boolean checkIfTouching(Dummy_sus d1){
+    public boolean checkIfTouching(MapEntity d1){
         
         int dx = d1.x - Panel.TILE_SIZE;
         int dy = d1.y - Panel.TILE_SIZE;
@@ -130,4 +139,31 @@ public abstract class PanelEntity {
     public int entityCollision(PanelEntity e) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not implemented");
     }
+
+
+    /*
+     * Calculates the distance of this object
+     * and a given PanelEntity in pixel units - Set H
+     *
+     */
+    public double calculateDistance(PanelEntity e){
+        return Math.sqrt(Math.pow((this.x - e.x),2) + Math.pow((this.y - e.y),2));
+    }
+
+
+    /*
+     * Calculates the angle relative to the x-axis a straight line from
+     * this entity to given entity e would form.
+     * The value might look wrong at first (i.e why it is negative or positive)
+     * mostly because our 0,0 is at the top left - Set H
+     *
+     */
+    public double calculateAngle(PanelEntity e) {
+        double x_diff = e.x - x;
+        double y_diff = e.y - y;
+        double angle_radians = (Math.atan2(y_diff, x_diff));
+
+        return angle_radians;
+    }
+
 }

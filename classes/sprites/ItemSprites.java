@@ -71,14 +71,13 @@ public class ItemSprites {
         public static BufferedImage HEADPHONES;
         public static BufferedImage HOODIE;
 
-        public StatModifiers(){
-            super();
+        static {
 
             try {
-                COFFEE = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/stat_modifiers/coffee.png"));
-                FOOT_MOP = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/stat_modifiers/foot_mop_1.png"));
-                HEADPHONES = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/stat_modifiers/headphones_1.png"));
-                HOODIE = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/stat_modifiers/hoodie.png"));
+                COFFEE = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/coffee.png"));
+                FOOT_MOP = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/foot_mop_1.png"));
+                HEADPHONES = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/headphones_1.png"));
+                HOODIE = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/hoodie.png"));
             } catch (IOException e) {
                 System.out.println("Error loading Consumable Stat Modifiers sprites");
             }
@@ -92,12 +91,11 @@ public class ItemSprites {
         public static BufferedImage ENERGY_DRINK;
         public static BufferedImage ICE_CREAM;
 
-        public ConsumableUtility(){
-            super();
+        static {
 
             try {
-                ENERGY_DRINK = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_utility/energy_drink.png"));
-                ICE_CREAM = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_utility/ice_cream.png"));
+                ENERGY_DRINK = ImageIO.read(ConsumableUtility.class.getResourceAsStream("../../assets/sprites/consumable_utility/energy_drink.png"));
+                ICE_CREAM = ImageIO.read(ConsumableUtility.class.getResourceAsStream("../../assets/sprites/consumable_utility/ice_cream.png"));
             } catch (IOException e) {
                 System.out.println("Error loading Consumable Utility sprites");
             }
@@ -115,16 +113,15 @@ public class ItemSprites {
         public static BufferedImage HOTCAKE;
         public static BufferedImage PIZZA;
 
-        public ConsumableHealing(){
-            super();
+        static {
 
             try {
-                BAND_AID = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/band_aid_1.png"));
-                CHIPS = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/chips_2.png"));
-                CUP_NOODLES = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/cup_noodles.png"));
-                GRAB = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/grab_1.png"));
-                HOTCAKE = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/hotcake_1.png"));
-                PIZZA = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/consumable_healing/pizza_1.png"));
+                BAND_AID = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/band_aid_1.png"));
+                CHIPS = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/chips_2.png"));
+                CUP_NOODLES = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/cup_noodles.png"));
+                GRAB = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/grab_1.png"));
+                HOTCAKE = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/hotcake_1.png"));
+                PIZZA = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/pizza_1.png"));
             } catch (IOException e) {
                 System.out.println("Error loading Consumable Healing sprites");
             }

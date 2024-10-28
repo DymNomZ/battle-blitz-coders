@@ -14,6 +14,7 @@ public class KeyHandler implements KeyListener {
     public boolean kill_enemy = false;
     public boolean debug_print = false;
     public boolean drop_item = false;
+    public boolean is_interacting = false;
 
     public boolean one_pressed = false;
     public boolean two_pressed = false;
@@ -35,6 +36,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_H -> kill_enemy = true;
             case KeyEvent.VK_P -> debug_print = true;
             case KeyEvent.VK_Q -> drop_item = true;
+            case KeyEvent.VK_F -> is_interacting = false;
             case KeyEvent.VK_1 -> one_pressed = true;
             case KeyEvent.VK_2 -> two_pressed = true;
             case KeyEvent.VK_3 -> three_pressed = true;
@@ -56,6 +58,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_H -> kill_enemy = false;
             case KeyEvent.VK_P -> debug_print = false;
             case KeyEvent.VK_Q -> drop_item = false;
+            case KeyEvent.VK_F -> is_interacting = false;
         }
     }
 

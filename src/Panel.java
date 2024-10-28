@@ -1,71 +1,67 @@
 package src;
 import classes.GUI.Hotbar;
-import classes.entities.Dummy;
 import classes.entities.Dummy_sus;
 import classes.entities.Enemy;
 import classes.entities.ItemEntity;
-import classes.items.Item;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import classes.entities.NPC;
+import classes.sprites.ItemSprites;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.JTextArea;
 
 public class Panel extends JPanel implements Runnable {
 
     public static int FPS = 60; // delta loop purposes
     public static int SCALE = 2, DEF_DIMENSION = 32;
     public static int TILE_SIZE = DEF_DIMENSION * SCALE;
-    //public static int MAX_SCREEN_ROW = 10, MAX_SCREEN_COL = 20, SCREEN_TILE_SIZE = 64;
     public static int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 
     public int max_map_row, max_map_col;
 
-    public final int NORTH_MAP_BOUNDARY = 0;
-    public final int WEST_MAP_BOUNDARY = 0;
-    public final int SOUTH_MAP_BOUNDARY;
-    public final int EAST_MAP_BOUNDARY;
-
+    public static AssetEngine asset_engine;
     MapConstructor map;
     
     KeyHandler key_input;
 
     Thread main_thread;
 
+    //temporary heheh - Dymes
+    JTextArea hit_points_display;
+
     //temporary
-    Dummy d;
     Dummy_sus d1;
+    NPC NPC1;
 
     HashMap<Integer, Enemy> spawned_enemies = new HashMap<>();
     HashMap<Integer, ItemEntity> drop_items = new HashMap<>();
 
-    List<Enemy> enemies = new ArrayList<>();
-    List<Item> hotbar_items = new ArrayList<>();
     List<Integer> enemy_ids = new LinkedList<>();
     List<Integer> collected_items_keys = new ArrayList<>();
 
     public Panel(){
 
-        map = new MapConstructor("assets/maps/field_test.zip", SCREEN_WIDTH, SCREEN_HEIGHT);
+        map = new MapConstructor("assets/maps/stage_1_test.zip", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         key_input = new KeyHandler();
 
         max_map_row = map.getMap_height();
         max_map_col = map.getMap_length();
 
-        SOUTH_MAP_BOUNDARY = max_map_row * TILE_SIZE;
-        EAST_MAP_BOUNDARY = max_map_col * TILE_SIZE;
+        d1 = new Dummy_sus(1000, max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, key_input);
 
-        //d = new Dummy(SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, max_map_col, max_map_row);
-        d1 = new Dummy_sus(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, key_input);
+        //temp NPC
+        NPC1 = new NPC.TempNPC(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, ItemSprites.ConsumableHealing.GRAB);
+
+        hit_points_display = new JTextArea(String.format("%d", d1.getHit_points()), 1, 1);
+        hit_points_display.setBounds(10, 150, 50, 30);
 
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(key_input);
+        this.add(hit_points_display);
     }
 
     public void start_main_thread(){
@@ -74,31 +70,40 @@ public class Panel extends JPanel implements Runnable {
     }
 
     @Override
-    public void run(){
-        double draw_interval = 1000000000/FPS, delta = 0;
+    public void run() {
+        long nanoInterval = 16666667; // 60 fps
+        long lastEntityCheck = 0;
         long last_system_time = System.nanoTime();
         long current_system_time;
-        long timer = 0;
-        int draw_count = 0;
+        long delta = 0;
 
-        while(main_thread != null){
+        while (main_thread != null) {
+            last_system_time = System.nanoTime() - (System.nanoTime() - last_system_time);
+
+            update();
+            repaint();
+
+            if (lastEntityCheck + 1000000 < last_system_time) {
+                lastEntityCheck = System.nanoTime();
+                for(Enemy e : spawned_enemies.values()){
+                    System.out.println(e.getMovement_internal_timer());
+                    e.decrementMovementInternalTimer(1);
+
+                    //enemies attack
+                    if(d1.checkIfTouching(e)){
+                        d1.setHit_points(e.attack());
+                        hit_points_display.setText(String.format("%d", d1.getHit_points()));
+                    }
+                }
+            }
 
             current_system_time = System.nanoTime();
-            delta += (current_system_time - last_system_time) / draw_interval;
-            timer += (current_system_time - last_system_time);
+            delta = Math.max(nanoInterval - current_system_time + last_system_time, 0);
             last_system_time = current_system_time;
 
-            if(delta >= 1){
-                update();
-                repaint();
-                delta--;
-                draw_count++;
-            }
-
-            if(timer >= 1000000000){
-                draw_count = 0;
-                timer = 0;
-            }
+            try {
+                Thread.sleep(delta / 1000000, (int)(delta % 1000000));
+            } catch (InterruptedException e) {throw new RuntimeException();}
         }
     }
 
@@ -107,11 +112,19 @@ public class Panel extends JPanel implements Runnable {
         d1.move();
         map.verifyEntityPosition(d1);
         d1.printHotbarItems();
-        spawn_check();
+        spawnCheck();
         checkIfDropping();
     }
 
-    public void checkIfDropping(){
+    void handleInteractions(Dummy_sus d1, Graphics g) {
+
+        //check if player is within proximity of NPC and if F key is pressed, if so, display dialogue of NPC
+        if(key_input.is_interacting && NPC1.checkIfTouching(d1)){
+            NPC1.displayDialogue(g);
+        }
+    }
+
+    void checkIfDropping(){
         ItemEntity dropped = d1.dropItems();
         
         if((dropped.getItem() != null)){
@@ -119,15 +132,16 @@ public class Panel extends JPanel implements Runnable {
         }
     }
 
-    public void spawn_check(){
+    void spawnCheck(){
         for(Enemy e : spawned_enemies.values()){
             try{
-                e.moveTowardsEntity(d1);
+                e.executeEnemyBehavior(d1);
                 map.verifyEntityPosition(e);
             } catch(NullPointerException n){
                 System.out.println("Null Enemy!");
             }
         }
+        
         //spawning
         if(key_input.spawn_enemy){
 
@@ -147,14 +161,13 @@ public class Panel extends JPanel implements Runnable {
                 System.out.println("Spawned new Soviet");
             }
 
-            //enemy_id_queue.add(enemy_id);
             spawned_enemies.put(enemy_id, enemy);
             key_input.spawn_enemy = false;
         }
 
     }
 
-    public void dropItems(Enemy e){
+    void dropItems(Enemy e){
         int range = 64;
         int random_x = new Random().nextInt(0, range * 2) - range;
         int random_y = new Random().nextInt(0, range * 2) - range;
@@ -168,45 +181,35 @@ public class Panel extends JPanel implements Runnable {
         );
     }
 
-    @Override
-    public void paintComponent(Graphics g){
-
-        super.paintComponent(g);
-        map.view(d1);
-
-        //old drawing method - dym
-        //map.displayTiles(g, TILE_SIZE, d, SCREEN_HEIGHT, SCREEN_WIDTH);
-        //d.displayDummy(g, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-        map.displayTiles(g);
-        d1.display(g, map.camera);
-        Hotbar.displayHotbar(g);
-        d1.displayHotbarItems(g);
-
+    void handleEnemies(Graphics g) {
         for(Enemy e : spawned_enemies.values()){
             try{
                 e.display(g, map.camera);
             } catch (NullPointerException n){
                 System.out.println("Trying to Render Null Enemy!!");
             }
+
             //killing with range
             if(key_input.kill_enemy && e.checkIfTouching(d1)){
-                enemy_ids.add(e.key);
 
-                System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
-                
-                dropItems(e);
+                e.setHit_points(d1.attack());
 
-                System.out.println("Dropped Item count: " + drop_items.size());
+                if(e.getHit_points() == 0){
+                    enemy_ids.add(e.key);
+
+                    System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
+                    
+                    dropItems(e);
+
+                    System.out.println("Dropped Item count: " + drop_items.size());
+                }
+                    
                 key_input.kill_enemy = false;
             }
         }
+    }
 
-        //remove killed enemies
-        for(Integer key : enemy_ids){
-            spawned_enemies.remove(key);
-        }
-
+    void handleItems(Graphics g) {
         for(ItemEntity item : drop_items.values()){
             try{
                 item.display(g, map.camera);
@@ -226,100 +229,39 @@ public class Panel extends JPanel implements Runnable {
                 item.is_pickable = true;
             }
         }
+    }
+
+    void removeEntities() {
+        //remove killed enemies
+        for(Integer key : enemy_ids){
+            spawned_enemies.remove(key);
+        }
 
         //remove collected items
         for(Integer key : collected_items_keys){
             drop_items.remove(key);
         }
+    }
 
-        //System.out.println("Remaining items on ground: " + drop_items.size());
+    @Override
+    public void paintComponent(Graphics g){
+
+        super.paintComponent(g);
+
+        map.view(d1);
+        map.displayTiles(g);
+        d1.display(g, map.camera);
+        NPC1.display(g, map.camera);
+
+        handleEnemies(g);
+        handleItems(g);
+        removeEntities();
+
+        handleInteractions(d1, g);
+
+        Hotbar.displayHotbar(g);
+        d1.displayHotbarItems(g);
 
     }
 
-    //Thank you for your service 💪 - Dym
-    @Deprecated
-    private final ActionListener timer_listener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e){
-            
-            //we pass our key handler so that our dummy can check which keys are pressed
-
-            d1.move();
-            map.verifyEntityPosition(d1);
-
-
-            for(Enemy enemy : enemies){
-                enemy.moveTowardsEntity(d1);
-                map.verifyEntityPosition(enemy);
-            }
-
-            repaint();
-        }
-        
-    };
-
-    @Deprecated
-    public void start_clock(){
-        Timer timer = new Timer(10, timer_listener);
-        timer.start();
-    }
-
-    //Old Collision Method - Set H
-    @Deprecated
-    public void collisionCheck(){
-        //Checks if the dummy is colliding with map border
-        int half_scale = TILE_SIZE / 2;
-        //System.out.println(d.getDelta_x() + " " + d.isColliding_left());
-        int d_top_hitbox = d.getY_pos() - half_scale + d.getDelta_y() + 4;
-        int d_down_hitBox = d.getY_pos() + half_scale + d.getDelta_y() - 4;
-        int d_right_hitbox = d.getX_pos() + half_scale + d.getDelta_x() - 4;
-        int d_left_hitbox = d.getX_pos() - half_scale + d.getDelta_x() + 4;
-
-        boolean is_colliding_r = false;
-        boolean is_colliding_l = false;
-        boolean is_colliding_t = false;
-        boolean is_colliding_d = false;
-
-	    is_colliding_r = (d_right_hitbox > EAST_MAP_BOUNDARY);
-	    is_colliding_l = (d_left_hitbox < WEST_MAP_BOUNDARY);
-	    is_colliding_d = (d_down_hitBox > SOUTH_MAP_BOUNDARY);
-	    is_colliding_t = (d_top_hitbox < NORTH_MAP_BOUNDARY);
-
-        int x_diff = 0, y_diff = 0;
-
-	    int[][] map_tiles = map.getMap_indexes();
-        for(int i = 0;i < map_tiles.length;i++){
-            for(int j = 0;j < map_tiles[i].length;j++){
-                if(map_tiles[i][j] == 4 || map_tiles[i][j] == 5){
-                    int tile_xpos = ((j + 1) * DEF_DIMENSION * SCALE) - half_scale;
-                    int tile_ypos = ((i + 1) * DEF_DIMENSION * SCALE) - half_scale;
-                    boolean is_same_row = d_top_hitbox < tile_ypos + (half_scale) && d_down_hitBox > tile_ypos - ((DEF_DIMENSION/2) * SCALE);
-                    boolean is_same_col = d_left_hitbox < tile_xpos + (half_scale) && d_right_hitbox > tile_xpos - ((DEF_DIMENSION/2) * SCALE) ;
-
-                    if(!is_colliding_l && (d_left_hitbox <= tile_xpos + half_scale  && is_same_row && d_left_hitbox >= tile_xpos - half_scale)){
-	                    is_colliding_l = true;
-                    }
-                    if(!is_colliding_r && (d_right_hitbox >= tile_xpos - half_scale  && is_same_row && d_right_hitbox <= tile_xpos + half_scale)){
-	                    is_colliding_r = true;
-
-                    }
-                    if(!is_colliding_t &&  (d_top_hitbox  <= tile_ypos + half_scale  && is_same_col && d_top_hitbox >= tile_ypos - half_scale)){
-	                    is_colliding_t = true;
-                    }
-                    if(!is_colliding_d && (d_down_hitBox >= tile_ypos - half_scale && is_same_col && d_down_hitBox <= tile_ypos + half_scale)){
-                        is_colliding_d = true;
-                    }
-
-
-                }
-            }
-        }
-
-
-        d.setColliding_left(is_colliding_l);
-        d.setColliding_down(is_colliding_d);
-        d.setColliding_top(is_colliding_t);
-        d.setColliding_right(is_colliding_r);
-
-    }
 }

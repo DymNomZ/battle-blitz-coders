@@ -50,15 +50,12 @@ public class ItemEntity extends PanelEntity {
 
     //temp touching function, ikik this guy will be deprecated soon XD - Dymes
     @Override
-    public boolean checkIfTouching(Dummy_sus d1){
+    public boolean checkIfTouching(MapEntity d1){
         
         int dx2 = d1.x + Panel.TILE_SIZE;
         int dy2 = d1.y + Panel.TILE_SIZE;
         int x2 = x + Panel.TILE_SIZE;
         int y2 = y + Panel.TILE_SIZE;
-
-        // System.out.println("Item coords x: " + x + " y: " + y + " x2: " + x2 + " y2: " + y2);
-        // System.out.println("D1 coords x: " + d1.x + " y: " + d1.y + " x2: " + dx2 + " y2: " + dy2);
 
         //Simple touching rectangle
         return !(d1.y > y2 || y > dy2) && !(d1.x > x2 || x > dx2);

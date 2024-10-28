@@ -1,10 +1,7 @@
 package classes.items;
 
-import classes.items.Ranged.Calculator;
-import classes.items.Ranged.Mouse;
 import classes.sprites.ItemSprites;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 public abstract class ConsumableHealing extends Consumable
 {

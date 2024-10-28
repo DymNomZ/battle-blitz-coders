@@ -1,7 +1,6 @@
 package classes.entities;
 
 import java.awt.Graphics;
-import java.util.ArrayList;
 
 public class CameraEntity extends PanelEntity{
 
