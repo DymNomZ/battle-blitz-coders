@@ -1,5 +1,7 @@
 package classes.entities;
 
+import src.Panel;
+
 import java.awt.image.BufferedImage;
 
 public abstract class MapEntity extends PanelEntity {
@@ -28,9 +30,22 @@ public abstract class MapEntity extends PanelEntity {
         this.name = name;
     }
 
+    //Temporary to display enemies with sprite - Lil Z
+    public MapEntity(String name, int x, int y, int side, int key, String spritePath){
+        super(x,y,side,side, key, spritePath);
+        this.name = name;
+    }
+
     //hit point test - dym
     public MapEntity(String name, int hit_points, int x, int y, int side, int key){
         super(x,y,side,side, key);
+        this.name = name;
+        this.hit_points = hit_points;
+    }
+
+    //hit point test with sprite - Lil Z
+    public MapEntity(String name, int hit_points, int x, int y, int side, int key, String spritePath){
+        super(x,y,side,side, key, spritePath);
         this.name = name;
         this.hit_points = hit_points;
     }
@@ -41,8 +56,16 @@ public abstract class MapEntity extends PanelEntity {
         this.hit_points = hit_points;
     }
 
-    public MapEntity(String name, int id, int x, int y, BufferedImage sprite){
-        super(x, y, sprite);
+    public MapEntity(String name, int id, int x, int y, String spritePath){
+        super(x, y, spritePath);
+        this.name = name;
+        this.hit_points = INFINITE;
+        this.defense_stat = INFINITE;
+        this.id = id;
+    }
+
+    public MapEntity(String name, int id, int x, int y) {
+        super(x, y, Panel.TILE_SIZE, Panel.TILE_SIZE);
         this.name = name;
         this.hit_points = INFINITE;
         this.defense_stat = INFINITE;

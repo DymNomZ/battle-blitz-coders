@@ -2,6 +2,9 @@ package classes.entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import classes.sprites.Sprite.Sprite;
+import interfaces.EntityCollidable;
 import src.Panel;
 
 /*  Super class for all entities
@@ -25,14 +28,15 @@ public abstract class PanelEntity {
     public int x_pos_center, y_pos_center;
     public int deltaX, deltaY;
     public int key;
-    BufferedImage buffer;
+    int speed;
+    Sprite buffer;
 
     public PanelEntity() {
         x = 0;
         y = 0;
         width = Panel.TILE_SIZE;
         height = Panel.TILE_SIZE;
-        buffer = null;
+        buffer = Sprite.load("default");
     } // Added default kay muerror sa MapEntity -Ervin
 
     public PanelEntity(int x, int y, int width, int height, int key) {
@@ -41,7 +45,25 @@ public abstract class PanelEntity {
         this.width = width;
         this.height = height;
         this.key = key;
-        this.buffer = null;
+        this.buffer = Sprite.load("default");
+    }
+
+    public PanelEntity(int x, int y, int width, int height, int key, String spritePath) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.key = key;
+        this.buffer = Sprite.load(spritePath);
+    }
+
+    public PanelEntity(int x, int y, int width, int height, int key, Sprite sprite) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.key = key;
+        this.buffer = sprite;
     }
 
     public PanelEntity(int x, int y, int width, int height) {
@@ -49,15 +71,23 @@ public abstract class PanelEntity {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.buffer = null;
+        this.buffer = Sprite.load("default");
     }
 
-    public PanelEntity(int x, int y, int width, int height, BufferedImage buffer) {
+    public PanelEntity(int x, int y, int width, int height, String spritePath) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.buffer = buffer;
+        this.buffer = Sprite.load(spritePath);
+    }
+
+    public PanelEntity(int x, int y, int width, int height, Sprite sprite) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.buffer = sprite;
     }
 
     public PanelEntity(int width, int height) {
@@ -65,7 +95,7 @@ public abstract class PanelEntity {
         this.y = 0;
         this.width = width;
         this.height = height;
-        this.buffer = null;
+        this.buffer = Sprite.load("default");
     }
 
     //for item entity
@@ -75,16 +105,25 @@ public abstract class PanelEntity {
         this.width = Panel.TILE_SIZE;
         this.height = Panel.TILE_SIZE;
         this.key = key;
-        this.buffer = null;
+        this.buffer = Sprite.load("default");
     }
 
     //for NPCs
-    public PanelEntity(int x, int y, BufferedImage buffer){
+    public PanelEntity(int x, int y, String spritePath){
         this.x = x;
         this.y = y;
         this.width = Panel.TILE_SIZE;
         this.height = Panel.TILE_SIZE;
-        this.buffer = buffer;
+        this.buffer = Sprite.load(spritePath);
+    }
+
+    //for NPCs
+    public PanelEntity(int x, int y, Sprite sprite){
+        this.x = x;
+        this.y = y;
+        this.width = Panel.TILE_SIZE;
+        this.height = Panel.TILE_SIZE;
+        this.buffer = sprite;
     }
 
     public void move(int offsetX, int offsetY) {
@@ -102,17 +141,8 @@ public abstract class PanelEntity {
         this.y = y;
     }
 
-    protected boolean loadSprite(String fileName) {
-        return false;
-    }
-
     public void display(Graphics g, CameraEntity cam) {
-        if (buffer != null) {
-            g.drawImage(buffer, x - cam.x, y - cam.y, width, height, null);
-        } else {
-            g.drawRect(x - cam.x, y - cam.y, width, height);
-            System.err.println("[Warning: PanelEntity] Displaying without image/sprite attached");
-        }
+        g.drawImage(buffer.getSprite(), x - cam.x, y - cam.y, width, height, null);
     }
 
     //temp touching function, ikik this guy will be deprecated soon XD - Dymes
@@ -132,6 +162,72 @@ public abstract class PanelEntity {
         return !(dy > y2 || y1 > dy2) && !(dx > x2 || x1 > dx2);
 
     }
+    /*
+    * Mainly handles the EntityCollidable interface with the passed panel entity
+    * - Set h
+    * */
+    public void checkEntityCollision(PanelEntity other){
+        int this_left_boundary = this.x;
+        int this_top_boundary = this.y;
+        int this_right_boundary = this.x + this.width;
+        int this_bottom_boundary = this.y + this.height;
+
+        int other_left_boundary = other.x;
+        int other_top_boundary = other.y;
+        int other_right_boundary = other.x + other.width;
+        int other_bottom_boundary = other.y + other.height;
+
+        boolean left_is_colliding =
+                other_right_boundary > this_left_boundary &&
+                other_right_boundary < this_right_boundary &&
+                other_bottom_boundary > this_top_boundary &&
+                other_top_boundary < this_bottom_boundary;
+
+        boolean right_is_colliding =
+                other_left_boundary < this_right_boundary &&
+                other_left_boundary > this_left_boundary &&
+                other_bottom_boundary > this_bottom_boundary &&
+                other_top_boundary < this_bottom_boundary;
+
+        boolean top_is_colliding =
+                other_bottom_boundary < this_top_boundary &&
+                other_bottom_boundary > this_bottom_boundary &&
+                other_right_boundary > this_left_boundary &&
+                other_left_boundary < this_right_boundary;
+
+        boolean bottom_is_colliding =
+                other_top_boundary < this_bottom_boundary &&
+                other_top_boundary > this_top_boundary &&
+                other_right_boundary > this_left_boundary &&
+                other_left_boundary < this_right_boundary;
+
+        if(this instanceof EntityCollidable){
+            if(left_is_colliding){
+	            ((EntityCollidable) this).onEntityLeftCollision(other);
+                ((EntityCollidable) other).onEntityRightCollision(this);
+            }
+            if(right_is_colliding){
+	            ((EntityCollidable) this).onEntityRightCollision(other);
+                ((EntityCollidable) other).onEntityLeftCollision(this);
+            }
+            if(top_is_colliding){
+	            ((EntityCollidable) this).onEntityTopCollision(other);
+                ((EntityCollidable) other).onEntityBottomCollision(this);
+            }
+            if(bottom_is_colliding){
+	            ((EntityCollidable) this).onEntityBottomCollision(other);
+                ((EntityCollidable) other).onEntityTopCollision(this);
+            }
+            if(left_is_colliding || bottom_is_colliding || top_is_colliding || right_is_colliding){
+	            ((EntityCollidable) this).onEntityCollision(other);
+                ((EntityCollidable) other).onEntityCollision(this);
+            }
+        }
+
+
+
+    }
+
 
     // returns int, but i actually dont know why... i just feel like it must be int
     // This function is callback for entity collision to be implemented
@@ -165,5 +261,19 @@ public abstract class PanelEntity {
 
         return angle_radians;
     }
+    public double calculateAngle(int x, int y, int x2, int y2){
+        double x_diff = x2 - x;
+        double y_diff = y2 - y;
+        double angle_radians = (Math.atan2(y_diff, x_diff));
+
+        return angle_radians;
+    }
+
+    public void moveAtAngle(double angle_radians){
+
+        deltaY = (int) Math.round(Math.sin(angle_radians) * speed);
+        deltaX = (int) Math.round(Math.cos(angle_radians) * speed);
+    }
+
 
 }

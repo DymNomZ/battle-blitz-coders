@@ -4,6 +4,8 @@ import classes.items.Item;
 import classes.items.Melee;
 import classes.items.Ranged;
 import java.awt.image.BufferedImage;
+
+import classes.sprites.Sprite.Sprite;
 import src.Panel;
 
 public class ItemEntity extends PanelEntity {
@@ -44,7 +46,7 @@ public class ItemEntity extends PanelEntity {
         return item;
     }
 
-    public void setSprite(BufferedImage buffer){
+    public void setSprite(Sprite buffer){
         this.buffer = buffer;
     }
 

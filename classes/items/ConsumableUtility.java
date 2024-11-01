@@ -3,10 +3,11 @@ package classes.items;
 import java.awt.image.BufferedImage;
 
 import classes.sprites.ItemSprites;
+import classes.sprites.Sprite.Sprite;
 
 public class ConsumableUtility extends Consumable {
 
-	public ConsumableUtility(String name, int quantity, int id, BufferedImage sprite) {
+	public ConsumableUtility(String name, int quantity, int id, Sprite sprite) {
 		super(name, quantity, "UTILITY", id, sprite); // item_type placeholder name
 	}
 

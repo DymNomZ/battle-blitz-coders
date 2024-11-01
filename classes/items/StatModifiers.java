@@ -1,5 +1,7 @@
 package classes.items;
 import classes.sprites.ItemSprites;
+import classes.sprites.Sprite.Sprite;
+
 import java.awt.image.BufferedImage;
 
 public abstract class StatModifiers extends Item {
@@ -9,7 +11,7 @@ public abstract class StatModifiers extends Item {
         super();
     }
 
-    public StatModifiers(String name, int quality, int id, BufferedImage sprite) {
+    public StatModifiers(String name, int quality, int id, Sprite sprite) {
         super(name, "Stat Modifier", quality, id, sprite);
     }
 

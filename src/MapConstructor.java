@@ -1,28 +1,31 @@
 package src;
-import classes.entities.CameraEntity;
-import classes.entities.Dummy;
-import classes.entities.PanelEntity;
+
+import classes.entities.*;
 import classes.map.Tile;
 import interfaces.CollisionHandler;
-
 import java.awt.Graphics;
-import java.io.BufferedReader;
 import java.util.ArrayList;
 
 public class MapConstructor {
 
     MapLoader map_loader;
-    BufferedReader reader;
+
     ArrayList<Tile> tile_data;
     Tile tiles[][];
     int map_indexes[][];
     int map_height, map_length;
-    int recent_x = 0, recent_y = 0;
 
     public CameraEntity camera;
+    int recent_x = 0, recent_y = 0;
+    
     String map_path;
 
+    private final Tile DEFAULT_TILE;
+
     public MapConstructor(String path, int screenWidth, int screenHeight){
+
+        DEFAULT_TILE = new Tile("void.png", "void", 0, false, false);
+
         map_path = path;
 
         map_loader = new MapLoader();
@@ -34,7 +37,7 @@ public class MapConstructor {
         map_height = map_indexes.length;
         map_length = map_indexes[0].length;
 
-        initializeTiles();
+        loadMapTiles();
         camera = new CameraEntity(screenWidth, screenHeight);
     }
 
@@ -50,27 +53,27 @@ public class MapConstructor {
         return map_length;
     }
 
-    void initializeTiles() {
+    public void loadMapTiles(){
 
-        tiles = new Tile[map_height][map_length];
-        for (int i = 0; i < map_height; i++) {
-            for (int j = 0; j < map_length; j++) {
+        map_length = map_indexes[0].length;
+        map_height = map_indexes.length;
 
+        this.tiles = new Tile[map_height][map_length];
+        for(int i = 0; i < map_height; i++){
+            for(int j = 0; j < map_length; j++){
+                
                 //check which tile in tile data matches index
-                if (map_indexes[i][j] != 0) {
-                    for (Tile td : tile_data) {
-                        if (td.tile_type == map_indexes[i][j]) {
-                            tiles[i][j] = td;
+                if(map_indexes[i][j] != 0){
+                    for(Tile t : tile_data){
+                        if(t.index == map_indexes[i][j]){
+                            this.tiles[i][j] = t;
                             break;
                         }
                     }
-                } else {
-                    tiles[i][j] = new Tile(
-                            "../../assets/map_tiles/void.png", "void",
-                            0, false
-                    );
+                }else{
+                    this.tiles[i][j] = DEFAULT_TILE;
                 }
-
+                    
             }
         }
     }
@@ -125,19 +128,24 @@ public class MapConstructor {
             maxSpeedPerLoop *= -1;
         }
         int maxPixelOnMap = (isXDimension ? map_length : map_height) * Panel.TILE_SIZE;
-        int offPixelOnTile = Panel.TILE_SIZE - size;
-        boolean isBetween = oppositePosition % Panel.TILE_SIZE > Panel.TILE_SIZE - oppositeSize;
+        int offPixelOnTile = Panel.TILE_SIZE - (size % Panel.TILE_SIZE == 0 ? size : size % Panel.TILE_SIZE);
 
-        int offXTile = 0;
-        int offYTile = 0;
+        int oppositeOffTile = oppositeSize % Panel.TILE_SIZE;
+        boolean isBetween = oppositePosition % Panel.TILE_SIZE > (oppositeOffTile == 0 ? 0 : Panel.TILE_SIZE - oppositeOffTile);
+        int loopN = oppositeSize / Panel.TILE_SIZE;
+        if (oppositeOffTile > 0) loopN++;
+        if (isBetween) loopN++;
+
+        int initOffXTile = 0;
+        int initOffYTile = 0;
         int nextOffXTile = 0;
         int nextOffYTile = 0;
 
         if (isXDimension) {
-            offYTile = oppositePosition / Panel.TILE_SIZE;
+            initOffYTile = oppositePosition / Panel.TILE_SIZE;
             nextOffYTile = 1;
         } else {
-            offXTile = oppositePosition / Panel.TILE_SIZE;
+            initOffXTile = oppositePosition / Panel.TILE_SIZE;
             nextOffXTile = 1;
         }
 
@@ -160,6 +168,9 @@ public class MapConstructor {
             } else if (offTile >= 0 && ((pixelsOnTile < offPixelOnTile && offTile <= offPixelOnTile) || (pixelsOnTile > offPixelOnTile && offTile <= Panel.TILE_SIZE + offPixelOnTile))) {
                 position += deltaTemp;
             } else {
+                int offXTile = initOffXTile;
+                int offYTile = initOffYTile;
+
                 if (offTile >= 0) {
                     if (isXDimension) {
                         offXTile = (position + deltaTemp + size) / Panel.TILE_SIZE;
@@ -176,32 +187,25 @@ public class MapConstructor {
 
                 position += deltaTemp;
 
-                if (tiles[offYTile][offXTile].is_solid) {
-                    if (offTile < 0) {
-                        position -= offTile;
-                    } else {
-                        if (pixelsOnTile == offPixelOnTile) {
-                            position -= deltaTemp;
-                        } else if (pixelsOnTile > offPixelOnTile) {
-                            position -= offTile - offPixelOnTile - Panel.TILE_SIZE;
+                for (int i = loopN; i >= 1; i--) {
+                    if (tiles[offYTile][offXTile].is_solid) {
+                        if (offTile < 0) {
+                            position -= offTile;
                         } else {
-                            position -= offTile - offPixelOnTile;
+                            if (pixelsOnTile == offPixelOnTile) {
+                                position -= deltaTemp;
+                            } else if (pixelsOnTile > offPixelOnTile) {
+                                position -= offTile - offPixelOnTile - Panel.TILE_SIZE;
+                            } else {
+                                position -= offTile - offPixelOnTile;
+                            }
                         }
+                        deltaPosition = 0;
+                        break;
                     }
-                    deltaPosition = 0;
-                } else if (isBetween && (tiles[offYTile + nextOffYTile][offXTile + nextOffXTile].is_solid)) {
-                    if (offTile < 0) {
-                        position -= offTile;
-                    } else {
-                        if (pixelsOnTile == offPixelOnTile) {
-                            position -= deltaTemp;
-                        } else if (pixelsOnTile > offPixelOnTile) {
-                            position -= offTile - offPixelOnTile - Panel.TILE_SIZE;
-                        } else {
-                            position -= offTile - offPixelOnTile;
-                        }
-                    }
-                    deltaPosition = 0;
+
+                    offYTile += nextOffYTile;
+                    offXTile += nextOffXTile;
                 }
             }
         }
@@ -209,7 +213,6 @@ public class MapConstructor {
         return position;
     }
 
-    // Will not support size greater than Panel.TileSize
     public void verifyEntityPosition(PanelEntity e){
         boolean isCollided = false;
 
@@ -223,7 +226,9 @@ public class MapConstructor {
             }
             isCollided = true;
         }
-        e.deltaX = 0;
+
+        if(e instanceof Enemy && ((Enemy) e).getMovement_internal_cooldown() == 0 && ((Enemy) e).isGoingToMove())
+            e.deltaX = 0;
 
         tempPos = e.y;
         e.y = getVerifiedPosition(e.y, e.x, e.height, e.width, e.deltaY, false);
@@ -235,11 +240,13 @@ public class MapConstructor {
             }
             isCollided = true;
         }
-        e.deltaY = 0;
+        if(e instanceof Enemy && ((Enemy) e).getMovement_internal_cooldown() == 0 && ((Enemy) e).isGoingToMove())
+            e.deltaY = 0;
 
         if (e instanceof CollisionHandler ent && isCollided) {
             ent.onCollision();
         }
+
     }
 
     // Note: x and y not centered

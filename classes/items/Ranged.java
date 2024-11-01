@@ -3,6 +3,8 @@ package classes.items;
 // Anotha wan for weapons -Ervin
 
 import classes.sprites.ItemSprites;
+import classes.sprites.Sprite.Sprite;
+
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
@@ -16,14 +18,14 @@ public class Ranged extends Weapons {
     }
 
     // Constructor for ranged weapons with one shooting direction
-    public Ranged(String name, int quality, int id, int damage, int fire_rate, int bullet_spd, BufferedImage sprite) {
+    public Ranged(String name, int quality, int id, int damage, int fire_rate, int bullet_spd, Sprite sprite) {
         super(name, "RANGED", quality, id, damage, sprite);
         this.fire_rate = fire_rate;
         this.bullet_spd = bullet_spd;
     }
 
     // Constructor for ranged weapons with splash damage
-    public Ranged(String name, int quality, int id, int damage, int fire_rate, double radius, BufferedImage sprite) {
+    public Ranged(String name, int quality, int id, int damage, int fire_rate, double radius, Sprite sprite) {
         super(name, "RANGED", quality, id, damage, sprite);
         this.fire_rate = fire_rate;
         this.radius = radius;

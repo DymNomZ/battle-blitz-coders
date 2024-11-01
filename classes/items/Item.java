@@ -3,6 +3,7 @@ package classes.items;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import classes.sprites.Sprite.Sprite;
 import src.Panel;
 
 public abstract class Item {
@@ -18,13 +19,13 @@ public abstract class Item {
     // Moved quality var to weapons class, if goods na we can delete the comments
     // for this to reduce clutter -Ervin
     private int id;
-    private BufferedImage sprite;
+    private Sprite sprite;
 
     public Item() {
 
     }
 
-    public Item(String name, String item_type, int quantity, int id, BufferedImage sprite) // for consumables -Raymond
+    public Item(String name, String item_type, int quantity, int id, Sprite sprite)
     {
         this.name = name;
         this.stackable = true;
@@ -34,7 +35,27 @@ public abstract class Item {
         this.sprite = sprite;
     }
 
-    public Item(String name, String item_type, int id, BufferedImage sprite) // for weapons and stat-modifiers -Raymond
+    public Item(String name, String item_type, int quantity, int id, String sprite) // for consumables -Raymond
+    {
+        this.name = name;
+        this.stackable = true;
+        this.quantity = quantity;
+        this.item_type = item_type;
+        this.id = id;
+        this.sprite = Sprite.load(sprite);
+    }
+
+    public Item(String name, String item_type, int id, String sprite) // for weapons and stat-modifiers -Raymond
+    {
+        this.name = name;
+        this.stackable = false;
+        this.quantity = 1;
+        this.item_type = item_type;
+        this.id = id;
+        this.sprite = Sprite.load(sprite);
+    }
+
+    public Item(String name, String item_type, int id, Sprite sprite)
     {
         this.name = name;
         this.stackable = false;
@@ -50,7 +71,7 @@ public abstract class Item {
         quantity += amount;
     }
 
-    public BufferedImage getSprite(){
+    public Sprite getSprite(){
         return sprite;
     }
 
@@ -102,7 +123,7 @@ public abstract class Item {
     }
 
     public void display(Graphics g, int x, int y){
-        g.drawImage(sprite, x, y, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
+        g.drawImage(sprite.getSprite(), x, y, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
     }
 
 }

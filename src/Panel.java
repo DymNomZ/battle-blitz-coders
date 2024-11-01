@@ -1,15 +1,11 @@
 package src;
 import classes.GUI.Hotbar;
-import classes.entities.Dummy_sus;
-import classes.entities.Enemy;
-import classes.entities.ItemEntity;
-import classes.entities.NPC;
+import classes.entities.*;
 import classes.sprites.ItemSprites;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class Panel extends JPanel implements Runnable {
 
@@ -20,10 +16,10 @@ public class Panel extends JPanel implements Runnable {
 
     public int max_map_row, max_map_col;
 
-    public static AssetEngine asset_engine;
     MapConstructor map;
     
     KeyHandler key_input;
+    MouseHandler mouse_handler;
 
     Thread main_thread;
 
@@ -40,11 +36,15 @@ public class Panel extends JPanel implements Runnable {
     List<Integer> enemy_ids = new LinkedList<>();
     List<Integer> collected_items_keys = new ArrayList<>();
 
+    List<ProjectileEntity> projectiles = new ArrayList<>();
+
+
     public Panel(){
 
-        map = new MapConstructor("assets/maps/stage_1_test.zip", SCREEN_WIDTH, SCREEN_HEIGHT);
+        map = new MapConstructor("assets/maps/new_field_test.zip", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         key_input = new KeyHandler();
+        mouse_handler = new MouseHandler();
 
         max_map_row = map.getMap_height();
         max_map_col = map.getMap_length();
@@ -52,7 +52,7 @@ public class Panel extends JPanel implements Runnable {
         d1 = new Dummy_sus(1000, max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, TILE_SIZE, key_input);
 
         //temp NPC
-        NPC1 = new NPC.TempNPC(max_map_row * TILE_SIZE, max_map_col * TILE_SIZE, ItemSprites.ConsumableHealing.GRAB);
+        NPC1 = new NPC.TempNPC(max_map_row * TILE_SIZE / 2, max_map_col * TILE_SIZE / 2, ItemSprites.ConsumableHealing.GRAB);
 
         hit_points_display = new JTextArea(String.format("%d", d1.getHit_points()), 1, 1);
         hit_points_display.setBounds(10, 150, 50, 30);
@@ -61,7 +61,14 @@ public class Panel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(key_input);
+        this.addMouseListener(mouse_handler);
         this.add(hit_points_display);
+
+    }
+
+    public void updateMousePosition(int x, int y) {
+        mouse_handler.mouse_x = x - (d1.x - map.camera.x);
+        mouse_handler.mouse_y = y - (d1.y - map.camera.y);
     }
 
     public void start_main_thread(){
@@ -78,16 +85,21 @@ public class Panel extends JPanel implements Runnable {
         long delta = 0;
 
         while (main_thread != null) {
+            int i = 0;
             last_system_time = System.nanoTime() - (System.nanoTime() - last_system_time);
 
             update();
             repaint();
 
-            if (lastEntityCheck + 1000000 < last_system_time) {
+            mouse_handler.mouse_location_on_screen = MouseInfo.getPointerInfo().getLocation();
+
+            SwingUtilities.convertPointFromScreen(mouse_handler.mouse_location_on_screen,this);
+            updateMousePosition(mouse_handler.mouse_location_on_screen.x,mouse_handler.mouse_location_on_screen.y);
+
+            if (lastEntityCheck + 1000000000 < last_system_time) {
                 lastEntityCheck = System.nanoTime();
                 for(Enemy e : spawned_enemies.values()){
-                    System.out.println(e.getMovement_internal_timer());
-                    e.decrementMovementInternalTimer(1);
+                    //System.out.println(e.getMovement_internal_timer());
 
                     //enemies attack
                     if(d1.checkIfTouching(e)){
@@ -96,6 +108,7 @@ public class Panel extends JPanel implements Runnable {
                     }
                 }
             }
+
 
             current_system_time = System.nanoTime();
             delta = Math.max(nanoInterval - current_system_time + last_system_time, 0);
@@ -112,53 +125,112 @@ public class Panel extends JPanel implements Runnable {
         d1.move();
         map.verifyEntityPosition(d1);
         d1.printHotbarItems();
-        spawnCheck();
+        enemyCheck();
         checkIfDropping();
+        bulletCheck();
     }
 
-    void handleInteractions(Dummy_sus d1, Graphics g) {
+    private void bulletCheck(){
+        Iterator<ProjectileEntity> it = projectiles.iterator();
+        while(it.hasNext()){
+            ProjectileEntity current_projectile = it.next();
+            try{
+                current_projectile.executeProjectileBehavior();
+                map.verifyEntityPosition(current_projectile);
+                if(current_projectile.is_colliding()){
+                    it.remove();
+                }
+                if(!current_projectile.is_player_friendly){
+                    current_projectile.checkEntityCollision(d1);
+                }
+            } catch(NullPointerException n){
+                System.out.println("Null Projectile!");
+            }
+        }
+        if(mouse_handler.left_is_pressed){
+            if(d1.shooting_cooldown == 0){
+                projectiles.add(new ProjectileEntity.TemporaryBullet(d1.x, d1.y, d1.x + mouse_handler.mouse_x, d1.y + mouse_handler.mouse_y));
+                d1.initiateShootingCooldown(10);
+            }
+        }
+    }
+
+    void handleInteractions(Dummy_sus d1, Graphics g, CameraEntity cam) {
 
         //check if player is within proximity of NPC and if F key is pressed, if so, display dialogue of NPC
         if(key_input.is_interacting && NPC1.checkIfTouching(d1)){
-            NPC1.displayDialogue(g);
+            NPC1.displayDialogue(g, cam);
+        }
+        else if(!(NPC1.checkIfTouching(d1))){
+            key_input.is_interacting = false;
         }
     }
 
     void checkIfDropping(){
         ItemEntity dropped = d1.dropItems();
         
-        if((dropped.getItem() != null)){
+        if(dropped != null && dropped.getItem() != null){
             drop_items.put(dropped.key, dropped);
         }
     }
 
-    void spawnCheck(){
-        for(Enemy e : spawned_enemies.values()){
+    void enemyCheck(){
+        Iterator<Enemy> enemy_it = spawned_enemies.values().iterator();
+        while(enemy_it.hasNext()){
+            Enemy e = enemy_it.next();
+            if(e.getHit_points() <= 0){
+                enemy_it.remove();
+                dropItems(e);
+                continue;
+            }
             try{
                 e.executeEnemyBehavior(d1);
                 map.verifyEntityPosition(e);
+                for(ProjectileEntity projectile : projectiles){
+                    if(projectile.is_player_friendly)
+                    e.checkEntityCollision(projectile);
+                }
             } catch(NullPointerException n){
                 System.out.println("Null Enemy!");
+            }
+            //killing with range
+            if(key_input.kill_enemy && e.checkIfTouching(d1)){
+
+                e.setHit_points(d1.attack());
+
+                if(e.getHit_points() == 0){
+                    enemy_ids.add(e.key);
+
+                    System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
+
+                    dropItems(e);
+
+                    System.out.println("Dropped Item count: " + drop_items.size());
+                }
+
+                key_input.kill_enemy = false;
             }
         }
         
         //spawning
         if(key_input.spawn_enemy){
 
-            int x_coords = new Random().nextInt(0, (TILE_SIZE * max_map_col));
-            int y_coords = new Random().nextInt(0, (TILE_SIZE * max_map_row));
             int enemy_id = new Random().nextInt(0, 100);
 
             //random spawning, equal chances lmao
             Enemy enemy;
-            if(new Random().nextInt(1, 3) == 1){
+            //int temp_chances = new Random().nextInt(0, 3);
+            int temp_chances = 4;
+            if(temp_chances == 0){
                 //d1 coords lang sa kapoy pangita HAHAHAHAHA - dymes
-                enemy = new Enemy.Brit(d1.x, d1.y, TILE_SIZE, enemy_id);
+                enemy = new Enemy.Brit(d1.x + (new Random().nextInt(200,1000) - 400), d1.y+ (new Random().nextInt(200,1000) - 400), TILE_SIZE, enemy_id);
                 System.out.println("Spawned new Brit");
             }
-            else{
-                enemy = new Enemy.Soviet(d1.x, d1.y, TILE_SIZE, enemy_id);
+            else if(temp_chances == 1){
+                enemy = new Enemy.Soviet(d1.x + (new Random().nextInt(200,1000) - 400), d1.y+ (new Random().nextInt(200,1000) - 400), TILE_SIZE, enemy_id);
                 System.out.println("Spawned new Soviet");
+            } else {
+                enemy = new Enemy.Virus(d1.x + (new Random().nextInt(200,1000) - 400), d1.y+ (new Random().nextInt(200,1000) - 400), TILE_SIZE, enemy_id,projectiles);
             }
 
             spawned_enemies.put(enemy_id, enemy);
@@ -189,23 +261,7 @@ public class Panel extends JPanel implements Runnable {
                 System.out.println("Trying to Render Null Enemy!!");
             }
 
-            //killing with range
-            if(key_input.kill_enemy && e.checkIfTouching(d1)){
 
-                e.setHit_points(d1.attack());
-
-                if(e.getHit_points() == 0){
-                    enemy_ids.add(e.key);
-
-                    System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
-                    
-                    dropItems(e);
-
-                    System.out.println("Dropped Item count: " + drop_items.size());
-                }
-                    
-                key_input.kill_enemy = false;
-            }
         }
     }
 
@@ -227,6 +283,18 @@ public class Panel extends JPanel implements Runnable {
             //if just dropped, don't pick
             if(!item.checkIfTouching(d1) && !item.is_pickable){
                 item.is_pickable = true;
+            }
+        }
+    }
+    void handleProjectiles(Graphics g){
+        Iterator<ProjectileEntity> it = projectiles.iterator();
+
+        while(it.hasNext()){
+            try{
+                ProjectileEntity current_projectile = it.next();
+                current_projectile.display(g, map.camera);
+            } catch (NullPointerException n){
+                System.out.println("Trying to Render Null Bullet!!");
             }
         }
     }
@@ -255,9 +323,10 @@ public class Panel extends JPanel implements Runnable {
 
         handleEnemies(g);
         handleItems(g);
+        handleProjectiles(g);
         removeEntities();
 
-        handleInteractions(d1, g);
+        handleInteractions(d1, g, map.camera);
 
         Hotbar.displayHotbar(g);
         d1.displayHotbarItems(g);

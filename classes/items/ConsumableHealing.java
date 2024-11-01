@@ -1,6 +1,8 @@
 package classes.items;
 
 import classes.sprites.ItemSprites;
+import classes.sprites.Sprite.Sprite;
+
 import java.awt.image.BufferedImage;
 
 public abstract class ConsumableHealing extends Consumable
@@ -13,14 +15,14 @@ public abstract class ConsumableHealing extends Consumable
         super();
     }
 
-    public ConsumableHealing(String name, int quantity, int id, int heal_amount, int heal_time, BufferedImage sprite)   //HOT
+    public ConsumableHealing(String name, int quantity, int id, int heal_amount, int heal_time, Sprite sprite)   //HOT
     {
         super(name, quantity, "HEALING", id, sprite);       //item type can still be specified more if necessary -Raymond
         this.heal_type = "HOT";
         this.heal_amount = heal_amount;
         this.heal_time = heal_time; 
     }
-    public ConsumableHealing(String name, int quantity, int id, int heal_amount, BufferedImage sprite)   //INSTA
+    public ConsumableHealing(String name, int quantity, int id, int heal_amount, Sprite sprite)   //INSTA
     {
         super(name, quantity, "HEALING", id, sprite);       //item type can still be specified more if necessary -Raymond
         this.heal_type = "INSTA";

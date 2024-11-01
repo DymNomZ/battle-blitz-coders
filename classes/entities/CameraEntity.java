@@ -6,6 +6,7 @@ public class CameraEntity extends PanelEntity{
 
 	public CameraEntity(int width, int height){
 		super(width, height);
+		buffer = null;
 	}
 	
 	@Override

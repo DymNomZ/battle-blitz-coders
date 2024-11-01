@@ -11,18 +11,16 @@ import javax.imageio.ImageIO;
 
 public class MapLoader {
 
-    ArrayList<Tile> loaded_tile_data;
+    ArrayList<Tile> loaded_tiles = new ArrayList<>();
+    ArrayList<ZipEntry> png_entries = new ArrayList<>();
     int[][] loaded_map_indexes, tile_data_indexes;
-    int curr_idx;
     
     public MapLoader(){
 
-        loaded_tile_data = new ArrayList<>();
-        curr_idx = 0;
     }
 
     public ArrayList<Tile> getTiles(){
-        return loaded_tile_data;
+        return loaded_tiles;
     }
 
     public int[][] getMapIndexes(){
@@ -39,39 +37,48 @@ public class MapLoader {
             // Get an enumeration of the entries in the zip file
             Enumeration<? extends ZipEntry> entries = zip_file.entries();
 
-            // Iterate over the entries and print their names
-            //System.out.println("Zip contents: ");
+            // Iterate over the entries
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                //System.out.println(entry.getName());
 
                 //read operations:
                 if(entry.getName().endsWith("data.txt")){
-                    read_tile_data(zip_file, entry);
+                    readTile_data(zip_file, entry);
                 }
                 if(entry.getName().endsWith("$.txt")){
-                    read_map(zip_file, entry);
+                    readMap(zip_file, entry);
                 }
             }
 
-            //load for pngs
+            //Store the pngs in an ArrayList first
             entries = zip_file.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
 
                 if(entry.getName().endsWith(".png")){
-                    read_images(zip_file, entry);
+                    png_entries.add(entry);
                 }
             }
 
-            //reset traversing index
-            curr_idx = 0;
+            //Iterate until png matches index
+            for(int i = 0; i < tile_data_indexes.length; i++){
+                for(ZipEntry z : png_entries){
+                    //extract index at the beginning of the png name
+                    String image_index = z.getName().substring(0, z.getName().lastIndexOf('$'));
+
+                    if(Integer.parseInt(image_index) == tile_data_indexes[i][0]){
+                        loaded_tiles.add(readImage(zip_file, z, tile_data_indexes, i));
+                    }
+                }
+            }
 
             //Check print
-            // System.out.println(loaded_tile_data.size());
-            // for(Tile t : loaded_tile_data){
-            //     System.out.println(t.name + " " + t.tile_type + " " + t.is_solid);
-            // }
+            System.out.println(loaded_tiles.size());
+            for(Tile t : loaded_tiles){
+                System.out.println(
+                    t.name + " " + t.index + " " 
+                    + t.is_solid + " " + t.is_animated);
+            }
 
             zip_file.close();
 
@@ -79,33 +86,30 @@ public class MapLoader {
             }
     }
 
-    public void read_images(ZipFile zip, ZipEntry image){
+    public Tile readImage(ZipFile zip, ZipEntry image, int[][] tile_data_indexes, int curr_idx){
 
         InputStream image_data_stream;
-        BufferedImage tile_image;
-        String tile_name = image.getName().substring(0, image.getName().lastIndexOf('.'));
+        BufferedImage tile_image = null;
+        String tile_name = image.getName().substring(image.getName().lastIndexOf("$")+1, image.getName().lastIndexOf('.'));
 
         try {
             image_data_stream = zip.getInputStream(image);
             tile_image = ImageIO.read(image_data_stream);
             image_data_stream.close();
 
-            loaded_tile_data.add(
-                new Tile(
-                    tile_name, tile_image,
-                    tile_data_indexes[curr_idx][0], 
-                    (tile_data_indexes[curr_idx][1] == 1)
-                )
-            );
-
-            curr_idx++;
-
         } catch (IOException ex) {
+            System.out.println("Error reading image");
         }
+
+        int tile_index = tile_data_indexes[curr_idx][0];
+        boolean solid_state = tile_data_indexes[curr_idx][1] == 1;
+        boolean animated_state = tile_data_indexes[curr_idx][2] == 1;
+
+        return new Tile(tile_image, tile_name, tile_index, solid_state, animated_state);
 
     }
 
-    public void read_tile_data(ZipFile zip, ZipEntry tile_data){
+    public void readTile_data(ZipFile zip, ZipEntry tile_data){
         
         InputStream tile_data_stream;
         BufferedReader reader;
@@ -145,7 +149,7 @@ public class MapLoader {
         }
     }
 
-    public void read_map(ZipFile zip, ZipEntry map){
+    public void readMap(ZipFile zip, ZipEntry map){
 
         InputStream map_data_stream;
         BufferedReader reader;
@@ -153,9 +157,8 @@ public class MapLoader {
             map_data_stream = zip.getInputStream(map);
             reader = new BufferedReader(new InputStreamReader(map_data_stream));
 
-            String line = reader.readLine();
             int map_h = 0;
-            int map_l = line.length() / 2; //because of spaces
+            int map_l = reader.readLine().split(" ").length; //because of spaces
 
             do{
                 map_h++;

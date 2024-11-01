@@ -1,5 +1,7 @@
 package classes.items;
 
+import classes.sprites.Sprite.Sprite;
+
 import java.awt.image.BufferedImage;
 
 public abstract class Weapons extends Item {
@@ -12,7 +14,7 @@ public abstract class Weapons extends Item {
         super();
     }
 
-    public Weapons(String name, String weapon_type, int quality, int id, int damage, BufferedImage sprite) {
+    public Weapons(String name, String weapon_type, int quality, int id, int damage, Sprite sprite) {
         super(name, "Weapon", id, sprite);
         this.quality = quality;
         this.damage = damage;

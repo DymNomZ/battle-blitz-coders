@@ -1,6 +1,7 @@
 package classes.sprites;
 
-import java.awt.image.BufferedImage;
+import classes.sprites.Sprite.Sprite;
+
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -8,27 +9,22 @@ public class ItemSprites {
 
     public static class Melee {
 
-        public static BufferedImage BREADBOARD;
-        public static BufferedImage KEYBOARD;
-        public static BufferedImage NOKIA;
-        public static BufferedImage PICKAXE;
-        public static BufferedImage SOCK;
-        public static BufferedImage BOOK;
-        public static BufferedImage STICK;
+        public static Sprite BREADBOARD;
+        public static Sprite KEYBOARD;
+        public static Sprite NOKIA;
+        public static Sprite PICKAXE;
+        public static Sprite SOCK;
+        public static Sprite BOOK;
+        public static Sprite STICK;
     
         static{
-    
-            try {
-                BREADBOARD = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/breadboard.png"));
-                KEYBOARD = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/keyboard_1.png"));
-                NOKIA = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/nokia_1.png"));
-                PICKAXE = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/pickaxe_1.png"));
-                SOCK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/sock_1.png"));
-                BOOK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/SOCSCI_book_1.png"));
-                STICK = ImageIO.read(Melee.class.getResourceAsStream("../../assets/sprites/weapons_melee/stick_1.png"));
-            } catch (IOException e) {
-                System.out.println("Error loading Melee sprites");
-            }
+            BREADBOARD = Sprite.load("sprites/weapons_melee/breadboard.png");
+            KEYBOARD = Sprite.load("sprites/weapons_melee/keyboard_1.png");
+            NOKIA = Sprite.load("sprites/weapons_melee/nokia_1.png");
+            PICKAXE = Sprite.load("sprites/weapons_melee/pickaxe_1.png");
+            SOCK = Sprite.load("sprites/weapons_melee/sock_1.png");
+            BOOK = Sprite.load("sprites/weapons_melee/SOCSCI_book_1.png");
+            STICK = Sprite.load("sprites/weapons_melee/stick_1.png");
         }
         
         
@@ -36,29 +32,25 @@ public class ItemSprites {
 
     public static class Ranged {
 
-        public static BufferedImage ALCOHOL_GUN;
-        public static BufferedImage PENCIL_GUN;
-        public static BufferedImage PEN_GUN;
-        public static BufferedImage CALCULATOR;
-        public static BufferedImage POKE_BALL;
-        public static BufferedImage SAMSUNG;
-        public static BufferedImage PAPER_AIRPLANE;
-        public static BufferedImage EXPLOSIVE_MOUSE;
+        public static Sprite ALCOHOL_GUN;
+        public static Sprite PENCIL_GUN;
+        public static Sprite PEN_GUN;
+        public static Sprite CALCULATOR;
+        public static Sprite POKE_BALL;
+        public static Sprite SAMSUNG;
+        public static Sprite PAPER_AIRPLANE;
+        public static Sprite EXPLOSIVE_MOUSE;
 
         static{
-
-            try {
-                ALCOHOL_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/alcohol_gun_1.png"));
-                PENCIL_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/pencil_gun_1.png"));
-                PEN_GUN = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/pen_shotgun_1.png"));
-                CALCULATOR = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/calculator_1.png"));
-                POKE_BALL = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/poke_ball_1.png"));
-                SAMSUNG = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/samsung_1.png"));
-                PAPER_AIRPLANE = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/paper_airplane_1.png"));
-                EXPLOSIVE_MOUSE = ImageIO.read(Ranged.class.getResourceAsStream("../../assets/sprites/weapons_ranged/explosive_mouse_1.png"));
-            } catch (IOException e) {
-                System.out.println("Error loading Weapon sprites");
-            }
+            
+            ALCOHOL_GUN = Sprite.load("sprites/weapons_ranged/alcohol_gun_1.png");
+            PENCIL_GUN = Sprite.load("sprites/weapons_ranged/pencil_gun_1.png");
+            PEN_GUN = Sprite.load("sprites/weapons_ranged/pen_shotgun_1.png");
+            CALCULATOR = Sprite.load("sprites/weapons_ranged/calculator_1.png");
+            POKE_BALL = Sprite.load("sprites/weapons_ranged/poke_ball_1.png");
+            SAMSUNG = Sprite.load("sprites/weapons_ranged/samsung_1.png");
+            PAPER_AIRPLANE = Sprite.load("sprites/weapons_ranged/paper_airplane_1.png");
+            EXPLOSIVE_MOUSE = Sprite.load("sprites/weapons_ranged/explosive_mouse_1.png");
 
         }
     
@@ -66,21 +58,17 @@ public class ItemSprites {
 
     public static class StatModifiers {
 
-        public static BufferedImage COFFEE;
-        public static BufferedImage FOOT_MOP;
-        public static BufferedImage HEADPHONES;
-        public static BufferedImage HOODIE;
+        public static Sprite COFFEE;
+        public static Sprite FOOT_MOP;
+        public static Sprite HEADPHONES;
+        public static Sprite HOODIE;
 
         static {
-
-            try {
-                COFFEE = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/coffee.png"));
-                FOOT_MOP = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/foot_mop_1.png"));
-                HEADPHONES = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/headphones_1.png"));
-                HOODIE = ImageIO.read(StatModifiers.class.getResourceAsStream("../../assets/sprites/stat_modifiers/hoodie.png"));
-            } catch (IOException e) {
-                System.out.println("Error loading Consumable Stat Modifiers sprites");
-            }
+            
+            COFFEE = Sprite.load("sprites/stat_modifiers/coffee.png");
+            FOOT_MOP = Sprite.load("sprites/stat_modifiers/foot_mop_1.png");
+            HEADPHONES = Sprite.load("sprites/stat_modifiers/headphones_1.png");
+            HOODIE = Sprite.load("sprites/stat_modifiers/hoodie.png");
 
         }
     
@@ -88,17 +76,13 @@ public class ItemSprites {
 
     public static class ConsumableUtility {
 
-        public static BufferedImage ENERGY_DRINK;
-        public static BufferedImage ICE_CREAM;
+        public static Sprite ENERGY_DRINK;
+        public static Sprite ICE_CREAM;
 
         static {
-
-            try {
-                ENERGY_DRINK = ImageIO.read(ConsumableUtility.class.getResourceAsStream("../../assets/sprites/consumable_utility/energy_drink.png"));
-                ICE_CREAM = ImageIO.read(ConsumableUtility.class.getResourceAsStream("../../assets/sprites/consumable_utility/ice_cream.png"));
-            } catch (IOException e) {
-                System.out.println("Error loading Consumable Utility sprites");
-            }
+            
+            ENERGY_DRINK = Sprite.load("sprites/consumable_utility/energy_drink.png");
+            ICE_CREAM = Sprite.load("sprites/consumable_utility/ice_cream.png");
 
         }
     
@@ -106,25 +90,21 @@ public class ItemSprites {
 
     public static class ConsumableHealing {
 
-        public static BufferedImage BAND_AID;
-        public static BufferedImage CHIPS;
-        public static BufferedImage CUP_NOODLES;
-        public static BufferedImage GRAB;
-        public static BufferedImage HOTCAKE;
-        public static BufferedImage PIZZA;
+        public static Sprite BAND_AID;
+        public static Sprite CHIPS;
+        public static Sprite CUP_NOODLES;
+        public static Sprite GRAB;
+        public static Sprite HOTCAKE;
+        public static Sprite PIZZA;
 
         static {
 
-            try {
-                BAND_AID = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/band_aid_1.png"));
-                CHIPS = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/chips_2.png"));
-                CUP_NOODLES = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/cup_noodles.png"));
-                GRAB = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/grab_1.png"));
-                HOTCAKE = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/hotcake_1.png"));
-                PIZZA = ImageIO.read(ConsumableHealing.class.getResourceAsStream("../../assets/sprites/consumable_healing/pizza_1.png"));
-            } catch (IOException e) {
-                System.out.println("Error loading Consumable Healing sprites");
-            }
+            BAND_AID = Sprite.load("sprites/consumable_healing/band_aid_1.png");
+            CHIPS = Sprite.load("sprites/consumable_healing/chips_2.png");
+            CUP_NOODLES = Sprite.load("sprites/consumable_healing/cup_noodles.png");
+            GRAB = Sprite.load("sprites/consumable_healing/grab_1.png");
+            HOTCAKE = Sprite.load("sprites/consumable_healing/hotcake_1.png");
+            PIZZA = Sprite.load("sprites/consumable_healing/pizza_1.png");
 
         }
     

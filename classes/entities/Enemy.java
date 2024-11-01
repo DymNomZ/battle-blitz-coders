@@ -1,31 +1,59 @@
 package classes.entities;
 
+import interfaces.EntityCollidable;
+
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Random;
-import javax.imageio.ImageIO;
 
-public abstract class Enemy extends MapEntity {
+public abstract class Enemy extends MapEntity implements EntityCollidable{
     // to implement shi
-    private int speed;
     private final String enemy_type; // For melee, ranged, boss types -Ervin
 
     //maybe temporary timer var kay idk a better way HAHAHAHAH - Set H
-    private int movement_internal_timer = 0;
-    private double angle;
-    private boolean is_going_to_move;
-
-    public int getMovement_internal_timer(){
-        return movement_internal_timer;
+    private int movement_internal_cooldown = 0;
+    private Timer movement_internal_timer;
+    boolean is_going_to_move = false;
+    public boolean isGoingToMove(){
+        return is_going_to_move;
     }
-
+    public int getMovement_internal_cooldown(){
+        return movement_internal_cooldown;
+    }
     public void decrementMovementInternalTimer(int value){
-        movement_internal_timer -= value;
-        if(movement_internal_timer <= 0) movement_internal_timer = 0;
-        if(movement_internal_timer == 0) is_going_to_move = false;
+        movement_internal_cooldown -= value;
     }
+    public void initiateMovementInternalTimer(){
+        this.movement_internal_cooldown = new Random().nextInt(50,100);
+        System.out.println(movement_internal_cooldown);
+        this.movement_internal_timer = new Timer(10, e -> {
+            //System.out.println(movement_internal_cooldown);
+            decrementMovementInternalTimer(1);
+            if(movement_internal_cooldown == 0) movement_internal_timer.stop();
+        });
+        movement_internal_timer.start();
+    }
+
+    protected int attack_cooldown = 0;
+    private Timer attack_timer;
+    public void decrementAttackCooldown(int value){
+        this.attack_cooldown -= value;
+    }
+    public void initiateAttackTimer(){
+        this.attack_cooldown = 100;
+        this.attack_timer = new Timer(10, e -> {
+            decrementAttackCooldown(1);
+            if(attack_cooldown == 0) attack_timer.stop();
+        });
+        attack_timer.start();
+    }
+
+
 
     public Enemy(String name,
             String enemy_type,
@@ -40,14 +68,14 @@ public abstract class Enemy extends MapEntity {
     }
 
     //hit point test - dym
-    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, int key) {
-        super(name, hit_points, x, y, side, key);
+    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, int key, String spritePath) {
+        super(name, hit_points, x, y, side, key, spritePath);
         this.enemy_type = enemy_type;
         this.speed = 2;
     }
 
-    public Enemy(String name, int x, int y, int side, String enemy_type, int key) {
-        super(name, x, y, side, key);
+    public Enemy(String name, int x, int y, int side, String enemy_type, int key, String spritePath) {
+        super(name, x, y, side, key, spritePath);
         this.enemy_type = enemy_type;
         this.speed = 2;
     }
@@ -79,18 +107,12 @@ public abstract class Enemy extends MapEntity {
 
     public void executeEnemyBehavior(PanelEntity e) {
         if(isWithinRange(300,70,e)){
-            moveTowardsEntity(calculateAngle(e));
-        } else if(!isWithinRange(300,-1,e) && movement_internal_timer == 0){
+            moveAtAngle(calculateAngle(e));
+        } else if(!isWithinRange(300,-1,e) && movement_internal_cooldown == 0){
             roamRandom();
-        } else {
-            move();
         }
     }
-    public void moveTowardsEntity(double angle_radians){
 
-        deltaY = (int) Math.floor(Math.sin(angle_radians) * speed);
-        deltaX = (int) Math.floor(Math.cos(angle_radians) * speed);
-    }
     /*
     * This function will return false if the given PanelEntity is
     * too close or too far defined by outer_range and inner_range
@@ -102,19 +124,22 @@ public abstract class Enemy extends MapEntity {
     public void roamRandom(){
 
         double rand_angle = new Random().nextDouble(0.0, 3.14159 * 2) - 3.14159;
-        is_going_to_move = new Random().nextBoolean();
+        System.out.println(rand_angle);
+        int value = new Random().nextInt(1,4);
+        is_going_to_move = value == 3;
         if(is_going_to_move){
             System.out.println("I am about to move");
-            this.angle = rand_angle;
-
+            move(rand_angle);
+        } else {
+            deltaY = 0;
+            deltaX = 0;
         }
-        movement_internal_timer = new Random().nextInt(1,5);
+        System.out.println("Starting timer");
+        this.initiateMovementInternalTimer();
     }
-    public void move(){
-        if(is_going_to_move){
-            deltaY = (int) Math.floor(Math.sin(angle) * speed);
-            deltaX = (int) Math.floor(Math.cos(angle) * speed);
-        }
+    public void move(double angle){
+        deltaY = (int) Math.round(Math.sin(angle) * speed/2);
+        deltaX = (int) Math.round(Math.cos(angle) * speed/2);
     }
 
     //for enemies
@@ -123,64 +148,83 @@ public abstract class Enemy extends MapEntity {
     }
 
     @Override
-    public void display(Graphics g, CameraEntity cam) {
-        if (buffer != null) {
-            g.setFont(new Font("Consolas", Font.PLAIN, 30));
-            g.setColor(Color.BLACK);
-            g.drawString(String.format("%d", getHit_points()), x - cam.x, (y - cam.y) - 30);
-            g.drawImage(buffer, x - cam.x, y - cam.y, width, height, null);
-        } else {
-            g.drawRect(x - cam.x, y - cam.y, width, height);
-            System.err.println("[Warning: PanelEntity] Displaying without image/sprite attached");
+    public void onEntityCollision(PanelEntity e){
+        EntityCollidable.super.onEntityCollision(e);
+        if(e instanceof ProjectileEntity && ((ProjectileEntity) e).is_player_friendly){
+            setHit_points(((ProjectileEntity) e).dealDamage());
         }
+    }
+
+    @Override
+    public void display(Graphics g, CameraEntity cam) {
+        g.setFont(new Font("Consolas", Font.PLAIN, 30));
+        g.setColor(Color.BLACK);
+        g.drawString(String.format("%d", getHit_points()), x - cam.x, (y - cam.y) - 30);
+        super.display(g, cam);
     }
 
     // temporary enemies just reuse code - SET H
     public static class Brit extends Enemy {
         public Brit(int x, int y, int side, int key) {
-            super("Brit",100,  x, y, side, "Brit Temporary Enemy", key);
-            try {
-                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/bo_o_ov_wa_er.png"));
-            } catch (IOException e) {
-                System.out.println("Suck deez british nuts");
-            }
-
+            super("Brit",100,  x, y, side, "Brit Temporary Enemy", key, "sprites/enemy_sprites/bo_o_ov_wa_er.png");
         }
     }
 
     public static class Soviet extends Enemy {
         public Soviet(int x, int y, int side, int key) {
-            super("Soviet", 100, x, y, side, "Soviet Temporary Enemy", key);
-            try {
-                this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/our_enemy.png"));
-            } catch (IOException e) {
-                System.out.println("Suck deez soviet nuts");
-            }
+            super("Soviet", 100, x, y, side, "Soviet Temporary Enemy", key, "sprites/enemy_sprites/our_enemy.png");
         }
     }
 
     // Just change the names no idea what to name it lmao -Ervin
-    public static class MeleeMinion extends Enemy {
-        public MeleeMinion(String name,
+    public class Slime extends Enemy {
+        enum slimeType{
+            PYRO,
+            HYDRO,
+            GEO
+
+        }
+        slimeType slime_type;
+
+        public Slime(String name,
                 String enemy_type,
                 int hit_points,
                 int attack_stat,
                 float haste,
                 int defense_stat,
-                int id) {
+                int id, slimeType slime_type) {
             super("Minion Warrior", "melee", 10, 5, 3.0f, 10, 500);
+            this.slime_type = slime_type;
         }
     }
 
-    public static class RangedMinion extends Enemy {
-        public RangedMinion(String name,
-                String enemy_type,
-                int hit_points,
-                int attack_stat,
-                float haste,
-                int defense_stat,
-                int id) {
-            super("Minion Archer", "ranged", 5, 10, 5.0f, 5, 501);
+    public static class Virus extends Enemy {
+        List<ProjectileEntity> projectiles;
+        public Virus(int x, int y, int side, int key, List<ProjectileEntity> projectiles){
+            super("Virus", 100, x, y, side, "Ranged", key, "sprites/enemies/virus_left_F1.png");
+            this.projectiles = projectiles;
+
+        }
+
+
+        public void shoot_projectile(PanelEntity player){
+            if(attack_cooldown == 0){
+                System.out.println("Virus attacks");
+                ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,player);
+
+                projectiles.add(projectile);
+                System.out.println(projectiles);
+                initiateAttackTimer();
+            }
+        }
+
+        @Override
+        public void executeEnemyBehavior(PanelEntity e){
+            if(isWithinRange(400,100,e)){
+                shoot_projectile(e);
+            } else if(!isWithinRange(300,-1,e) && super.movement_internal_cooldown == 0){
+                roamRandom();
+            }
         }
     }
 

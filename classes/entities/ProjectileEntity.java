@@ -1,27 +1,68 @@
 package classes.entities;
 
+import interfaces.CollisionHandler;
+import interfaces.EntityCollidable;
+
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class ProjectileEntity extends PanelEntity{
+public abstract class ProjectileEntity extends PanelEntity implements CollisionHandler, EntityCollidable{
 	int speed;
 	double angle;
-	boolean is_player_friendly;
+	public boolean is_player_friendly, is_colliding = false;
+	int damage;
 
-	public ProjectileEntity(int x, int y, int width, int height, int speed, boolean is_player_friendly, double angle){
-		super(x, y, width, height);
+
+	public ProjectileEntity(int x, int y, int width, int height, int speed, boolean is_player_friendly, int damage, String spritePath){
+		super(x, y, width, height, spritePath);
 		this.speed = speed;
 		this.is_player_friendly = is_player_friendly;
-		this.angle = angle;
+		this.damage = damage;
 	}
+
+	public int dealDamage(){ return damage; }
+
+	@Override
+	public void onCollision(){
+		System.out.println("I Collided");
+		CollisionHandler.super.onCollision();
+		is_colliding = true;
+	}
+	@Override
+	public void onEntityCollision(PanelEntity e){
+		onCollision();
+	}
+	public boolean is_colliding(){
+		return is_colliding;
+	}
+
+	public abstract void executeProjectileBehavior();
+
 	public static class TemporaryBullet extends ProjectileEntity{
 		public TemporaryBullet(int x, int y, int mouse_location_x, int mouse_location_y){
-			super(x,y,5,5,10,true,0.0);
-			try{
-				this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/enemy_sprites/bo_o_ov_wa_er.png"));
-			}catch(IOException e){
-				System.out.println("Bullet Sprite Error!");
-			}
+			super(x,y,32,32,10,true,10, "sprites/projectile_entity/temp_bullet.png");
+			this.angle = calculateAngle(x,y,mouse_location_x,mouse_location_y);
+		}
+		public void executeProjectileBehavior(){
+			deltaY = (int) Math.round(Math.sin(angle) * speed);
+			deltaX = (int) Math.round(Math.cos(angle) * speed);
 		}
 	}
+	public static class VirusSpit extends ProjectileEntity{
+		public VirusSpit(int x, int y, PanelEntity player){
+			super(x, y, 32, 32, 10, false, 10, "sprites/projectile_entity/virus_projectile.png");
+			this.angle = calculateAngle(player);
+		}
+
+
+
+		@Override
+		public void executeProjectileBehavior(){
+			deltaY = (int) Math.round(Math.sin(angle) * speed);
+			deltaX = (int) Math.round(Math.cos(angle) * speed);
+		}
+	}
+
 }

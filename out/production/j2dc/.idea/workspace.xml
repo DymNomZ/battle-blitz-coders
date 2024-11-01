@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="020f069c-490c-4669-845d-3c108f12748b" name="Changes" comment="Collision Handler interface for solid collision callbacks" />
+    <list default="true" id="01f676a6-f13a-4d7e-84da-0de1407b0add" name="Changes" comment="A S S E T S">
+      <change afterPath="$PROJECT_DIR$/src/MouseHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/entities/Dummy_sus.java" beforeDir="false" afterPath="$PROJECT_DIR$/classes/entities/Dummy_sus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/entities/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/classes/entities/Enemy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/entities/PanelEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/classes/entities/PanelEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/entities/ProjectileEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/classes/entities/ProjectileEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/j2dc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/j2dc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MapConstructor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapConstructor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Panel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Panel.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,29 +24,30 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "CursedSensei"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;BreakfasteMeat&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/DymNomZ/j2dc.git",
-    "accountId": "b758c43f-7fe5-464d-8011-f3fe2ad6d4bd"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DymNomZ/j2dc.git&quot;,
+    &quot;accountId&quot;: &quot;e6552f1c-89f7-4d5e-b9ad-24552e11a0a3&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
-  <component name="ProjectId" id="2nkNZcPSFpAiel4ihdGOqUBXjDx" />
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2nmbQRQE4tuGRuYDEnen0XsCSCi" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -43,39 +55,93 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Run Game.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RunManager">
+    <configuration name="Run Game" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="src.Main" />
+      <module name="j2dc" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="020f069c-490c-4669-845d-3c108f12748b" name="Changes" comment="" />
-      <created>1729513171471</created>
+      <changelist id="01f676a6-f13a-4d7e-84da-0de1407b0add" name="Changes" comment="" />
+      <created>1729581183290</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1729513171471</updated>
+      <updated>1729581183290</updated>
     </task>
-    <task id="LOCAL-00001" summary="Collision Handler interface for solid collision callbacks">
+    <task id="LOCAL-00001" summary="Kind of random roam for enemies too far to see the player">
       <option name="closed" value="true" />
-      <created>1729531296594</created>
+      <created>1729651357319</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1729531296594</updated>
+      <updated>1729651357319</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Some Enemy methods transferred to Panel Entity">
+      <option name="closed" value="true" />
+      <created>1729912579745</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1729912579745</updated>
+    </task>
+    <task id="LOCAL-00003" summary="added a lot of floor tiles">
+      <option name="closed" value="true" />
+      <created>1729912614168</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1729912614168</updated>
+    </task>
+    <task id="LOCAL-00004" summary="A S S E T S">
+      <option name="closed" value="true" />
+      <created>1730113325032</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730113325032</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Collision Handler interface for solid collision callbacks" />
-    <option name="LAST_COMMIT_MESSAGE" value="Collision Handler interface for solid collision callbacks" />
+    <MESSAGE value="Kind of random roam for enemies too far to see the player" />
+    <MESSAGE value="Some Enemy methods transferred to Panel Entity" />
+    <MESSAGE value="added a lot of floor tiles" />
+    <MESSAGE value="A S S E T S" />
+    <option name="LAST_COMMIT_MESSAGE" value="A S S E T S" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.util.ConcurrentModificationException" package="java.util" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

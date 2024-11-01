@@ -1,28 +1,67 @@
 package classes.entities;
 
 import classes.items.Item;
+import classes.sprites.EntitySprite;
 import classes.sprites.GUISprites;
 import java.awt.Graphics;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
-import javax.imageio.ImageIO;
+import javax.swing.*;
+
+import classes.sprites.Sprite.AnimatedSprite;
+import interfaces.EntityCollidable;
 import src.KeyHandler;
 import src.Panel;
 
-public class Dummy_sus extends MapEntity{
+public class Dummy_sus extends MapEntity implements EntityCollidable{
 
 	private final KeyHandler inputs;
 	private Item hotbar_items[] = new Item[5];
 	int speed = 8, curr_slot = 0, selected_slot = 0, size = 0;
+	public int shooting_cooldown;
+	Timer shooting_cooldown_timer;
+
+	public void decrementShootingCooldown(int value){
+		shooting_cooldown -= value;
+		if(shooting_cooldown < 0) shooting_cooldown = 0;
+	}
+	public void initiateShootingCooldown(int cooldown){
+		shooting_cooldown = cooldown;
+		this.shooting_cooldown_timer = new Timer(10, new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println(shooting_cooldown);
+				decrementShootingCooldown(1);
+				if(shooting_cooldown == 0) shooting_cooldown_timer.stop();
+			}
+		});
+		shooting_cooldown_timer.start();
+	}
 
 	public Dummy_sus(int hit_points, int screenWidth, int screenHeight, int side, KeyHandler inputs){
-		super(hit_points, screenWidth, screenHeight, side - 30, side - 30);
+		super(hit_points, screenWidth, screenHeight, side + 150, side + 200);
 
-		try{
-			this.buffer = ImageIO.read(getClass().getResourceAsStream("../../assets/sprites/character_sprites/fidget_spinner.png"));
-		}catch(IOException e){
-			System.out.println("Suck deez nuts");
-		}
+		ArrayList<AnimatedSprite> entitySprites = new ArrayList<>();
+		String[] filenames = new String[3];
+
+		filenames[0] = "sprites/character_sprites/base sprites/zillion_1.png";
+		filenames[1] = "sprites/character_sprites/base sprites/zillion_2.png";
+		filenames[2] = "sprites/character_sprites/base sprites/zillion_alt_2.png";
+		entitySprites.add(new AnimatedSprite(2000000000, filenames));
+
+		filenames[0] = "sprites/character_sprites/zillion_left_F0.png";
+		filenames[1] = "sprites/character_sprites/zillion_left_F1.png";
+		filenames[2] = "sprites/character_sprites/zillion_left_F-1.png";
+		entitySprites.add(new AnimatedSprite(500000000, filenames));
+
+		filenames[0] = "sprites/character_sprites/zillion_right_F0.png";
+		filenames[1] = "sprites/character_sprites/zillion_right_F1.png";
+		filenames[2] = "sprites/character_sprites/zillion_right_F-1.png";
+		entitySprites.add(new AnimatedSprite(500000000, filenames));
+
+		buffer = new EntitySprite(entitySprites).cropSprite(5, 10,2,8);
 
 		this.x /= 2;
 		this.y /= 2;
@@ -70,7 +109,7 @@ public class Dummy_sus extends MapEntity{
 			}
 		} 
 
-		return new ItemEntity(item_entity_key, x, y, false);
+		return null;
 	}
 
 	//temp damage
@@ -135,7 +174,9 @@ public class Dummy_sus extends MapEntity{
 		//heheh - dymes
 		hotbarSlotHandler();
 
-		if(inputs.up_pressed == inputs.down_pressed) deltaY = 0;
+		if(inputs.up_pressed == inputs.down_pressed) {
+			deltaY = 0;
+		}
 		else if(inputs.up_pressed)
 			deltaY = -speed;
 		else if(inputs.down_pressed)
@@ -152,7 +193,18 @@ public class Dummy_sus extends MapEntity{
 		if (inputs.lShift_pressed) {
 			speed = 96;
 		} else {
-			speed = 8;
+			speed = 6;
+		}
+
+		EntitySprite sprite = (EntitySprite) buffer;
+		if (deltaY == 0 && deltaX == 0) {
+			sprite.setMoving(false);
+		} else {
+			if (deltaX > 0) {
+				sprite.setMoving(true).toRight();
+			} else if (deltaX < 0) {
+				sprite.setMoving(true).toLeft();
+			}
 		}
 	}
 }
