@@ -1,11 +1,10 @@
 package classes.entities;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.Sprite;
+import classes.sprites.EntitySprite;
 import interfaces.EntityCollidable;
-import src.Panel;
+import java.awt.Graphics;
+import src.GamePanel;
 
 /*  Super class for all entities
  *  This class differs from MapEntity by its JPanel specific methods and data
@@ -27,19 +26,20 @@ public abstract class PanelEntity {
     public int x, y, width, height;
     public int x_pos_center, y_pos_center;
     public int deltaX, deltaY;
-    public int key;
+    public long key;
     int speed;
     Sprite buffer;
+    public boolean is_colliding = false;
 
     public PanelEntity() {
         x = 0;
         y = 0;
-        width = Panel.TILE_SIZE;
-        height = Panel.TILE_SIZE;
+        width = GamePanel.TILE_SIZE;
+        height = GamePanel.TILE_SIZE;
         buffer = Sprite.load("default");
-    } // Added default kay muerror sa MapEntity -Ervin
+    }
 
-    public PanelEntity(int x, int y, int width, int height, int key) {
+    public PanelEntity(int x, int y, int width, int height, long key) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -48,7 +48,7 @@ public abstract class PanelEntity {
         this.buffer = Sprite.load("default");
     }
 
-    public PanelEntity(int x, int y, int width, int height, int key, String spritePath) {
+    public PanelEntity(int x, int y, int width, int height, long key, String spritePath) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -57,7 +57,7 @@ public abstract class PanelEntity {
         this.buffer = Sprite.load(spritePath);
     }
 
-    public PanelEntity(int x, int y, int width, int height, int key, Sprite sprite) {
+    public PanelEntity(int x, int y, int width, int height, long key, Sprite sprite) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -99,11 +99,11 @@ public abstract class PanelEntity {
     }
 
     //for item entity
-    public PanelEntity(int x, int y, int key){
+    public PanelEntity(int x, int y, long key){
         this.x = x;
         this.y = y;
-        this.width = Panel.TILE_SIZE;
-        this.height = Panel.TILE_SIZE;
+        this.width = GamePanel.TILE_SIZE;
+        this.height = GamePanel.TILE_SIZE;
         this.key = key;
         this.buffer = Sprite.load("default");
     }
@@ -112,8 +112,8 @@ public abstract class PanelEntity {
     public PanelEntity(int x, int y, String spritePath){
         this.x = x;
         this.y = y;
-        this.width = Panel.TILE_SIZE;
-        this.height = Panel.TILE_SIZE;
+        this.width = GamePanel.TILE_SIZE;
+        this.height = GamePanel.TILE_SIZE;
         this.buffer = Sprite.load(spritePath);
     }
 
@@ -121,8 +121,8 @@ public abstract class PanelEntity {
     public PanelEntity(int x, int y, Sprite sprite){
         this.x = x;
         this.y = y;
-        this.width = Panel.TILE_SIZE;
-        this.height = Panel.TILE_SIZE;
+        this.width = GamePanel.TILE_SIZE;
+        this.height = GamePanel.TILE_SIZE;
         this.buffer = sprite;
     }
 
@@ -134,6 +134,14 @@ public abstract class PanelEntity {
         x_pos_center = x + (width / 2);
         y_pos_center = y + (height / 2);
     }
+    public int getTileXPosition(){
+        System.out.println(x + " divided by " + GamePanel.TILE_SIZE + " is equal to " + x / (GamePanel.TILE_SIZE));
+        return x / (GamePanel.TILE_SIZE);
+    }
+    public int getTileYPosition(){
+        System.out.println(y + " divided by " + GamePanel.TILE_SIZE + " is equal to " + x / (GamePanel.TILE_SIZE));
+        return y / (GamePanel.TILE_SIZE);
+    }
 
     // move like a sigma male, disregarding all bondaries of this world
     public void moveAbsolute(int x, int y) {
@@ -142,22 +150,27 @@ public abstract class PanelEntity {
     }
 
     public void display(Graphics g, CameraEntity cam) {
-        g.drawImage(buffer.getSprite(), x - cam.x, y - cam.y, width, height, null);
+        buffer.display(g, x - cam.x, y - cam.y, width, height);
+    }
+
+    //for character selection screen
+    public void display(Graphics g) {
+        buffer.display(g, x, y, width, height);
     }
 
     //temp touching function, ikik this guy will be deprecated soon XD - Dymes
     //used in temporary attacking
     public boolean checkIfTouching(MapEntity d1){
         
-        int dx = d1.x - Panel.TILE_SIZE;
-        int dy = d1.y - Panel.TILE_SIZE;
-        int dx2 = d1.x + (Panel.TILE_SIZE * 2);
-        int dy2 = d1.y + (Panel.TILE_SIZE * 2);
+        int dx = d1.x - GamePanel.TILE_SIZE;
+        int dy = d1.y - GamePanel.TILE_SIZE;
+        int dx2 = d1.x + (GamePanel.TILE_SIZE * 2);
+        int dy2 = d1.y + (GamePanel.TILE_SIZE * 2);
 
-        int x1 = x - Panel.TILE_SIZE;
-        int y1 = y - Panel.TILE_SIZE;
-        int x2 = x + (Panel.TILE_SIZE * 2);
-        int y2 = y + (Panel.TILE_SIZE) * 2;
+        int x1 = x - GamePanel.TILE_SIZE;
+        int y1 = y - GamePanel.TILE_SIZE;
+        int x2 = x + (GamePanel.TILE_SIZE * 2);
+        int y2 = y + (GamePanel.TILE_SIZE) * 2;
         
         return !(dy > y2 || y1 > dy2) && !(dx > x2 || x1 > dx2);
 
@@ -166,7 +179,9 @@ public abstract class PanelEntity {
     * Mainly handles the EntityCollidable interface with the passed panel entity
     * - Set h
     * */
-    public void checkEntityCollision(PanelEntity other){
+    public boolean checkEntityCollision(PanelEntity other){
+        boolean is_colliding = false;
+
         int this_left_boundary = this.x;
         int this_top_boundary = this.y;
         int this_right_boundary = this.x + this.width;
@@ -219,13 +234,12 @@ public abstract class PanelEntity {
                 ((EntityCollidable) other).onEntityTopCollision(this);
             }
             if(left_is_colliding || bottom_is_colliding || top_is_colliding || right_is_colliding){
+                is_colliding = true;
 	            ((EntityCollidable) this).onEntityCollision(other);
                 ((EntityCollidable) other).onEntityCollision(this);
             }
         }
-
-
-
+        return is_colliding;
     }
 
 
@@ -259,8 +273,10 @@ public abstract class PanelEntity {
         double y_diff = e.y - y;
         double angle_radians = (Math.atan2(y_diff, x_diff));
 
+
         return angle_radians;
     }
+
     public double calculateAngle(int x, int y, int x2, int y2){
         double x_diff = x2 - x;
         double y_diff = y2 - y;
@@ -270,9 +286,22 @@ public abstract class PanelEntity {
     }
 
     public void moveAtAngle(double angle_radians){
-
         deltaY = (int) Math.round(Math.sin(angle_radians) * speed);
         deltaX = (int) Math.round(Math.cos(angle_radians) * speed);
+    }
+
+    public void checkEntitySprites(){
+        EntitySprite sprite = (EntitySprite) buffer;
+        if (deltaY == 0 && deltaX == 0) {
+            sprite.setMoving(false);
+        } else {
+            sprite.setMoving(true);
+            if (deltaX > 0) {
+                sprite.toRight();
+            } else if (deltaX < 0) {
+                sprite.toLeft();
+            }
+        }
     }
 
 

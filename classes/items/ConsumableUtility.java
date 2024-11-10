@@ -1,9 +1,7 @@
 package classes.items;
 
-import java.awt.image.BufferedImage;
-
 import classes.sprites.ItemSprites;
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.Sprite;
 
 public class ConsumableUtility extends Consumable {
 
@@ -20,7 +18,6 @@ public class ConsumableUtility extends Consumable {
 	 * just use interfaces - Set H
 	 */
 
-	// Mah g oks ra ba same id? Ang melee weapon ids kay gastart sa 300 -Ervin
 	public static class EnergyDrink extends ConsumableUtility // implements statBuffer??
 	{
 		public EnergyDrink(int quantity) {

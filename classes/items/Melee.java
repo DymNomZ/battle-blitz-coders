@@ -1,10 +1,8 @@
 package classes.items;
 
-// I made a separate melee class for melee weapons, if unnecessary u can merge it- Ervin
 import classes.sprites.ItemSprites;
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.Sprite;
 
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Melee extends Weapons {

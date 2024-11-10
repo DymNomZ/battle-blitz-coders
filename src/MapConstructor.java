@@ -123,16 +123,25 @@ public class MapConstructor {
          * 
          */
 
-        int maxSpeedPerLoop = Panel.TILE_SIZE;
+        int maxSpeedPerLoop = GamePanel.TILE_SIZE;
         if (deltaPosition < 0) {
             maxSpeedPerLoop *= -1;
         }
-        int maxPixelOnMap = (isXDimension ? map_length : map_height) * Panel.TILE_SIZE;
-        int offPixelOnTile = Panel.TILE_SIZE - (size % Panel.TILE_SIZE == 0 ? size : size % Panel.TILE_SIZE);
+        int maxPixelOnMap = (isXDimension ? map_length : map_height) * GamePanel.TILE_SIZE;
+        int offPixelOnTile = GamePanel.TILE_SIZE;
+        if (size % GamePanel.TILE_SIZE == 0) {
+            if (size > GamePanel.TILE_SIZE) {
+                offPixelOnTile -= GamePanel.TILE_SIZE;
+            } else {
+                offPixelOnTile -= size;
+            }
+        } else {
+            offPixelOnTile -= size % GamePanel.TILE_SIZE;
+        }
 
-        int oppositeOffTile = oppositeSize % Panel.TILE_SIZE;
-        boolean isBetween = oppositePosition % Panel.TILE_SIZE > (oppositeOffTile == 0 ? 0 : Panel.TILE_SIZE - oppositeOffTile);
-        int loopN = oppositeSize / Panel.TILE_SIZE;
+        int oppositeOffTile = oppositeSize % GamePanel.TILE_SIZE;
+        boolean isBetween = oppositePosition % GamePanel.TILE_SIZE > (oppositeOffTile == 0 ? 0 : GamePanel.TILE_SIZE - oppositeOffTile);
+        int loopN = oppositeSize / GamePanel.TILE_SIZE;
         if (oppositeOffTile > 0) loopN++;
         if (isBetween) loopN++;
 
@@ -142,10 +151,10 @@ public class MapConstructor {
         int nextOffYTile = 0;
 
         if (isXDimension) {
-            initOffYTile = oppositePosition / Panel.TILE_SIZE;
+            initOffYTile = oppositePosition / GamePanel.TILE_SIZE;
             nextOffYTile = 1;
         } else {
-            initOffXTile = oppositePosition / Panel.TILE_SIZE;
+            initOffXTile = oppositePosition / GamePanel.TILE_SIZE;
             nextOffXTile = 1;
         }
 
@@ -156,7 +165,7 @@ public class MapConstructor {
             }
             deltaPosition -= deltaTemp;
 
-            int pixelsOnTile = position % Panel.TILE_SIZE;
+            int pixelsOnTile = position % GamePanel.TILE_SIZE;
             int offTile = pixelsOnTile + deltaTemp;
 
             if (position + deltaTemp < 0) {
@@ -165,7 +174,7 @@ public class MapConstructor {
             } else if (position + size + deltaTemp >= maxPixelOnMap) {
                 position = maxPixelOnMap - size;
                 deltaPosition = 0;
-            } else if (offTile >= 0 && ((pixelsOnTile < offPixelOnTile && offTile <= offPixelOnTile) || (pixelsOnTile > offPixelOnTile && offTile <= Panel.TILE_SIZE + offPixelOnTile))) {
+            } else if (offTile >= 0 && ((pixelsOnTile < offPixelOnTile && offTile <= offPixelOnTile) || (pixelsOnTile > offPixelOnTile && offTile <= GamePanel.TILE_SIZE + offPixelOnTile))) {
                 position += deltaTemp;
             } else {
                 int offXTile = initOffXTile;
@@ -173,15 +182,15 @@ public class MapConstructor {
 
                 if (offTile >= 0) {
                     if (isXDimension) {
-                        offXTile = (position + deltaTemp + size) / Panel.TILE_SIZE;
+                        offXTile = (position + deltaTemp + size) / GamePanel.TILE_SIZE;
                     } else {
-                        offYTile = (position + deltaTemp + size) / Panel.TILE_SIZE;
+                        offYTile = (position + deltaTemp + size) / GamePanel.TILE_SIZE;
                     }
                 } else {
                     if (isXDimension) {
-                        offXTile = (position + deltaTemp) / Panel.TILE_SIZE;
+                        offXTile = (position + deltaTemp) / GamePanel.TILE_SIZE;
                     } else {
-                        offYTile = (position + deltaTemp) / Panel.TILE_SIZE;
+                        offYTile = (position + deltaTemp) / GamePanel.TILE_SIZE;
                     }
                 }
 
@@ -195,7 +204,7 @@ public class MapConstructor {
                             if (pixelsOnTile == offPixelOnTile) {
                                 position -= deltaTemp;
                             } else if (pixelsOnTile > offPixelOnTile) {
-                                position -= offTile - offPixelOnTile - Panel.TILE_SIZE;
+                                position -= offTile - offPixelOnTile - GamePanel.TILE_SIZE;
                             } else {
                                 position -= offTile - offPixelOnTile;
                             }
@@ -252,19 +261,19 @@ public class MapConstructor {
     // Note: x and y not centered
     public void view(int x, int y) {
         camera.x = Math.max(x, 0);
-        camera.x = Math.min(camera.x, (map_length * Panel.TILE_SIZE) - camera.width);
+        camera.x = Math.min(camera.x, (map_length * GamePanel.TILE_SIZE) - camera.width);
 
         camera.y = Math.max(y, 0);
-        camera.y = Math.min(camera.y, (map_height * Panel.TILE_SIZE) - camera.height);
+        camera.y = Math.min(camera.y, (map_height * GamePanel.TILE_SIZE) - camera.height);
     }
 
     // Note: center to entity
     public void view(PanelEntity e) {
         camera.x = Math.max(0, e.x - ((camera.width / 2) - (e.width / 2) - 2));
-        camera.x = Math.min(camera.x, (map_length * Panel.TILE_SIZE) - camera.width);
+        camera.x = Math.min(camera.x, (map_length * GamePanel.TILE_SIZE) - camera.width);
     
         camera.y = Math.max(0, e.y - ((camera.height / 2) - (e.height / 2)));
-        camera.y = Math.min(camera.y, (map_height * Panel.TILE_SIZE) - camera.height);
+        camera.y = Math.min(camera.y, (map_height * GamePanel.TILE_SIZE) - camera.height);
     }
 
     public void displayEntity(PanelEntity e, Graphics g) {
@@ -276,20 +285,39 @@ public class MapConstructor {
     }
 
     public void displayTiles(Graphics g) {
-        int leftStart = Math.max((camera.x / Panel.TILE_SIZE) - 1, 0);
-        int topStart = Math.max((camera.y / Panel.TILE_SIZE) - 1, 0);
-        int rightEnd = Math.min(((camera.x + camera.width) / Panel.TILE_SIZE) + 1, map_length);
-        int bottomEnd = Math.min(((camera.y + camera.height) / Panel.TILE_SIZE) + 1, map_height);
+        int leftStart = Math.max((camera.x / GamePanel.TILE_SIZE) - 1, 0);
+        int topStart = Math.max((camera.y / GamePanel.TILE_SIZE) - 1, 0);
+        int rightEnd = Math.min(((camera.x + camera.width) / GamePanel.TILE_SIZE) + 1, map_length);
+        int bottomEnd = Math.min(((camera.y + camera.height) / GamePanel.TILE_SIZE) + 1, map_height);
 
         while (topStart < bottomEnd) {
             for (int i = leftStart; i < rightEnd; i++) {
-                int tileX = (i * Panel.TILE_SIZE) - camera.x;
-                int tileY = (topStart * Panel.TILE_SIZE) - camera.y;
+                int tileX = (i * GamePanel.TILE_SIZE) - camera.x;
+                int tileY = (topStart * GamePanel.TILE_SIZE) - camera.y;
 
-                g.drawImage(tiles[topStart][i].image, tileX, tileY, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
+                if(PlayerData.kill_count >= 10) handleDoors(topStart, i);
+
+                tiles[topStart][i].image.display(g, tileX, tileY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
             }
             topStart++;
         }
+    }
+
+    //door system
+    private void handleDoors(int j, int i){
+        //TODO add index of map doors to specify
+        if(tiles[j][i].getName().equals("stone_wall_door_left_closed.png")){
+            replaceTile(j, i, "map_tiles/stone_wall_door_left_open.png", false, false);
+        }
+        if(tiles[j][i].getName().equals("stone_wall_door_right_closed.png")){
+            replaceTile(j, i, "map_tiles/stone_wall_door_right_open.png", false, false);
+        }
+    }
+
+    private void replaceTile(int j, int i, String path, boolean solid_state, boolean animated_state){
+        tiles[j][i].setSprite(path);
+        tiles[j][i].is_solid = solid_state;
+        tiles[j][i].is_animated = animated_state;
     }
 
     @Deprecated
@@ -320,7 +348,7 @@ public class MapConstructor {
                         screen_y = tile_y - d.y_pos + d.screen_y; 
 
                         g.drawImage(
-                            tiles[map_tile_row][map_tile_col].image, 
+                            tiles[map_tile_row][map_tile_col].getSprite(),
                             screen_x, 
                             screen_y, 
                             TILE_SIZE, TILE_SIZE, 
@@ -338,7 +366,7 @@ public class MapConstructor {
                     screen_x = tile_x - recent_x + d.screen_x;    
                     screen_y = tile_y - recent_y + d.screen_y; 
                     g.drawImage(
-                        tiles[map_tile_row][map_tile_col].image, 
+                        tiles[map_tile_row][map_tile_col].getSprite(),
                         screen_x, 
                         screen_y, 
                         TILE_SIZE, TILE_SIZE, 

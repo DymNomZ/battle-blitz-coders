@@ -1,11 +1,8 @@
 package classes.items;
 
-// Anotha wan for weapons -Ervin
-
 import classes.sprites.ItemSprites;
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.Sprite;
 
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Ranged extends Weapons {

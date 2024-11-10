@@ -1,59 +1,25 @@
 package classes.entities;
 
+import classes.map.Tile;
+import classes.sprites.EnemySprite;
+import interfaces.CollisionHandler;
 import interfaces.EntityCollidable;
-
-import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import src.GamePanel;
 
-public abstract class Enemy extends MapEntity implements EntityCollidable{
+public abstract class Enemy extends MapEntity implements EntityCollidable, CollisionHandler{
     // to implement shi
-    private final String enemy_type; // For melee, ranged, boss types -Ervin
+    private final String enemy_type;
 
     //maybe temporary timer var kay idk a better way HAHAHAHAH - Set H
     private int movement_internal_cooldown = 0;
-    private Timer movement_internal_timer;
-    boolean is_going_to_move = false;
-    public boolean isGoingToMove(){
-        return is_going_to_move;
-    }
-    public int getMovement_internal_cooldown(){
-        return movement_internal_cooldown;
-    }
-    public void decrementMovementInternalTimer(int value){
-        movement_internal_cooldown -= value;
-    }
-    public void initiateMovementInternalTimer(){
-        this.movement_internal_cooldown = new Random().nextInt(50,100);
-        System.out.println(movement_internal_cooldown);
-        this.movement_internal_timer = new Timer(10, e -> {
-            //System.out.println(movement_internal_cooldown);
-            decrementMovementInternalTimer(1);
-            if(movement_internal_cooldown == 0) movement_internal_timer.stop();
-        });
-        movement_internal_timer.start();
-    }
-
     protected int attack_cooldown = 0;
-    private Timer attack_timer;
-    public void decrementAttackCooldown(int value){
-        this.attack_cooldown -= value;
-    }
-    public void initiateAttackTimer(){
-        this.attack_cooldown = 100;
-        this.attack_timer = new Timer(10, e -> {
-            decrementAttackCooldown(1);
-            if(attack_cooldown == 0) attack_timer.stop();
-        });
-        attack_timer.start();
-    }
-
-
+    protected final int attack_cooldown_max = 180;
+    public boolean is_attacking = false;
+    boolean is_going_to_move = false;
 
     public Enemy(String name,
             String enemy_type,
@@ -61,41 +27,83 @@ public abstract class Enemy extends MapEntity implements EntityCollidable{
             int attack_stat,
             float haste,
             int defense_stat,
-            int id) {
-        super(name, hit_points, attack_stat, haste, defense_stat, id); // Murag di man needed ang haste stat sa enemy
-                                                                       // guro? -Ervin
+            long id) {
+        super(name, hit_points, attack_stat, haste, defense_stat, id);
         this.enemy_type = enemy_type;
     }
 
     //hit point test - dym
-    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, int key, String spritePath) {
+    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, long key, String spritePath) {
         super(name, hit_points, x, y, side, key, spritePath);
         this.enemy_type = enemy_type;
         this.speed = 2;
     }
+    public Enemy(String name, int speed, int hit_points, int x, int y, int side, String enemy_type, long key) {
+        super(name, hit_points, x, y, side, key);
+        this.enemy_type = enemy_type;
+        this.speed = speed;
+    }
+    public Enemy(String name, int hit_points, Tile tile,int tile_x, int tile_y, int side, String enemy_type, long key){
+        super(name, hit_points, tile_x * GamePanel.TILE_SIZE, tile_y * GamePanel.TILE_SIZE, side, key);
+        if(tile.is_solid)is_colliding = true;
+        this.enemy_type = enemy_type;
+        this.speed = 2;
+    }
 
-    public Enemy(String name, int x, int y, int side, String enemy_type, int key, String spritePath) {
+    public Enemy(String name, int x, int y, int side, String enemy_type, long key, String spritePath) {
         super(name, x, y, side, key, spritePath);
         this.enemy_type = enemy_type;
         this.speed = 2;
     }
 
+    public boolean isGoingToMove(){
+        return is_going_to_move;
+    }
+
+    public int getMovement_internal_cooldown(){
+        return movement_internal_cooldown;
+    }
+
+    public void decrementCooldowns(int value){
+        movement_internal_cooldown -= value;
+        if(movement_internal_cooldown < 0)movement_internal_cooldown = 0;
+
+        attack_cooldown -= value;
+        if(attack_cooldown < 0){
+            attack_cooldown = 0;
+            is_attacking = false;
+        }
+    }
+
+    public enum EnemySpecies{
+        VIRUS, SLIME
+    }
+
+    public void initiateMovementInternalTimer(){
+        this.movement_internal_cooldown = new Random().nextInt(60,180);
+    }
+
+    public void initiateAttackTimer(){
+        is_attacking = true;
+        this.attack_cooldown = 100;
+    }
+
+    @Override
+    public void onCollision(){
+        this.is_colliding = true;
+    }
+
     public String getEnemyType() {
-        return enemy_type; // this might be useful like boss fights like naay minions tapos iboost specific
-                           // minions -Ervin
+        return enemy_type;
     }
 
     public int getSpeed() {
         return this.speed;
     }
 
-    // Speedster enemy soon?!?!?! -Ervin
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-
-
-
 
     /*
      * Will make this entity move towards a given PanelEntity.
@@ -121,22 +129,23 @@ public abstract class Enemy extends MapEntity implements EntityCollidable{
     public boolean isWithinRange(int outer_range, int inner_range, PanelEntity e){
         return this.calculateDistance(e) < outer_range && this.calculateDistance(e) > inner_range;
     }
+
     public void roamRandom(){
 
         double rand_angle = new Random().nextDouble(0.0, 3.14159 * 2) - 3.14159;
         System.out.println(rand_angle);
         int value = new Random().nextInt(1,4);
-        is_going_to_move = value == 3;
+        is_going_to_move = (value == 3);
         if(is_going_to_move){
-            System.out.println("I am about to move");
+            System.out.println("MOVE");
             move(rand_angle);
         } else {
             deltaY = 0;
             deltaX = 0;
         }
-        System.out.println("Starting timer");
         this.initiateMovementInternalTimer();
     }
+
     public void move(double angle){
         deltaY = (int) Math.round(Math.sin(angle) * speed/2);
         deltaX = (int) Math.round(Math.cos(angle) * speed/2);
@@ -144,14 +153,14 @@ public abstract class Enemy extends MapEntity implements EntityCollidable{
 
     //for enemies
     public int attack(){
-        return 10;
+        return 5;
     }
 
     @Override
     public void onEntityCollision(PanelEntity e){
         EntityCollidable.super.onEntityCollision(e);
         if(e instanceof ProjectileEntity && ((ProjectileEntity) e).is_player_friendly){
-            setHit_points(((ProjectileEntity) e).dealDamage());
+            damage(((ProjectileEntity) e).dealDamage());
         }
     }
 
@@ -159,76 +168,97 @@ public abstract class Enemy extends MapEntity implements EntityCollidable{
     public void display(Graphics g, CameraEntity cam) {
         g.setFont(new Font("Consolas", Font.PLAIN, 30));
         g.setColor(Color.BLACK);
-        g.drawString(String.format("%d", getHit_points()), x - cam.x, (y - cam.y) - 30);
+//        g.drawString(String.format("%d", getHit_points()), x - cam.x, (y - cam.y) - 30);
         super.display(g, cam);
     }
 
-    // temporary enemies just reuse code - SET H
-    public static class Brit extends Enemy {
-        public Brit(int x, int y, int side, int key) {
-            super("Brit",100,  x, y, side, "Brit Temporary Enemy", key, "sprites/enemy_sprites/bo_o_ov_wa_er.png");
+    public static class Slime extends Enemy {
+
+        public Slime(int x, int y, int side, long key){
+            super("Slime",1 , 50, x, y, side, "Melee",key);
+            buffer = EnemyHandler.SLIME();
         }
-    }
-
-    public static class Soviet extends Enemy {
-        public Soviet(int x, int y, int side, int key) {
-            super("Soviet", 100, x, y, side, "Soviet Temporary Enemy", key, "sprites/enemy_sprites/our_enemy.png");
+        
+        @Override
+        public void executeEnemyBehavior(PanelEntity e) {
+            if(isWithinRange(70,-1,e)){
+                deltaX = 0;
+                deltaY = 0;
+            } else if(isWithinRange(300,70,e)){
+                moveAtAngle(calculateAngle(e));
+            } else if(!isWithinRange(300,-1,e) && super.movement_internal_cooldown == 0){
+                roamRandom();
+            }
+            checkEntitySprites();
         }
-    }
 
-    // Just change the names no idea what to name it lmao -Ervin
-    public class Slime extends Enemy {
-        enum slimeType{
-            PYRO,
-            HYDRO,
-            GEO
-
-        }
-        slimeType slime_type;
-
-        public Slime(String name,
-                String enemy_type,
-                int hit_points,
-                int attack_stat,
-                float haste,
-                int defense_stat,
-                int id, slimeType slime_type) {
-            super("Minion Warrior", "melee", 10, 5, 3.0f, 10, 500);
-            this.slime_type = slime_type;
+        @Override
+        public void checkEntitySprites(){
+            EnemySprite sprite = (EnemySprite) buffer;
+            super.checkEntitySprites();
+            if(is_attacking){
+                sprite.setAttacking(true);
+            } else {
+                sprite.setAttacking(false);
+            }
         }
     }
 
     public static class Virus extends Enemy {
         List<ProjectileEntity> projectiles;
-        public Virus(int x, int y, int side, int key, List<ProjectileEntity> projectiles){
-            super("Virus", 100, x, y, side, "Ranged", key, "sprites/enemies/virus_left_F1.png");
+        public Virus(int x, int y, int side, long key, List<ProjectileEntity> projectiles){
+            super("Virus", 2, 100, x, y, side, "Ranged", key);
             this.projectiles = projectiles;
-
+            buffer = EnemyHandler.VIRUS();
         }
 
-
         public void shoot_projectile(PanelEntity player){
-            if(attack_cooldown == 0){
-                System.out.println("Virus attacks");
+
+            if(attack_cooldown == attack_cooldown_max - 50){
+
                 ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,player);
 
                 projectiles.add(projectile);
-                System.out.println(projectiles);
+            }
+            if(attack_cooldown == 0){
+
                 initiateAttackTimer();
             }
+
+        }
+
+        @Override
+        public void initiateAttackTimer(){
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    is_attacking = false; // Stops the timer after the task is executed
+                }
+            }, 500);
+
+            is_attacking = true;
+            this.attack_cooldown = attack_cooldown_max;
         }
 
         @Override
         public void executeEnemyBehavior(PanelEntity e){
-            if(isWithinRange(400,100,e)){
+
+            if(isWithinRange(200,100,e)){
                 shoot_projectile(e);
-            } else if(!isWithinRange(300,-1,e) && super.movement_internal_cooldown == 0){
+                deltaX = 0;
+                deltaY = 0;
+            } else if(isWithinRange(300,200,e)){
+                moveAtAngle(calculateAngle(e));
+            } else if(isWithinRange(1000,300,e) && super.movement_internal_cooldown == 0){
+                System.out.println("Roam Randomly");
                 roamRandom();
             }
+            checkEntitySprites();
         }
+
     }
 
-    // idk if needed ni pero I just put this just in case -Ervin
     public static class Boss extends Enemy {
         // sample
         public Boss(String name,

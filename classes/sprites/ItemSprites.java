@@ -1,9 +1,6 @@
 package classes.sprites;
 
-import classes.sprites.Sprite.Sprite;
-
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import classes.Asset.Sprite.Sprite;
 
 public class ItemSprites { 
 

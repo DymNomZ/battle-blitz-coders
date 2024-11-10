@@ -1,6 +1,6 @@
 package src;
+import classes.GUI.General;
 import javax.swing.*;
-import java.awt.event.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,33 +9,15 @@ public class Main {
 
         main_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         main_window.setResizable(false);
-        main_window.setTitle("2D Game Title");
+        main_window.setTitle("Battle Blitz Coders Demo");
 
-        Panel main_panel = new Panel();
-        main_panel.setLayout(null);
-        String instruction = """
-                W A S D - Movement Controls
-                Shift - Increase Movement Speed
-                N - Spawn Random Enemy
-                H - Kill Enemy within range (+- TILE_SIZE[64])
-                P - Debug Print Hotbar Items
-                Q - Drop Item
-                F - Interact with NPC
-                1-5 Hotbar Slots
-            """;
-        JTextArea controls_display;
-        controls_display = new JTextArea(instruction,3,3);
-            
-        controls_display.setBounds(10, 10, 300, 150);
-        controls_display.setEditable(false);
-        main_panel.add(controls_display);
+        General.Panels.MAIN.add(General.Panels.HOME, 0);
 
+        main_window.add(General.Panels.MAIN);
 
-        main_window.add(main_panel);
         main_window.pack();
         main_window.setLocationRelativeTo(null);
         main_window.setVisible(true);
         
-        main_panel.start_main_thread();
     }
 }

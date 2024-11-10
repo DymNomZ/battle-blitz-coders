@@ -3,8 +3,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import src.GamePanel;
 import src.KeyHandler;
-import src.Panel;
 @Deprecated
 public class Dummy {
     final public int MAX_X;
@@ -164,7 +164,7 @@ public class Dummy {
         this.delta_x = 0;
     }
 
-    public void calculateNextPosition(KeyHandler inputs, Panel pan){
+    public void calculateNextPosition(KeyHandler inputs, GamePanel pan){
         //check which key is pressed and add/subtract the corresponding value
         //System.out.println("x,y_pos: " + x_pos + ", " + y_pos + " screen_x,y" + screen_x + ", " + screen_y);
 

@@ -1,9 +1,11 @@
 package classes.sprites;
 
-import classes.sprites.Sprite.AnimatedSprite;
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.AnimatedSprite;
+import classes.Asset.Sprite.Sprite;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntitySprite extends Sprite {
@@ -11,28 +13,38 @@ public class EntitySprite extends Sprite {
     public static final int DEFAULT_MOVING_LEFT = 1;
     public static final int DEFAULT_MOVING_RIGHT = 2;
 
-    private boolean is_right = false;
-    private final List<AnimatedSprite> sprites;
-    private int state = DEFAULT_IDLE;
-    private boolean isMoving;
+    protected boolean is_right = false;
+    protected final ArrayList<AnimatedSprite> sprites = new ArrayList<>();
+    protected int state = DEFAULT_IDLE;
+    protected boolean isMoving;
 
     public EntitySprite(List<AnimatedSprite> sprites) {
-        this.sprites = sprites;
+        this.sprites.addAll(sprites);
     }
 
     public EntitySprite toLeft() {
-        is_right = false;
+        if (is_right) {
+            sprites.get(DEFAULT_IDLE).invert();
+            is_right = false;
+        }
         return this;
     }
 
     public EntitySprite toRight() {
-        is_right = true;
+        if (!is_right) {
+            sprites.get(DEFAULT_IDLE).invert();
+            is_right = true;
+        }
         return this;
     }
 
     public EntitySprite setMoving(boolean isMoving) {
         this.isMoving = isMoving;
         return this;
+    }
+
+    public AnimatedSprite get(int state) {
+        return sprites.get(state);
     }
 
     @Override
@@ -44,7 +56,22 @@ public class EntitySprite extends Sprite {
     }
 
     @Override
-    public BufferedImage getSprite() {
+    public EntitySprite cropSpriteRelative(int top, int right, int bottom, int left) {
+        for (AnimatedSprite s : sprites) {
+            s.cropSpriteRelative(top, right, bottom, left);
+        }
+        return this;
+    }
+
+    @Override
+    public EntitySprite invert() {
+        for (AnimatedSprite s : sprites) {
+            s.invert();
+        }
+        return this;
+    }
+
+    protected int getState() {
         if (isMoving) {
             if (state == DEFAULT_IDLE || (is_right && state == DEFAULT_MOVING_LEFT) || (!is_right && state == DEFAULT_MOVING_RIGHT)) {
                 sprites.get(state).reset();
@@ -55,6 +82,17 @@ public class EntitySprite extends Sprite {
             state = DEFAULT_IDLE;
         }
 
-        return sprites.get(state).getSprite();
+        return state;
+    }
+
+    @Override
+    public BufferedImage getSprite() {
+        return sprites.get(getState()).getSprite();
+    }
+
+    @Override
+    public EntitySprite display(Graphics g, int x, int y, int width, int height) {
+        sprites.get(getState()).display(g, x, y, width, height);
+        return this;
     }
 }

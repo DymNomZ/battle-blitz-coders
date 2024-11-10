@@ -1,13 +1,13 @@
 package src;
 
 import classes.map.Tile;
-import java.awt.image.BufferedImage;
+import classes.Asset.Sprite.Sprite;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.imageio.ImageIO;
 
 public class MapLoader {
 
@@ -88,25 +88,16 @@ public class MapLoader {
 
     public Tile readImage(ZipFile zip, ZipEntry image, int[][] tile_data_indexes, int curr_idx){
 
-        InputStream image_data_stream;
-        BufferedImage tile_image = null;
-        String tile_name = image.getName().substring(image.getName().lastIndexOf("$")+1, image.getName().lastIndexOf('.'));
+        Sprite tile_image;
+        String tile_name = image.getName().substring(image.getName().lastIndexOf("$")+1);
 
-        try {
-            image_data_stream = zip.getInputStream(image);
-            tile_image = ImageIO.read(image_data_stream);
-            image_data_stream.close();
-
-        } catch (IOException ex) {
-            System.out.println("Error reading image");
-        }
+        tile_image = Sprite.load("map_tiles/" + tile_name);
 
         int tile_index = tile_data_indexes[curr_idx][0];
         boolean solid_state = tile_data_indexes[curr_idx][1] == 1;
         boolean animated_state = tile_data_indexes[curr_idx][2] == 1;
 
         return new Tile(tile_image, tile_name, tile_index, solid_state, animated_state);
-
     }
 
     public void readTile_data(ZipFile zip, ZipEntry tile_data){

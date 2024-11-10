@@ -1,6 +1,6 @@
 package classes.items;
 
-import classes.sprites.Sprite.Sprite;
+import classes.Asset.Sprite.Sprite;
 
 public abstract class Consumable extends Item 
 {

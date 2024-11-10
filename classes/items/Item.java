@@ -1,23 +1,14 @@
 package classes.items;
 
+import classes.Asset.Sprite.Sprite;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import classes.sprites.Sprite.Sprite;
-import src.Panel;
+import src.GamePanel;
 
 public abstract class Item {
     private String name;
-    private boolean stackable; // Changed is_stackable to stackable -Ervin
-    private int quantity; // suggest to move to only CONSUMABLE since no reason to give weapons and stat
-                          // mods quantity since limited to only 1? -Raymond
-    private String item_type; // why isn't this visible? - FV
-    // suggest to move to only WEAPONS since no reason to give consumables quality
-    // level? -Raymond
-    // da heck is quality level - Ervin //replied in gc -Raymond
-    // I'm in favor of moving quality to the WEAPONS subclass - FV
-    // Moved quality var to weapons class, if goods na we can delete the comments
-    // for this to reduce clutter -Ervin
+    private boolean stackable;
+    private int quantity;
+    private String item_type;
     private int id;
     private Sprite sprite;
 
@@ -123,7 +114,7 @@ public abstract class Item {
     }
 
     public void display(Graphics g, int x, int y){
-        g.drawImage(sprite.getSprite(), x, y, Panel.TILE_SIZE, Panel.TILE_SIZE, null);
+        g.drawImage(sprite.getSprite(), x, y, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
     }
 
 }

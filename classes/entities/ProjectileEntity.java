@@ -3,10 +3,7 @@ package classes.entities;
 import interfaces.CollisionHandler;
 import interfaces.EntityCollidable;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 public abstract class ProjectileEntity extends PanelEntity implements CollisionHandler, EntityCollidable{
 	int speed;
@@ -26,7 +23,6 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 
 	@Override
 	public void onCollision(){
-		System.out.println("I Collided");
 		CollisionHandler.super.onCollision();
 		is_colliding = true;
 	}
@@ -52,8 +48,9 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 	}
 	public static class VirusSpit extends ProjectileEntity{
 		public VirusSpit(int x, int y, PanelEntity player){
-			super(x, y, 32, 32, 10, false, 10, "sprites/projectile_entity/virus_projectile.png");
+			super(x, y+16, 32, 32, 10, false, 10, "sprites/projectile_entity/virus_projectile.png");
 			this.angle = calculateAngle(player);
+			this.angle += ((new Random().nextDouble(0,11) - 5) * 0.174533);
 		}
 
 

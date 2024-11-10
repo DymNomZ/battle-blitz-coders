@@ -1,9 +1,7 @@
 package classes.items;
 
 import classes.sprites.ItemSprites;
-import classes.sprites.Sprite.Sprite;
-
-import java.awt.image.BufferedImage;
+import classes.Asset.Sprite.Sprite;
 
 public abstract class ConsumableHealing extends Consumable
 {

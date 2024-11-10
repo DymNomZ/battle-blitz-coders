@@ -1,14 +1,12 @@
 package classes.items;
 
-import classes.sprites.Sprite.Sprite;
-
-import java.awt.image.BufferedImage;
+import classes.Asset.Sprite.Sprite;
 
 public abstract class Weapons extends Item {
     // To implement
-    private int damage; // Set to private -Ervin
+    private int damage;
     private int quality;
-    private String weapon_type; // Added this to differentiate melee to ranged -Ervin
+    private String weapon_type;
 
     public Weapons() {
         super();
@@ -25,7 +23,7 @@ public abstract class Weapons extends Item {
         return damage; // is the damage variable not usable? -Raymond
     }
 
-    public String getWeapon_type() { // Added this; might be useful for later features -Ervin
+    public String getWeapon_type() {
         return weapon_type;
     }
 
