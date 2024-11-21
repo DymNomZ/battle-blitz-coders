@@ -5,7 +5,9 @@ import java.awt.Graphics;
 public class CameraEntity extends PanelEntity{
 
 	public CameraEntity(int width, int height){
-		super(width, height);
+		super();
+		super.setWidth(width);
+		super.setHeight(height);
 		buffer = null;
 	}
 	

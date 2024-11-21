@@ -10,69 +10,43 @@ public abstract class MapEntity extends PanelEntity {
     private long id;
     private static final int INFINITE = Integer.MAX_VALUE; // Infinite health and defense for NPCs
 
-    public MapEntity(){}
-    public MapEntity(String name, int hit_points, int attack_stat, float haste, int defense_stat, long id){
-        super();
+    protected void setName(String name){
         this.name = name;
+    }
+
+    protected void setHit_points(int hit_points){
         this.hit_points = hit_points;
-        max_hit_points = hit_points;
+    }
+
+    protected void setAttack_stat(int attack_stat){
         this.attack_stat = attack_stat;
+    }
+
+    protected void setHaste(float haste){
         this.haste = haste;
+    }
+
+    protected void setDefense_stat(int defense_stat){
         this.defense_stat = defense_stat;
+    }
+
+    protected void setId(long id){
         this.id = id;
     }
 
-    //Temporary to display enemies - Set H
-    public MapEntity(String name, int x, int y, int side, long key){
-        super(x,y,side,side, key);
-        this.name = name;
+    public void setMax_hit_points(int max_hit_points){
+        this.max_hit_points = max_hit_points;
     }
 
-    //Temporary to display enemies with sprite - Lil Z
-    public MapEntity(String name, int x, int y, int side, long key, String spritePath){
-        super(x,y,side,side, key, spritePath);
-        this.name = name;
-    }
-
-    //hit point test - dym
-    public MapEntity(String name, int hit_points, int x, int y, int side, long key){
-        super(x,y,side,side, key);
-        this.name = name;
-        this.hit_points = hit_points;
-        max_hit_points = hit_points;
-    }
-
-    //hit point test with sprite - Lil Z
-    public MapEntity(String name, int hit_points, int x, int y, int side, long key, String spritePath){
-        super(x,y,side,side, key, spritePath);
-        this.name = name;
-        this.hit_points = hit_points;
-        max_hit_points = hit_points;
-    }
-
-    //for dummy d1
-    public MapEntity(int hit_points, int x, int y, int width, int height){
-        super(x, y, width, height);
-        this.hit_points = hit_points;
-        max_hit_points = hit_points;
-    }
-
-    public MapEntity(String name, long id, int x, int y, int width, int height) {
-        super(x, y, width, height);
-        this.name = name;
-        this.id = id;
+    public MapEntity(){
+        super();
+        this.name = "Default";
         this.hit_points = INFINITE;
         max_hit_points = hit_points;
-        this.defense_stat = INFINITE;
-    }
-
-    public MapEntity(String name, long id, int x, int y, String spritePath){
-        super(x, y, spritePath);
-        this.name = name;
-        this.id = id;
-        this.hit_points = INFINITE;
-        max_hit_points = hit_points;
-        this.defense_stat = INFINITE;
+        this.attack_stat = 1;
+        this.haste = 1;
+        this.defense_stat = 1;
+        this.id = 1;
     }
 
     public String getName() {
@@ -90,7 +64,6 @@ public abstract class MapEntity extends PanelEntity {
     //hit point test - dym
     public void damage(int damage) {
         hit_points -= damage;
-        System.out.println(hit_points);
     }
 
     public long getId() {

@@ -15,13 +15,14 @@ import src.MouseHandler;
 
 public class General {
 
-    public static final int[] SCALE_VALUES = {256, 96};
+    public static final int[] SCALE_VALUES = {256, 96, 1000, 184, 256};
     public static final int[] DEF_BTN_DIMENSIONS = {192, 64};
 
     public static class Panels {
 
         public static final CardLayout CARD_LAYOUT;
         public static final JPanel MAIN, HOME, CHARACTER_SELECT;
+        public static JPanel GAME;
 
         static {
 
@@ -33,29 +34,31 @@ public class General {
             HOME = new HomePanel();
 
             CHARACTER_SELECT = new CharSelectionPanel();
+
+            GAME = null;
             
         }
     }
     
     public static class Titles {
 
-        public static final JLabel GAME_TITLE, SELECT_CHARACTER, GAME_OVER;
+        public static final JLabel GAME_TITLE, VICTORY, GAME_OVER;
 
         static{
 
             GAME_TITLE = new JLabel(new ImageIcon(GUISprites.Titles.GAME_TITLE));
-            SELECT_CHARACTER = new JLabel(new ImageIcon(GUISprites.Titles.SELECT_CHARACTER));
+            VICTORY = new JLabel(new ImageIcon(GUISprites.Titles.VICTORY));
             GAME_OVER = new JLabel(new ImageIcon(GUISprites.Titles.GAME_OVER));
 
             GAME_TITLE.setBounds(128, 50, 1110, 290);
-            SELECT_CHARACTER.setBounds(350, -150, 577, 433);
+            VICTORY.setBounds(350, -150, 577, 433);
 
         }
     }
 
     public static class Buttons {
 
-        public static final JButton PLAY, START;
+        public static final JButton PLAY, START, NEXT, END;
         public static final JButton DYMES, SETH, ZILLION, RAYMOND;
         public static final ArrayList<JButton> CHARACTER_BUTTONS = new ArrayList<>();
         private static final MouseHandler mouse = new MouseHandler();
@@ -64,6 +67,8 @@ public class General {
 
             PLAY = new JButton(new ImageIcon(GUISprites.Buttons.PLAY_U.getScaledInstance(SCALE_VALUES[0], SCALE_VALUES[1], Image.SCALE_SMOOTH)));
             START = new JButton(new ImageIcon(GUISprites.Buttons.START_U));
+            NEXT = new JButton(new ImageIcon(GUISprites.Buttons.NEXT_U));
+            END = new JButton(new ImageIcon(GUISprites.Buttons.END_U));
 
             DYMES = new JButton(new ImageIcon(GUISprites.Buttons.DYMES_U));
             SETH = new JButton(new ImageIcon(GUISprites.Buttons.SETH_U));
@@ -75,17 +80,17 @@ public class General {
             CHARACTER_BUTTONS.add(ZILLION);
             CHARACTER_BUTTONS.add(RAYMOND);
 
-            PLAY.setBounds(555, 450, SCALE_VALUES[0], SCALE_VALUES[1]);
+            PLAY.setBounds((GamePanel.SCREEN_WIDTH - SCALE_VALUES[0]) / 2, 450, SCALE_VALUES[0], SCALE_VALUES[1]);
             PLAY.setBorderPainted(false);
             PLAY.setContentAreaFilled(false);
             PLAY.addMouseListener(mouse);
 
-            START.setBounds((GamePanel.SCREEN_WIDTH / 2) - 96, 600, DEF_BTN_DIMENSIONS[0], DEF_BTN_DIMENSIONS[1]);
+            START.setBounds((GamePanel.SCREEN_WIDTH - DEF_BTN_DIMENSIONS[0]) / 2, 550, DEF_BTN_DIMENSIONS[0], DEF_BTN_DIMENSIONS[1]);
             START.setBorderPainted(false);
             START.setContentAreaFilled(false);
             START.addMouseListener(mouse);
 
-            int gap = 100;
+            int gap = 135;
             for(JButton b : CHARACTER_BUTTONS){
 
                 b.setBounds(gap, 450, DEF_BTN_DIMENSIONS[0], DEF_BTN_DIMENSIONS[1]);

@@ -1,5 +1,6 @@
 package src;
 
+import classes.dialogues.Dialogues;
 import classes.entities.*;
 import classes.map.Tile;
 import interfaces.CollisionHandler;
@@ -11,9 +12,10 @@ public class MapConstructor {
     MapLoader map_loader;
 
     ArrayList<Tile> tile_data;
+    ArrayList<Integer> door_coords;
     Tile tiles[][];
     int map_indexes[][];
-    int map_height, map_length;
+    int map_height, map_length, door_index = 0;
 
     public CameraEntity camera;
     int recent_x = 0, recent_y = 0;
@@ -38,6 +40,13 @@ public class MapConstructor {
         map_length = map_indexes[0].length;
 
         loadMapTiles();
+
+        door_coords = new ArrayList<>();
+        //locate door coords
+        locateDoors();
+
+        System.out.println("Door coords: " + door_coords);
+
         camera = new CameraEntity(screenWidth, screenHeight);
     }
 
@@ -51,6 +60,18 @@ public class MapConstructor {
 
     public int getMap_length(){
         return map_length;
+    }
+
+    private void locateDoors(){
+        for(int i = 0; i < tiles.length; i++){
+            for(int j = 0; j < tiles[0].length; j++){
+                if(tiles[i][j].getName().equals("stone_wall_door_left_closed.png") 
+                || tiles[i][j].getName().equals("stone_wall_door_right_closed.png")){
+                    door_coords.add(j);
+                    door_coords.add(i);
+                }
+            }
+        }
     }
 
     public void loadMapTiles(){
@@ -120,7 +141,10 @@ public class MapConstructor {
          * we must check for tile[offYTile][offXTile] and tile[offYTile + 1][offXTile]. To check whether we have
          * to check two tiles in this situation, y % Panel.TILE_SIZE > 0 will tell us just that... also opposite to the
          * current dimension
-         * 
+         *
+         *
+         * [NOTE] not updated
+         * - Lil Z
          */
 
         int maxSpeedPerLoop = GamePanel.TILE_SIZE;
@@ -283,7 +307,6 @@ public class MapConstructor {
             }
         }
     }
-
     public void displayTiles(Graphics g) {
         int leftStart = Math.max((camera.x / GamePanel.TILE_SIZE) - 1, 0);
         int topStart = Math.max((camera.y / GamePanel.TILE_SIZE) - 1, 0);
@@ -295,7 +318,7 @@ public class MapConstructor {
                 int tileX = (i * GamePanel.TILE_SIZE) - camera.x;
                 int tileY = (topStart * GamePanel.TILE_SIZE) - camera.y;
 
-                if(PlayerData.kill_count >= 10) handleDoors(topStart, i);
+                if(PlayerData.kill_count >= 10) handleDoors();
 
                 tiles[topStart][i].image.display(g, tileX, tileY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
             }
@@ -304,20 +327,23 @@ public class MapConstructor {
     }
 
     //door system
-    private void handleDoors(int j, int i){
-        //TODO add index of map doors to specify
-        if(tiles[j][i].getName().equals("stone_wall_door_left_closed.png")){
-            replaceTile(j, i, "map_tiles/stone_wall_door_left_open.png", false, false);
-        }
-        if(tiles[j][i].getName().equals("stone_wall_door_right_closed.png")){
-            replaceTile(j, i, "map_tiles/stone_wall_door_right_open.png", false, false);
+    public void handleDoors(){
+        if(PlayerData.kill_count >= 10){
+            int x = door_coords.get(door_index);
+            int y = door_coords.get(door_index+1);
+            replaceTile(y, x, "stone_wall_door_left_open.png", "door_left_open", 409, false, false);
+            replaceTile(y, x+1, "stone_wall_door_right_open.png", "door_right_open",410, false, false);
+            door_index += 4;
+            PlayerData.kill_count = 0;
+            if(PlayerData.check_pointer < PlayerData.position_checks.length - 1){
+                PlayerData.check_pointer++;
+            }
+            Dialogues.PHASE_STATE++;
         }
     }
 
-    private void replaceTile(int j, int i, String path, boolean solid_state, boolean animated_state){
-        tiles[j][i].setSprite(path);
-        tiles[j][i].is_solid = solid_state;
-        tiles[j][i].is_animated = animated_state;
+    private void replaceTile(int j, int i, String path, String name, int idx, boolean solid_state, boolean animated_state){
+        tiles[j][i] = new Tile(path, name, idx, solid_state, animated_state);
     }
 
     @Deprecated

@@ -1,6 +1,10 @@
 package src;
+import classes.GUI.General;
+import classes.sprites.GUISprites;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.ImageIcon;
 
 public class KeyHandler implements KeyListener {
 
@@ -11,11 +15,11 @@ public class KeyHandler implements KeyListener {
     public boolean lShift_pressed = false;
 
     public boolean spawn_enemy = false;
-    public boolean kill_enemy = false;
     public boolean debug_print = false;
     public boolean drop_item = false;
     public boolean is_interacting = false;
     public boolean purge = false;
+    public boolean skip_dialogue = false;
 
     public boolean one_pressed = false;
     public boolean two_pressed = false;
@@ -34,7 +38,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D -> right_pressed = true;
             case KeyEvent.VK_SHIFT -> lShift_pressed = true;
             case KeyEvent.VK_N -> spawn_enemy = true;
-            case KeyEvent.VK_H -> kill_enemy = true;
             case KeyEvent.VK_P -> debug_print = true;
             case KeyEvent.VK_Q -> drop_item = true;
             case KeyEvent.VK_F -> is_interacting = true;
@@ -44,6 +47,18 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_4 -> four_pressed = true;
             case KeyEvent.VK_5 -> five_pressed = true;
             case KeyEvent.VK_X -> purge = true;
+            case KeyEvent.VK_ESCAPE -> {
+                General.Panels.MAIN.remove(0);
+                General.Panels.GAME = null;
+                General.Panels.MAIN.add(General.Panels.HOME, 0);
+                General.Buttons.START.setIcon(new ImageIcon(
+				GUISprites.Buttons.START_U.getScaledInstance(
+                        General.DEF_BTN_DIMENSIONS[0], General.DEF_BTN_DIMENSIONS[1], Image.SCALE_SMOOTH)
+                    )
+                );
+                System.gc();
+            }
+            case KeyEvent.VK_ENTER -> skip_dialogue = true;
         }
     }
 
@@ -57,7 +72,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D -> right_pressed = false;
             case KeyEvent.VK_SHIFT -> lShift_pressed = false;
             case KeyEvent.VK_N -> spawn_enemy = false;
-            case KeyEvent.VK_H -> kill_enemy = false;
             case KeyEvent.VK_P -> debug_print = false;
             case KeyEvent.VK_Q -> drop_item = false;
             case KeyEvent.VK_X -> purge = false;

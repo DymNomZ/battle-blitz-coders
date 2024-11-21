@@ -1,9 +1,15 @@
 package src;
+
+import classes.Asset.Sprite.Sprite;
 import classes.GUI.EnemyHealthBar;
 import classes.GUI.Hotbar;
 import classes.GUI.PlayerHealthBar;
+import classes.dialogues.Dialogues;
 import classes.entities.*;
+import classes.items.Item;
+import classes.items.Melee;
 import classes.items.Ranged;
+import classes.sprites.EntitySprite;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -12,13 +18,16 @@ import javax.swing.*;
 public class GamePanel extends JPanel implements Runnable {
 
     public static int FPS = 60; // delta loop purposes
-    // public static Audio backgroundAudio = new Audio("mainBackground.wav").play();
+    // public static Audio backgroundAudio = new Audio().load("mainBackground.wav").play();
     public static final int SCALE = 2;
     public static final int DEF_DIMENSION = 32;
     public static final int TILE_SIZE = DEF_DIMENSION * SCALE;
     public static int SCREEN_WIDTH = 1366, SCREEN_HEIGHT = 768;
 
     public int max_map_row, max_map_col;
+    private boolean is_timing = false;
+    private int seconds = 0;
+    private int enemy_count = 0, offset_x = 0, offset_y = 10;
 
     MapConstructor map;
     
@@ -26,9 +35,6 @@ public class GamePanel extends JPanel implements Runnable {
     MouseHandler mouse_handler;
 
     Thread main_thread;
-
-    //temporary heheh - Dymes
-    JTextArea hit_points_display;
 
     //temporary
     Player d1;
@@ -38,11 +44,12 @@ public class GamePanel extends JPanel implements Runnable {
     HashMap<Long, ItemEntity> drop_items = new HashMap<>();
 
     List<Long> enemy_ids = new LinkedList<>();
-    List<Long> collected_items_keys = new ArrayList<>();
 
     List<ProjectileEntity> projectiles = new ArrayList<>();
 
     public GamePanel(){
+
+        Utils.loadFonts();
 
         map = new MapConstructor("assets/maps/trial_map_1.zip", SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -55,24 +62,20 @@ public class GamePanel extends JPanel implements Runnable {
 
         d1 = new Player(
             CharacterHandler.getSelected_character(), 1000, 
-            max_map_col * TILE_SIZE, max_map_row * TILE_SIZE, 64, 40, key_input
+            10 * TILE_SIZE, 13 * TILE_SIZE, 64, 40, key_input
         );
 
         //temp NPC
         NPC1 = new NPC.TempNPC(
-            55 * TILE_SIZE, 12 * TILE_SIZE, 
-            64, 40, CharacterHandler.ZILLION()
+            17 * TILE_SIZE, 10 * TILE_SIZE,
+            64, 40, ((Sprite) ((EntitySprite) CharacterHandler.randomizer()).toLeft())
         );
-
-        hit_points_display = new JTextArea(String.format("%d", d1.getHit_points()), 1, 1);
-        hit_points_display.setBounds(10, 150, 50, 30);
 
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(key_input);
         this.addMouseListener(mouse_handler);
-        //this.add(hit_points_display);
         this.setLayout(null);
 
     }
@@ -100,6 +103,7 @@ public class GamePanel extends JPanel implements Runnable {
             last_system_time = System.nanoTime() - (System.nanoTime() - last_system_time);
             update();
             repaint();
+
             decrementCooldown();
             mouse_handler.mouse_location_on_screen = MouseInfo.getPointerInfo().getLocation();
 
@@ -107,15 +111,16 @@ public class GamePanel extends JPanel implements Runnable {
             updateMousePosition(mouse_handler.mouse_location_on_screen.x,mouse_handler.mouse_location_on_screen.y);
 
             if (lastEntityCheck + 1000000000 < last_system_time) {
-                lastEntityCheck = System.nanoTime();
-                for(Enemy e : spawned_enemies.values()){
-                    if(d1.checkEntityCollision(e)){
-                        d1.damage(e.attack());
-                        hit_points_display.setText(String.format("%d", d1.getHit_points()));
-                    }
-                }
-            }
 
+                lastEntityCheck = System.nanoTime();
+
+                if(Dialogues.PHASE_STATE == 0) is_timing = true;
+
+                if(is_timing) seconds++;
+
+                triggers(this.getGraphics());
+
+            }
 
             current_system_time = System.nanoTime();
             delta = Math.max(nanoInterval - current_system_time + last_system_time, 0);
@@ -138,6 +143,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update(){
         //From here on out, place here updating methods ie. player pos, etc. - Dymes
+
         d1.move();
         map.verifyEntityPosition(d1);
         d1.printHotbarItems();
@@ -188,14 +194,38 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    void handleInteractions(Player d1, Graphics g, CameraEntity cam) {
+    void handleInteractions(Player d1, Graphics g) {
 
         //check if player is within proximity of NPC and if F key is pressed, if so, display dialogue of NPC
         if(key_input.is_interacting && NPC1.checkIfTouching(d1)){
-            NPC1.displayDialogue(g, cam);
+
+            if(Dialogues.PHASE_STATE == 0){
+                is_timing = false;
+                seconds = 0;
+                Dialogues.DIALOGUE_NUMBERS[0] = 1;
+                Dialogues.PHASE_STATE = 1;
+            }
+
+            //handle next
+            if(key_input.skip_dialogue){
+                Dialogues.DIALOGUE_NUMBERS[0]++;
+                key_input.skip_dialogue = false;
+            }
+
+            //give initial item to player
+            if(Dialogues.DIALOGUE_NUMBERS[0] == 6 && !PlayerData.received_initital_weapon){
+
+                Item item = new Melee().getRandom();
+
+                d1.addItem(item);
+                PlayerData.received_initital_weapon = true;
+            }
+
+            Dialogues.handleNPCDialogues(g);
         }
         else if(!(NPC1.checkIfTouching(d1))){
             key_input.is_interacting = false;
+            Dialogues.handleReset();
         }
     }
 
@@ -224,50 +254,69 @@ public class GamePanel extends JPanel implements Runnable {
                 e.executeEnemyBehavior(d1);
                 map.verifyEntityPosition(e);
                 for(ProjectileEntity projectile : projectiles){
-                    if(projectile.is_player_friendly)
-                    e.checkEntityCollision(projectile);
+                    if(projectile.is_player_friendly){
+                        e.checkEntityCollision(projectile);
+                    }
                 }
             } catch(NullPointerException n){
                 System.out.println("Null Enemy!");
             }
+
             //killing with range
-            if(key_input.kill_enemy && e.checkIfTouching(d1)){
+            if(mouse_handler.left_is_pressed && e.checkIfTouching(d1) && d1.getCurrentItem() instanceof Melee){
 
                 e.damage(d1.attack());
 
                 if(e.getHit_points() <= 0){
                     enemy_ids.add(e.key);
 
-                    System.out.println("Enemy killed at x: " + e.x + " y: " + e.y);
-
                     dropItems(e);
-
-                    System.out.println("Dropped Item count: " + drop_items.size());
 
                     PlayerData.kill_count++;
                 }
-
-                key_input.kill_enemy = false;
+                mouse_handler.left_is_pressed = false;
             }
         }
         
         //spawning
-        if(key_input.spawn_enemy){
-            boolean successfullySpawned = false;
-            do{
-                int tile_x = d1.getTileXPosition() + (new Random().nextInt(0,11) - 5);
-                int tile_y = d1.getTileYPosition() + (new Random().nextInt(0,11) - 5);
-                System.out.println(map.tiles[tile_y][tile_x]);
+        if(key_input.spawn_enemy) mobSpawner(d1.getTileXPosition(), d1.getTileYPosition(), -1);
 
-                int type = new Random().nextInt(0, 2);
+    }
 
-                successfullySpawned = spawnEnemy(tile_x,tile_y,2, 
-                type == 0 ? Enemy.EnemySpecies.VIRUS : Enemy.EnemySpecies.SLIME);
+    void mobSpawnerHandler(int type){
 
-            }while(!successfullySpawned);
-            key_input.spawn_enemy = false;
+        if(!is_timing) is_timing = true;
+
+        mobSpawner(offset_x, offset_y, type);
+        
+        enemy_count++;
+        offset_y++;
+
+        if(enemy_count == 10){
+            PlayerData.trigger_spawning = false;
+            enemy_count = 0;
+            offset_x = 0;
+            offset_y = 10;
+            is_timing = false;
+            seconds = 0;
         }
+    }
 
+    void mobSpawner(int offset_x, int offset_y, int type){
+
+        boolean successfullySpawned = false;
+
+        do{
+            int tile_x = offset_x + (new Random().nextInt(0,11) - 5);
+            int tile_y = offset_y + (new Random().nextInt(0,11) - 5);
+
+            if(type == -1) type = new Random().nextInt(0, 2);
+
+            successfullySpawned = spawnEnemy(tile_x,tile_y,2, 
+            type == 0 ? Enemy.EnemySpecies.SLIME : Enemy.EnemySpecies.VIRUS);
+
+        }while(!successfullySpawned);
+        key_input.spawn_enemy = false;
     }
 
     /*
@@ -316,16 +365,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     void handleEnemies(Graphics g) {
         for(Enemy e : spawned_enemies.values()){
-            EnemyHealthBar.update_display_health_bar((double)e.getHit_points() / e.getMax_hit_points());
-            EnemyHealthBar.displayHealthBar(g,e.x - map.camera.x, e.y - map.camera.y, e.width);
-
             try{
+                EnemyHealthBar.update_display_health_bar((double)e.getHit_points() / e.getMax_hit_points());
+                EnemyHealthBar.displayHealthBar(g,e.x - map.camera.x, e.y - map.camera.y, e.width);
                 e.display(g, map.camera);
             } catch (NullPointerException n){
                 System.out.println("Trying to Render Null Enemy!!");
             }
-
-
         }
     }
 
@@ -341,8 +387,13 @@ public class GamePanel extends JPanel implements Runnable {
         for(ItemEntity item : drop_items.values()){
             //if collected
             if(item.checkIfTouching(d1) && d1.getSize() != 5 && item.is_pickable){
-                collected_items_keys.add(item.key);
+                //trigger you picked up ranged weapon dialogue
+                if(item.getItem() instanceof Ranged && !PlayerData.trigger_range_info){
+                    PlayerData.trigger_range_info = true;
+                }
                 d1.addItem(item.getItem());
+                drop_items.remove(item.key);
+                break;
             }
             //if just dropped, don't pick
             if(!item.checkIfTouching(d1) && !item.is_pickable){
@@ -360,6 +411,8 @@ public class GamePanel extends JPanel implements Runnable {
                 current_projectile.display(g, map.camera);
             } catch (NullPointerException n){
                 System.out.println("Trying to Render Null Bullet!!");
+            } catch (ConcurrentModificationException cm){
+                System.out.println("LOl!");
             }
         }
     }
@@ -369,11 +422,46 @@ public class GamePanel extends JPanel implements Runnable {
         for(Long key : enemy_ids){
             spawned_enemies.remove(key);
         }
+    }
 
-        //remove collected items
-        for(Long key : collected_items_keys){
-            drop_items.remove(key);
+    //trigger first ranged weapon dialogue
+    void showRangedInfo(Graphics g){
+
+        if(!is_timing) is_timing = true;
+        
+        if(seconds == 3){
+            is_timing = false;
+            seconds = 0;
+            PlayerData.range_info_shown = true;
         }
+        
+    }
+
+    void triggers(Graphics g){
+
+        int enemy_type = 1;
+
+        switch(Dialogues.PHASE_STATE){
+            case 2 -> {
+                offset_x = 35;
+                enemy_type = 0;
+                if(PlayerData.trigger_range_info && !PlayerData.range_info_shown) {
+                    showRangedInfo(g);
+                }
+            }
+            case 3 -> offset_x = 61;
+
+        }
+
+        if(d1.x >= PlayerData.position_checks[PlayerData.check_pointer] 
+        && !PlayerData.stage_spawns[PlayerData.check_pointer]) {
+            PlayerData.trigger_spawning = true;
+            PlayerData.stage_spawns[PlayerData.check_pointer] = true;
+        }
+        if(PlayerData.trigger_spawning && PlayerData.stage_spawns[PlayerData.check_pointer]) {
+            mobSpawnerHandler(enemy_type);
+        }
+
     }
 
     @Override
@@ -384,18 +472,23 @@ public class GamePanel extends JPanel implements Runnable {
         map.view(d1);
         map.displayTiles(g);
 
-        handleEnemies(g);
         handleItems(g);
+        handleEnemies(g);
         handleProjectiles(g);
 
         NPC1.display(g, map.camera);
         d1.display(g, map.camera);
 
-        handleInteractions(d1, g, map.camera);
+        handleInteractions(d1, g);
         PlayerHealthBar.displayHealthBar(g);
         Hotbar.displayHotbar(g);
         d1.displayHotbarItems(g);
 
+        Dialogues.handlePopUpDialogues(g, seconds);
+
+        //debug check coords for spawning purposes
+        // System.out.println("POS: " + d1.x + " " + d1.y);
+        // System.out.println("POS: " + d1.getTileXPosition() + " " + d1.getTileYPosition());
     }
 
 }

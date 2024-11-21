@@ -1,30 +1,41 @@
 package classes.entities;
 
 import classes.Asset.Sprite.Sprite;
+import classes.GUI.General;
 import interfaces.EntityCollidable;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import src.CharacterHandler;
 import src.GamePanel;
 
 public abstract class NPC extends MapEntity implements EntityCollidable {
 
     public NPC(String name, long id, int x, int y, String spritePath) {
-        super(name, id, x, y, spritePath);
-        this.x /= 2;
-        this.y /= 2;
+        super();
+        super.setName(name);
+        super.setId(id);
+        super.setBuffer(Sprite.load(spritePath));
+        super.setX(x / 2);
+        super.setY(y / 2);
     }
 
     public NPC(String name, long id, int x, int y, int side, int allowance) {
-        super(name, id, x, y, side, allowance);
+        super();
+        super.setName(name);
+        super.setId(id);
+        super.setX(x);
+        super.setY(y);
+        super.setDimensions(side,allowance);
     }
 
-    public void displayDialogue(Graphics g, CameraEntity cam) {
-        String sample_text = "SAMPLE TEXT!!!1!";
-        g.setFont(new Font("Consolas", Font.PLAIN, 30));
-        g.setColor(Color.BLACK);
-                                    //subtract length by 1/4 of Tile Size to center, bana2 ra bitaw ni AHAHAH, subject to change
-        g.drawString(sample_text, (x - cam.x) - ((sample_text.length() * GamePanel.TILE_SIZE) / 16), (y - cam.y) - 30);
+    public static void drawHead(Graphics g){
+
+        Sprite raw_head = CharacterHandler.getHead();
+        BufferedImage head = raw_head.getSprite();
+
+        g.drawImage(head.getScaledInstance(General.SCALE_VALUES[4], General.SCALE_VALUES[4], Image.SCALE_SMOOTH), 
+                (GamePanel.SCREEN_WIDTH / 2) - 525, 50, null
+        );
     }
 
     public static class TempNPC extends NPC {

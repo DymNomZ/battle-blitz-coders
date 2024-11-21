@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import static src.Utils.showError;
+
 public abstract class Sprite extends Asset {
     //bytes of void image
     private static final byte[] void_image = {
@@ -38,7 +40,7 @@ public abstract class Sprite extends Asset {
             }
             Asset.add(fileName, ret);
         }catch(IOException e){
-            System.err.println("[SPRITE LOADER] Asset not found at assets/" + fileName);
+            showError("[SPRITE LOADER] Asset not found at assets/" + fileName);
             ret = load("default");
         }
 

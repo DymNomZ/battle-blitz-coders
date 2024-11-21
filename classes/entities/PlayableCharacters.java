@@ -13,7 +13,14 @@ public abstract class PlayableCharacters extends MapEntity {
         float haste,
         int defense_stat, int id
     ){
-        super(name, hit_points, attack_stat, haste, defense_stat, id);
+        super();
+        super.setName(name);
+        super.setMax_hit_points(hit_points);
+        super.setHit_points(hit_points);
+        super.setAttack_stat(attack_stat);
+        super.setHaste(haste);
+        super.setDefense_stat(defense_stat);
+        super.setId(id);
     }
 
     public Sprite getSprite(){

@@ -24,126 +24,77 @@ public abstract class PanelEntity {
      *  - Set H
      */
     public int x, y, width, height;
-    public int x_pos_center, y_pos_center;
     public int deltaX, deltaY;
     public long key;
     int speed;
     Sprite buffer;
     public boolean is_colliding = false;
 
+    protected void setX(int x){
+        this.x = x;
+    }
+
+    protected void setY(int y){
+        this.y = y;
+    }
+
+    protected void setDimensions(int width, int height){
+        this.width = width;
+        this.height = height;
+    }
+
+    protected void setWidth(int width){
+        this.width = width;
+    }
+
+    protected void setHeight(int height){
+        this.height = height;
+    }
+
+    protected void setDeltaX(int deltaX){
+        this.deltaX = deltaX;
+    }
+
+    protected void setDeltaY(int deltaY){
+        this.deltaY = deltaY;
+    }
+
+    protected void setKey(long key){
+        this.key = key;
+    }
+
+    protected void setSpeed(int speed){
+        this.speed = speed;
+    }
+
+    protected void setBuffer(Sprite buffer){
+        this.buffer = buffer;
+    }
+
+    //DEFAULT CONSTRUCTOR
     public PanelEntity() {
         x = 0;
         y = 0;
         width = GamePanel.TILE_SIZE;
         height = GamePanel.TILE_SIZE;
+        deltaX = 0;
+        deltaY = 0;
         buffer = Sprite.load("default");
     }
 
-    public PanelEntity(int x, int y, int width, int height, long key) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.key = key;
-        this.buffer = Sprite.load("default");
-    }
-
-    public PanelEntity(int x, int y, int width, int height, long key, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.key = key;
-        this.buffer = Sprite.load(spritePath);
-    }
-
-    public PanelEntity(int x, int y, int width, int height, long key, Sprite sprite) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.key = key;
-        this.buffer = sprite;
-    }
-
-    public PanelEntity(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.buffer = Sprite.load("default");
-    }
-
-    public PanelEntity(int x, int y, int width, int height, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.buffer = Sprite.load(spritePath);
-    }
-
-    public PanelEntity(int x, int y, int width, int height, Sprite sprite) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.buffer = sprite;
-    }
-
-    public PanelEntity(int width, int height) {
-        this.x = 0;
-        this.y = 0;
-        this.width = width;
-        this.height = height;
-        this.buffer = Sprite.load("default");
-    }
-
-    //for item entity
-    public PanelEntity(int x, int y, long key){
-        this.x = x;
-        this.y = y;
-        this.width = GamePanel.TILE_SIZE;
-        this.height = GamePanel.TILE_SIZE;
-        this.key = key;
-        this.buffer = Sprite.load("default");
-    }
-
-    //for NPCs
-    public PanelEntity(int x, int y, String spritePath){
-        this.x = x;
-        this.y = y;
-        this.width = GamePanel.TILE_SIZE;
-        this.height = GamePanel.TILE_SIZE;
-        this.buffer = Sprite.load(spritePath);
-    }
-
-    //for NPCs
-    public PanelEntity(int x, int y, Sprite sprite){
-        this.x = x;
-        this.y = y;
-        this.width = GamePanel.TILE_SIZE;
-        this.height = GamePanel.TILE_SIZE;
-        this.buffer = sprite;
-    }
 
     public void move(int offsetX, int offsetY) {
         deltaX = offsetX;
         deltaY = offsetY;
     }
-    public void updateCenterPosition(){
-        x_pos_center = x + (width / 2);
-        y_pos_center = y + (height / 2);
-    }
     public int getTileXPosition(){
-        System.out.println(x + " divided by " + GamePanel.TILE_SIZE + " is equal to " + x / (GamePanel.TILE_SIZE));
         return x / (GamePanel.TILE_SIZE);
     }
     public int getTileYPosition(){
-        System.out.println(y + " divided by " + GamePanel.TILE_SIZE + " is equal to " + x / (GamePanel.TILE_SIZE));
         return y / (GamePanel.TILE_SIZE);
     }
 
-    // move like a sigma male, disregarding all bondaries of this world
+    // move like a sigma male, disregarding all boundaries of this world
     public void moveAbsolute(int x, int y) {
         this.x = x;
         this.y = y;
@@ -243,14 +194,6 @@ public abstract class PanelEntity {
     }
 
 
-    // returns int, but i actually dont know why... i just feel like it must be int
-    // This function is callback for entity collision to be implemented
-    // - Lil Z
-    public int entityCollision(PanelEntity e) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-
     /*
      * Calculates the distance of this object
      * and a given PanelEntity in pixel units - Set H
@@ -303,6 +246,4 @@ public abstract class PanelEntity {
             }
         }
     }
-
-
 }

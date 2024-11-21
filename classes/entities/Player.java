@@ -1,7 +1,9 @@
 package classes.entities;
 
 import classes.GUI.PlayerHealthBar;
+import classes.dialogues.Dialogues;
 import classes.items.Item;
+import classes.items.Ranged;
 import classes.sprites.GUISprites;
 import interfaces.EntityCollidable;
 import java.awt.Graphics;
@@ -9,6 +11,7 @@ import java.util.Random;
 import src.CharacterHandler;
 import src.GamePanel;
 import src.KeyHandler;
+import src.PlayerData;
 
 public class Player extends MapEntity implements EntityCollidable{
 
@@ -25,7 +28,7 @@ public class Player extends MapEntity implements EntityCollidable{
 	public void decrementCooldowns(int value){
 		if(shooting_cooldown != 0){
 
-			System.out.println(shooting_cooldown);
+			// System.out.println(shooting_cooldown);
 		}
 		shooting_cooldown -= value;
 		if(shooting_cooldown < 0) shooting_cooldown = 0;
@@ -49,8 +52,12 @@ public class Player extends MapEntity implements EntityCollidable{
 	}
 
 	public Player(String name, int hit_points, int screenWidth, int screenHeight, int side, int allowance, KeyHandler inputs){
-		super(hit_points, screenWidth, screenHeight, side, side + allowance);
-
+		super();
+		super.setHit_points(hit_points);
+		super.setMax_hit_points(hit_points);
+		super.setX(screenWidth);
+		super.setY(screenHeight);
+		super.setDimensions(side,side + allowance);
 		character = CharacterHandler.getCharacter(name);
 		buffer = character.getSprite();
 
@@ -117,7 +124,6 @@ public class Player extends MapEntity implements EntityCollidable{
 	}
 
 	public void addItem(Item item){
-
 		
 		hotbar_items[curr_slot] = item;
 		if(curr_slot >= 5) curr_slot = 0;

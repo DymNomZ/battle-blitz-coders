@@ -1,5 +1,6 @@
 package classes.entities;
 
+import classes.Asset.Sprite.Sprite;
 import interfaces.CollisionHandler;
 import interfaces.EntityCollidable;
 
@@ -13,7 +14,11 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 
 
 	public ProjectileEntity(int x, int y, int width, int height, int speed, boolean is_player_friendly, int damage, String spritePath){
-		super(x, y, width, height, spritePath);
+		super();
+		super.setX(x);
+		super.setY(y);
+		super.setDimensions(width,height);
+		super.setBuffer(Sprite.load(spritePath));
 		this.speed = speed;
 		this.is_player_friendly = is_player_friendly;
 		this.damage = damage;

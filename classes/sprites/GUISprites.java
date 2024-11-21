@@ -63,30 +63,31 @@ public class GUISprites {
     public static class Backgrounds {
 
         public static BufferedImage TITLE_SCREEN;
-        public static BufferedImage SELECT_CHARACTER;
+        public static BufferedImage SELECT_CHARACTER_1, SELECT_CHARACTER_2;
         public static BufferedImage CREDITS;
 
         static {
             try {
                 
                 TITLE_SCREEN = ImageIO.read(Backgrounds.class.getResourceAsStream("../../assets/GUI/backgrounds/GLE_sunset.png"));
-                SELECT_CHARACTER = ImageIO.read(Backgrounds.class.getResourceAsStream("../../assets/GUI/backgrounds/temp_title_screen_background.jpg"));
+                SELECT_CHARACTER_1 = ImageIO.read(Backgrounds.class.getResourceAsStream("../../assets/GUI/backgrounds/DOSBOX_1.png"));
+                SELECT_CHARACTER_2 = ImageIO.read(Backgrounds.class.getResourceAsStream("../../assets/GUI/backgrounds/DOSBOX_2.png"));
                 CREDITS = ImageIO.read(Backgrounds.class.getResourceAsStream("../../assets/GUI/backgrounds/temp_title_screen_background.jpg"));
 
             } catch (IOException e) {
-                System.out.println("Error loading wallpapers");
+                System.out.println("Error loading backgrounds");
             }
         }
     }
     public static class Titles {
 
-        public static BufferedImage GAME_TITLE, SELECT_CHARACTER, GAME_OVER;
+        public static BufferedImage GAME_TITLE, VICTORY, GAME_OVER;
 
         static{
             try {
 
                 GAME_TITLE = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/battle_blitz_coders.png"));
-                SELECT_CHARACTER = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/temp_game_title.png"));
+                VICTORY = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/temp_game_title.png"));
                 GAME_OVER = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/temp_game_title.png"));
                 
             } catch (IOException e) {
@@ -94,18 +95,23 @@ public class GUISprites {
             }
         }
     }
+
     public static class Buttons {
 
-        public static BufferedImage PLAY_U, PLAY_S, START_U, START_S; //PAUSE and other future butons
+        public static BufferedImage PLAY_U, PLAY_S, START_U, START_S, NEXT_U, NEXT_S, END_U, END_S; //PAUSE and other future butons
         public static BufferedImage DYMES_U, DYMES_S, SETH_U, SETH_S, ZILLION_U, ZILLION_S, RAYMOND_U, RAYMOND_S;
 
-        static{
+        static {
             try {
                 
                 PLAY_U = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/play_unselected.png"));
                 PLAY_S = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/play_selected.png"));
                 START_U = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/start_unselected.png"));
                 START_S = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/start_selected.png"));
+                NEXT_U = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/next_unselected.png"));
+                NEXT_S = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/next_selected.png"));
+                END_U = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/end_unselected.png"));
+                END_S = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/end_selected.png"));
 
                 DYMES_U = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/dymes_unselected.png"));
                 DYMES_S = ImageIO.read(Buttons.class.getResourceAsStream("../../assets/GUI/buttons/dymes_selected.png"));
@@ -124,12 +130,16 @@ public class GUISprites {
 
     public static class Miscellaneous {
 
-        public static BufferedImage CIT_U_LOGO;
+        public static BufferedImage CIT_U_LOGO, DOSBOX_DIALOGUE_BOX;
 
         static{
             try {
-                CIT_U_LOGO = ImageIO.read(Miscellaneous.class.getResourceAsStream("../../assets/GUI/miscellaneous/CIT-U_LOGO.png"));
+
+                CIT_U_LOGO = ImageIO.read(Miscellaneous.class.getResourceAsStream("../../assets/GUI/miscellaneous/CIT-U_logo.png"));
+                DOSBOX_DIALOGUE_BOX = ImageIO.read(Miscellaneous.class.getResourceAsStream("../../assets/GUI/dialogues/DOSBOX_window_template.png"));
+
             } catch (IOException e) {
+                System.out.println("Error loading miscellaneous GUI sprites");
             }
         }
     }

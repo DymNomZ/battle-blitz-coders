@@ -1,0 +1,88 @@
+NPC:
+"Hey you!"
+
+POP-UP:
+"Talk to your classmate. Press F"
+
+NPC:
+"No way you're here too?"
+"I just woke up here just before you did! I think someone imprisoned us here!"
+"I'm not sure but it seems like they're in this big castle up ahead."
+"Who is it? I dunno, but they must be really scary and cunning to do something like this."
+"To reach him, you need to get past three different stages fighting different enemies."
+"Here take this, it should help you fight the minions that will try to stop you."
+"The controls are simple. LMB to attack, 1-5 to cycle through your items, and Q to drop them."
+"I wish you nothing but goodluck!"
+
+STAGE 1 POP-UP:
+"STAGE 1: Defeat 10 Slimes to proceed."
+
+IF PLAYER INTERACTS WITH NPC AGAIN:
+"Huh? Why can't I go with you? Because we didn't implement multiplayer yet obviously."
+"Anyway, get moving already!"
+
+PICKING UP RANGED WEAPON FOR THE FIRST TIME:
+"You picked up a ranged weapon! Using it allows you to shoot projectiles in the direction you're facing."
+
+STAGE 2 POP-UP:
+"STAGE 2: Defeat 10 Viruses to proceed."
+
+STAGE 3 POP-UP:
+"FINAL STAGE: Defeat 20 enemies to proceed."
+
+BOSS AREA NPC:
+"You've made it! That was some really good fighting you did back there!"
+"Yano naa nako diri? Don't ask."
+"Anyways, once you enter that door there's no turning back."
+"Goodluck bro! Beat whoever is behind all this!"	//change lang ninyo kung unsa HAHAHAHA
+"Huwat lang ko diris gawas lods ❤"
+
+???:	//silhouette version of sprite
+"Hmmm, so you've finally arrived."
+"You must be wondering why I trapped you here."
+"Well it's because I'm tired of your coding being so inefficient and hard to read."
+"Can you imagine trying to check something like that every time we have an activity? YUCKS."
+"That's why I trapped you here so you can never code again."
+"If you want to leave, you need to defeat me first."
+"Oh yes, I suppose I'll say this for tradition's sake."
+	//silhouette changes to full color sprite and does entrance animation (serato_entrance_F0, F1, F0, F2)
+"How are you feeling today?"
+*BATTLE STARTS
+
+*creating peashooters
+---:
+"new Plant.Peashooter()!"
+NPC:
+"WTF NGANO NAAY PEASHOOTERS NGA LAVA MANI DIRI"
+---:
+"Ga tago ra lagi na siya?"
+"Anyways, Peashooter.attack()!"
+
+*creating squashes
+---:
+"new Plant.Squash()!"
+NPC:
+"BUNG NAA NAPUY LAIN"
+---:
+"Sabaa lagi anang isa sa."
+"*Ahem, Squash.attack()!"
+
+*reaches 50% HP
+---:
+"*sigh"			//does serato_pose_2
+"So boring."		//does serato_pose_1
+
+*defeat:
+"...You actually beat me..."
+"Hmph.... that was...."
+"Cool and normal."	//does serato_pose_3
+"You may go."
+"/teleport player NPC"
+
+*teleports back to NPC
+NPC:
+"Wow you really beat him! Congrats!"
+"This means we can finally leave!"
+"I can leave too even though I just stayed here right?"
+"...Right?"
+*Ending

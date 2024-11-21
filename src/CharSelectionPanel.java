@@ -19,7 +19,6 @@ public class CharSelectionPanel extends JPanel implements Runnable {
         this.setFocusable(false);
         this.setLayout(null);
 
-        this.add(General.Titles.SELECT_CHARACTER);
         this.add(General.Buttons.START);
         this.add(General.Buttons.DYMES);
         this.add(General.Buttons.SETH);
@@ -32,10 +31,10 @@ public class CharSelectionPanel extends JPanel implements Runnable {
 
     private void displayCharacters(){
 
-        DYM = new Player("Dymes", 1000, 350, 550, 64, 40, null);
-        SETH = new Player("Seth", 1000, 950, 550, 64, 40, null);
-        ZILLION = new Player("Zillion", 1000, 1550, 550, 64, 40, null);
-        RAYMOND = new Player("Raymond", 1000, 2150, 550, 64, 40, null);
+        DYM = new Player("Dymes", 1000, 370, 550, 96, 60, null);
+        SETH = new Player("Seth", 1000, 970, 550, 96, 60, null);
+        ZILLION = new Player("Zillion", 1000, 1570, 550, 96, 60, null);
+        RAYMOND = new Player("Raymond", 1000, 2170, 550, 96, 60, null);
     }
 
     public void start_main_thread(){
@@ -77,7 +76,8 @@ public class CharSelectionPanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         //display background image
-        g.drawImage(GUISprites.Backgrounds.SELECT_CHARACTER, 0, 0, GamePanel.SCREEN_WIDTH, GamePanel.SCREEN_HEIGHT, null);
+        //g.drawImage(GUISprites.Backgrounds.SELECT_CHARACTER_1, 0, 0, GamePanel.SCREEN_WIDTH, GamePanel.SCREEN_HEIGHT, null);
+        g.drawImage(GUISprites.Backgrounds.SELECT_CHARACTER_2, 0, 0, GamePanel.SCREEN_WIDTH, GamePanel.SCREEN_HEIGHT, null);
 
         DYM.display(g);
         SETH.display(g);

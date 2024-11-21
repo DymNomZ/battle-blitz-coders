@@ -14,14 +14,20 @@ public class ItemEntity extends PanelEntity {
 
     public ItemEntity(long key, int x, int y, int kind){
 
-        super(x, y, key);
+        super();
+        super.setX(x);
+        super.setY(y);
+        super.setKey(key);
         checkKind(kind);
         this.buffer = item.getSprite();
     }
 
     public ItemEntity(long key, int x, int y, Item item, boolean is_pickable){
 
-        super(x, y, key);
+        super();
+        super.setX(x);
+        super.setY(y);
+        super.setKey(key);
         this.item = item;
         this.is_pickable = is_pickable;
         this.buffer = item.getSprite();
@@ -29,7 +35,10 @@ public class ItemEntity extends PanelEntity {
 
     public ItemEntity(long key, int x, int y, boolean is_pickable){
 
-        super(x, y, key);
+        super();
+        super.setX(x);
+        super.setY(y);
+        super.setKey(key);
         this.is_pickable = is_pickable;
     }
 

@@ -34,11 +34,11 @@ public class MouseHandler implements MouseMotionListener, MouseWheelListener, Mo
 		}
 
 		if(e.getSource() == General.Buttons.START){
-			GamePanel game = new GamePanel();
+			General.Panels.GAME = new GamePanel();
 			General.Panels.MAIN.remove(0);
-			General.Panels.MAIN.add(game);
-			game.requestFocusInWindow();
-			game.start_main_thread();
+			General.Panels.MAIN.add(General.Panels.GAME);
+			General.Panels.GAME.requestFocusInWindow();
+			((GamePanel) General.Panels.GAME).start_main_thread();
 			General.Panels.MAIN.revalidate();
 		}
 

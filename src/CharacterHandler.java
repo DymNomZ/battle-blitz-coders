@@ -5,10 +5,12 @@ import classes.Asset.Sprite.Sprite;
 import classes.entities.PlayableCharacters;
 import classes.sprites.EntitySprite;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CharacterHandler {
 
     private static String selected_character = "Zillion"; //Zillion deafult nato AHAHAHAHAHAHAH
+    private static String selected_NPC = "Seth";
 
     static ArrayList<AnimatedSprite> entitySprites = new ArrayList<>();
     static String[] idles = new String[4];
@@ -28,7 +30,6 @@ public class CharacterHandler {
         PlayableCharacters player = null;
 
         switch (name) {
-
             case "Dymes" -> player = new PlayableCharacters.DYMES();
             case "Seth" -> player = new PlayableCharacters.SETH();
             case "Zillion" -> player = new PlayableCharacters.ZILLION();
@@ -38,8 +39,64 @@ public class CharacterHandler {
         return player;
     }
 
+    public static Sprite randomizer(){
+
+        int n = new Random().nextInt(1,4);
+        Sprite sprite = null;
+        String selected_character = CharacterHandler.getSelected_character();
+
+        switch(selected_character){
+            case "Dymes" -> {
+                switch(n){
+                    case 1 -> sprite = SETH();
+                    case 2 -> sprite = ZILLION();
+                    case 3 -> sprite = RAYMOND();
+                }
+            }
+            case "Seth" -> {
+                switch(n){
+                    case 1 -> sprite = DYMES();
+                    case 2 -> sprite = ZILLION();
+                    case 3 -> sprite = RAYMOND();
+                }
+            }
+            case "Zillion" -> {
+                switch(n){
+                    case 1 -> sprite = SETH();
+                    case 2 -> sprite = DYMES();
+                    case 3 -> sprite = RAYMOND();
+                }
+            }
+            case "Raymond" -> {
+                switch(n){
+                    case 1 -> sprite = SETH();
+                    case 2 -> sprite = ZILLION();
+                    case 3 -> sprite = DYMES();
+                }
+            }
+        }
+
+        return sprite;
+    }
+
+    public static Sprite getHead(){
+
+        Sprite sprite = null;
+
+        switch(selected_NPC){
+            case "Dymes" -> sprite = Sprite.load("sprites/character_sprites/portraits/dymier_portrait_right.png");
+            case "Seth" -> sprite = Sprite.load("sprites/character_sprites/portraits/seth_portrait_right.png");
+            case "Zillion" -> sprite = Sprite.load("sprites/character_sprites/portraits/zillion_portrait_right.png");
+            case "Raymond" -> sprite = Sprite.load("sprites/character_sprites/portraits/raymond_portrait_right.png");
+        }
+
+        return sprite;
+
+    }
+
     public static Sprite DYMES() {
 
+        selected_NPC = "Dymes";
         entitySprites.clear();
 
         idles[0] = "sprites/character_sprites/base sprites/dymier.png";
@@ -68,12 +125,15 @@ public class CharacterHandler {
         walking[7] = "sprites/character_sprites/dymier_right_F0.png";
         entitySprites.add(new AnimatedSprite(250000000, walking));
 
-        return new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toLeft();
+        EntitySprite e =  new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toRight();
+        e.get(EntitySprite.DEFAULT_MOVING_RIGHT).cropSpriteRelative(0, -3, 0, 3);
+        return e;
 
     }
 
     public static Sprite SETH() {
 
+        selected_NPC = "Seth";
         entitySprites.clear();
 
         idles[0] = "sprites/character_sprites/base sprites/seth.png";
@@ -102,12 +162,15 @@ public class CharacterHandler {
         walking[7] = "sprites/character_sprites/seth_right_F0_blink.png";
         entitySprites.add(new AnimatedSprite(250000000, walking));
 
-        return new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toLeft();
+        EntitySprite e =  new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toRight();
+        e.get(EntitySprite.DEFAULT_MOVING_RIGHT).cropSpriteRelative(0, -3, 0, 3);
+        return e;
 
     }
 
     public static Sprite ZILLION() {
 
+        selected_NPC = "Zillion";
         entitySprites.clear();
 
         idles[0] = "sprites/character_sprites/base sprites/zillion_1.png";
@@ -136,7 +199,7 @@ public class CharacterHandler {
         walking[7] = "sprites/character_sprites/zillion_right_F0_blink.png";
         entitySprites.add(new AnimatedSprite(250000000, walking));
 
-        EntitySprite e =  new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toLeft();
+        EntitySprite e =  new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toRight();
         e.get(EntitySprite.DEFAULT_MOVING_RIGHT).cropSpriteRelative(0, -3, 0, 3);
         return e;
 
@@ -144,6 +207,7 @@ public class CharacterHandler {
 
     public static Sprite RAYMOND() {
 
+        selected_NPC = "Raymond";
         entitySprites.clear();
 
         idles[0] = "sprites/character_sprites/base sprites/raymond.png";
@@ -172,7 +236,9 @@ public class CharacterHandler {
         walking[7] = "sprites/character_sprites/raymond_right_F0_blink.png";
         entitySprites.add(new AnimatedSprite(250000000, walking));
 
-        return new EntitySprite(entitySprites).cropSprite(5, 10,2,8).setMoving(true).toLeft();
+        EntitySprite e =  new EntitySprite(entitySprites).cropSprite(5, 10,0,4).setMoving(true).toRight();
+        e.get(EntitySprite.DEFAULT_MOVING_RIGHT).cropSpriteRelative(0, -3, 0, 3);
+        return e;
 
     }
 }

@@ -1,20 +1,16 @@
 package classes.entities;
 
-import classes.map.Tile;
 import classes.sprites.EnemySprite;
 import interfaces.CollisionHandler;
 import interfaces.EntityCollidable;
+import interfaces.RangedAttacker;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.*;
-import src.GamePanel;
 
 public abstract class Enemy extends MapEntity implements EntityCollidable, CollisionHandler{
-    // to implement shi
     private final String enemy_type;
-
-    //maybe temporary timer var kay idk a better way HAHAHAHAH - Set H
     private int movement_internal_cooldown = 0;
     protected int attack_cooldown = 0;
     protected final int attack_cooldown_max = 180;
@@ -28,33 +24,32 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             float haste,
             int defense_stat,
             long id) {
-        super(name, hit_points, attack_stat, haste, defense_stat, id);
+        super();
+        super.setName(name);
+        super.setHit_points(hit_points);
+        super.setMax_hit_points(hit_points);
+        super.setAttack_stat(attack_stat);
+        super.setHaste(haste);
+        super.setDefense_stat(defense_stat);
+        super.setId(id);
+
         this.enemy_type = enemy_type;
     }
 
-    //hit point test - dym
-    public Enemy(String name, int hit_points, int x, int y, int side, String enemy_type, long key, String spritePath) {
-        super(name, hit_points, x, y, side, key, spritePath);
-        this.enemy_type = enemy_type;
-        this.speed = 2;
-    }
     public Enemy(String name, int speed, int hit_points, int x, int y, int side, String enemy_type, long key) {
-        super(name, hit_points, x, y, side, key);
+        super();
+        super.setName(name);
+        super.setHit_points(hit_points);
+        super.setMax_hit_points(hit_points);
+        super.setX(x);
+        super.setY(y);
+        super.setDimensions(side,side);
+        super.setKey(key);
+
         this.enemy_type = enemy_type;
         this.speed = speed;
     }
-    public Enemy(String name, int hit_points, Tile tile,int tile_x, int tile_y, int side, String enemy_type, long key){
-        super(name, hit_points, tile_x * GamePanel.TILE_SIZE, tile_y * GamePanel.TILE_SIZE, side, key);
-        if(tile.is_solid)is_colliding = true;
-        this.enemy_type = enemy_type;
-        this.speed = 2;
-    }
 
-    public Enemy(String name, int x, int y, int side, String enemy_type, long key, String spritePath) {
-        super(name, x, y, side, key, spritePath);
-        this.enemy_type = enemy_type;
-        this.speed = 2;
-    }
 
     public boolean isGoingToMove(){
         return is_going_to_move;
@@ -130,14 +125,16 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
         return this.calculateDistance(e) < outer_range && this.calculateDistance(e) > inner_range;
     }
 
-    public void roamRandom(){
 
+    /*
+    * This function will pick a random angle and will either move or not move,
+    * having a 25% chance of moving and 75% chance not to move - Set H
+    * */
+    public void roamRandom(){
         double rand_angle = new Random().nextDouble(0.0, 3.14159 * 2) - 3.14159;
-        System.out.println(rand_angle);
         int value = new Random().nextInt(1,4);
         is_going_to_move = (value == 3);
         if(is_going_to_move){
-            System.out.println("MOVE");
             move(rand_angle);
         } else {
             deltaY = 0;
@@ -186,7 +183,7 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
                 deltaY = 0;
             } else if(isWithinRange(300,70,e)){
                 moveAtAngle(calculateAngle(e));
-            } else if(!isWithinRange(300,-1,e) && super.movement_internal_cooldown == 0){
+            } else if(isWithinRange(1000,300,e) && super.movement_internal_cooldown == 0){
                 roamRandom();
             }
             checkEntitySprites();
@@ -196,15 +193,11 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
         public void checkEntitySprites(){
             EnemySprite sprite = (EnemySprite) buffer;
             super.checkEntitySprites();
-            if(is_attacking){
-                sprite.setAttacking(true);
-            } else {
-                sprite.setAttacking(false);
-            }
+	        sprite.setAttacking(is_attacking);
         }
     }
 
-    public static class Virus extends Enemy {
+    public static class Virus extends Enemy implements RangedAttacker{
         List<ProjectileEntity> projectiles;
         public Virus(int x, int y, int side, long key, List<ProjectileEntity> projectiles){
             super("Virus", 2, 100, x, y, side, "Ranged", key);
@@ -212,11 +205,12 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             buffer = EnemyHandler.VIRUS();
         }
 
-        public void shoot_projectile(PanelEntity player){
+        @Override
+        public void shootProjectile(PanelEntity target){
 
             if(attack_cooldown == attack_cooldown_max - 50){
 
-                ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,player);
+                ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,target);
 
                 projectiles.add(projectile);
             }
@@ -245,16 +239,26 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
         public void executeEnemyBehavior(PanelEntity e){
 
             if(isWithinRange(200,100,e)){
-                shoot_projectile(e);
+                shootProjectile(e);
                 deltaX = 0;
                 deltaY = 0;
             } else if(isWithinRange(300,200,e)){
                 moveAtAngle(calculateAngle(e));
             } else if(isWithinRange(1000,300,e) && super.movement_internal_cooldown == 0){
-                System.out.println("Roam Randomly");
                 roamRandom();
             }
             checkEntitySprites();
+        }
+
+        @Override
+        public void checkEntitySprites(){
+            EnemySprite sprite = (EnemySprite) buffer;
+            super.checkEntitySprites();
+            if(is_attacking){
+                sprite.setAttacking(true);
+            } else {
+                sprite.setAttacking(false);
+            }
         }
 
     }
@@ -271,4 +275,5 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             super("The Shining", "boss", 100, 50, 25.0f, 50, 502);
         }
     }
+
 }
