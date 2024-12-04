@@ -42,16 +42,17 @@ public class General {
     
     public static class Titles {
 
-        public static final JLabel GAME_TITLE, VICTORY, GAME_OVER;
+        public static final JLabel GAME_TITLE, VICTORY, DEFEAT;
 
         static{
 
             GAME_TITLE = new JLabel(new ImageIcon(GUISprites.Titles.GAME_TITLE));
             VICTORY = new JLabel(new ImageIcon(GUISprites.Titles.VICTORY));
-            GAME_OVER = new JLabel(new ImageIcon(GUISprites.Titles.GAME_OVER));
+            DEFEAT = new JLabel(new ImageIcon(GUISprites.Titles.DEFEAT));
 
             GAME_TITLE.setBounds(128, 50, 1110, 290);
-            VICTORY.setBounds(350, -150, 577, 433);
+            VICTORY.setBounds(128, 50, 1110, 290);
+            DEFEAT.setBounds(128, 50, 1110, 290);
 
         }
     }
@@ -89,6 +90,11 @@ public class General {
             START.setBorderPainted(false);
             START.setContentAreaFilled(false);
             START.addMouseListener(mouse);
+
+            END.setBounds((GamePanel.SCREEN_WIDTH - SCALE_VALUES[0]) / 2, 450, SCALE_VALUES[0], SCALE_VALUES[1]);
+            END.setBorderPainted(false);
+            END.setContentAreaFilled(false);
+            END.addMouseListener(mouse);
 
             int gap = 135;
             for(JButton b : CHARACTER_BUTTONS){

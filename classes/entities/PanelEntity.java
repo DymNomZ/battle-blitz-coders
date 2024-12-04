@@ -3,7 +3,9 @@ package classes.entities;
 import classes.Asset.Sprite.Sprite;
 import classes.sprites.EntitySprite;
 import interfaces.EntityCollidable;
-import java.awt.Graphics;
+
+import java.awt.*;
+
 import src.GamePanel;
 
 /*  Super class for all entities
@@ -245,5 +247,9 @@ public abstract class PanelEntity {
                 sprite.toLeft();
             }
         }
+    }
+
+    public Point getTilePosition() {
+        return new Point(x / GamePanel.TILE_SIZE, y / GamePanel.TILE_SIZE);
     }
 }

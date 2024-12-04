@@ -1,9 +1,7 @@
 package classes.entities;
 
 import classes.GUI.PlayerHealthBar;
-import classes.dialogues.Dialogues;
 import classes.items.Item;
-import classes.items.Ranged;
 import classes.sprites.GUISprites;
 import interfaces.EntityCollidable;
 import java.awt.Graphics;
@@ -11,7 +9,6 @@ import java.util.Random;
 import src.CharacterHandler;
 import src.GamePanel;
 import src.KeyHandler;
-import src.PlayerData;
 
 public class Player extends MapEntity implements EntityCollidable{
 
@@ -40,6 +37,9 @@ public class Player extends MapEntity implements EntityCollidable{
 		if(e instanceof ProjectileEntity && !((ProjectileEntity)e).is_player_friendly){
 			damage(((ProjectileEntity) e).dealDamage());
 			((ProjectileEntity) e).onCollision();
+		}
+		if(e instanceof Enemy){
+			damage(((Enemy)e).attack());
 		}
 	}
 	public void updateInfo(){
@@ -82,6 +82,13 @@ public class Player extends MapEntity implements EntityCollidable{
 
 	public Item getCurrentItem(){
 		return hotbar_items[selected_slot];
+	}
+
+	public void removeItem(){
+		hotbar_items[selected_slot] = null;
+		size--;
+		if(selected_slot <= curr_slot) curr_slot = selected_slot;
+		else findNextFree();
 	}
 
 	public ItemEntity dropItems(){

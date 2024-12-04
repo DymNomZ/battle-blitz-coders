@@ -1,11 +1,14 @@
 package classes.entities;
 
+import classes.items.ConsumableHealing;
 import classes.items.Item;
 import classes.items.Melee;
 import classes.items.Ranged;
 
 import classes.Asset.Sprite.Sprite;
 import src.GamePanel;
+
+import java.util.Random;
 
 public class ItemEntity extends PanelEntity {
     
@@ -46,6 +49,7 @@ public class ItemEntity extends PanelEntity {
         switch(kind){
             case 1 -> item = new Melee().getRandom();
             case 2 -> item = new Ranged().getRandom();
+            case 3 -> item = new ConsumableHealing().getRandom();
         }
         System.out.println("Item: " + item.getName());
     }

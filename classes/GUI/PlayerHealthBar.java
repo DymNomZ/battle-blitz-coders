@@ -1,9 +1,11 @@
 package classes.GUI;
 
+import classes.entities.Player;
+import classes.sprites.EnemySprite;
 import classes.sprites.GUISprites;
 import java.awt.*;
 
-public class PlayerHealthBar{
+public abstract class PlayerHealthBar {
 	static int x = 30,y = 24;
 	static int display_health_max = 287;
 	static int current_display_health = display_health_max;

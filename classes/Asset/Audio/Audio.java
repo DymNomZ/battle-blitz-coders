@@ -8,8 +8,11 @@ import javax.sound.sampled.LineUnavailableException;
 import static src.Utils.showError;
 
 public class Audio {
+    public static float DEFAULT_VOLUME = -15f;
+
     private Clip stream = null;
-    private float volume = -15;
+    private float volume = DEFAULT_VOLUME;
+    private FloatControl controller;
 
     public Audio play() {
         if (stream == null) return this;
@@ -35,7 +38,8 @@ public class Audio {
 
         try {
             stream.open(AudioSystem.getAudioInputStream(Audio.class.getResourceAsStream("../../../assets/sounds/" + filePath)));
-            ((FloatControl) stream.getControl(FloatControl.Type.MASTER_GAIN)).setValue(volume);
+            controller = (FloatControl) stream.getControl(FloatControl.Type.MASTER_GAIN);
+            controller.setValue(volume);
         } catch (Exception e) {
             showError("[AUDIO LOADER] Error at opening audio file" + filePath + " with Error Message:\n" + e.getMessage());
             return this;
@@ -54,10 +58,14 @@ public class Audio {
         return this;
     }
 
+    public float getVolume() {
+        return volume;
+    }
+
     public Audio setVolume(float decibels) {
         if (stream == null) return this;
         volume = decibels;
-        ((FloatControl) stream.getControl(FloatControl.Type.MASTER_GAIN)).setValue(decibels);
+        controller.setValue(decibels);
         return this;
     }
 

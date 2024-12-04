@@ -81,14 +81,14 @@ public class GUISprites {
     }
     public static class Titles {
 
-        public static BufferedImage GAME_TITLE, VICTORY, GAME_OVER;
+        public static BufferedImage GAME_TITLE, VICTORY, DEFEAT;
 
         static{
             try {
 
                 GAME_TITLE = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/battle_blitz_coders.png"));
-                VICTORY = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/temp_game_title.png"));
-                GAME_OVER = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/temp_game_title.png"));
+                VICTORY = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/victory.png"));
+                DEFEAT = ImageIO.read(Titles.class.getResourceAsStream("../../assets/GUI/titles/defeat.png"));
                 
             } catch (IOException e) {
                 System.out.println("Error loading game titles");

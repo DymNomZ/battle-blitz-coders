@@ -12,18 +12,23 @@ public class MouseHandler implements MouseMotionListener, MouseWheelListener, Mo
 	Point mouse_location_on_screen;
 
 	boolean left_is_pressed  = false;
+	boolean right_is_pressed = false;
 
 	@Override
 	public void mouseReleased(MouseEvent e){
 		left_is_pressed = false;
+		right_is_pressed = false;
 	}
 
 
 	@Override
 	public void mousePressed(MouseEvent e){
 		int mouse_code = e.getButton();
-		if(mouse_code == 1)
-			left_is_pressed = true;
+
+		switch(mouse_code){
+			case 1 -> left_is_pressed = true;
+			case 3 -> right_is_pressed = true;
+		}
 
 		if(e.getSource() == General.Buttons.PLAY){
 			General.Panels.MAIN.remove(0);
@@ -41,6 +46,8 @@ public class MouseHandler implements MouseMotionListener, MouseWheelListener, Mo
 			((GamePanel) General.Panels.GAME).start_main_thread();
 			General.Panels.MAIN.revalidate();
 		}
+
+		if(e.getSource() == General.Buttons.END) Utils.resetGame();
 
 		//handle button dynamic GUI
 		handleButtons(e);
@@ -63,6 +70,14 @@ public class MouseHandler implements MouseMotionListener, MouseWheelListener, Mo
 				)
 			);
 		}
+
+		if(e.getSource() == General.Buttons.END) {
+			General.Buttons.END.setIcon(new ImageIcon(
+					GUISprites.Buttons.END_S.getScaledInstance(
+							General.DEF_BTN_DIMENSIONS[0], General.DEF_BTN_DIMENSIONS[1], Image.SCALE_SMOOTH)
+					)
+			);
+		}
 	}
 
 	@Override
@@ -79,6 +94,14 @@ public class MouseHandler implements MouseMotionListener, MouseWheelListener, Mo
 				GUISprites.Buttons.START_U.getScaledInstance(
 					General.DEF_BTN_DIMENSIONS[0], General.DEF_BTN_DIMENSIONS[1], Image.SCALE_SMOOTH)
 				)
+			);
+		}
+
+		if(e.getSource() == General.Buttons.END) {
+			General.Buttons.END.setIcon(new ImageIcon(
+					GUISprites.Buttons.END_U.getScaledInstance(
+							General.DEF_BTN_DIMENSIONS[0], General.DEF_BTN_DIMENSIONS[1], Image.SCALE_SMOOTH)
+					)
 			);
 		}
 	}

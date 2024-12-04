@@ -66,5 +66,13 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 			deltaX = (int) Math.round(Math.cos(angle) * speed);
 		}
 	}
+	public static class Pea extends ProjectileEntity{
+		public Pea(int x, int y, double angle){
+			super(x, y+16, 32, 32, 10, false, 10, "sprites/projectile_entity/peashooter_bullet.png");
+			this.angle = angle;
+		}
+		@Override
+		public void executeProjectileBehavior(){}
+	}
 
 }

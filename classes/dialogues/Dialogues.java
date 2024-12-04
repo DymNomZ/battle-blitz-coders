@@ -13,10 +13,10 @@ import src.Utils;
 
 public class Dialogues {
 
-    public static int FONT_SIZE = 35;
+    public static int FONT_SIZE;
 
-    public static int[] DIALOGUE_NUMBERS = {0, 0};
-    public static int PHASE_STATE = 0;
+    public static int[] DIALOGUE_NUMBERS;
+    public static int PHASE_STATE, LIMIT;
 
     public static final String[][] NPC_DIALOGUES = {
         {"Hey you!"},
@@ -26,10 +26,15 @@ public class Dialogues {
         {"Who is it? I dunno, but they must be really", "scary and cunning to do something like this."},
         {"To reach him, you need to get past three", "different stages fighting different enemies."},
         {"Here take this, it should help you fight", "the minions that will try to stop you."},
-        {"The controls are simple. LMB to attack,", "1-5 to navigate your items, and Q to drop them."},
-        {"I wish you nothing but goodluck!"},
+        {"The controls are simple. LMB to attack,", "RMB to eat, 1-5 to navigate your items"},
+        {"and Q to drop a selected item.", "I wish you nothing but goodluck!"},
         {"Huh? Why can't I go with you? Because we", "didn't implement multiplayer yet obviously."},
-        {"Anyway, get moving already!"}
+        {"Anyway, get moving already!"},
+        {"You've made it! That was some", "really good fighting you did back there!"},
+        {"Yano naa nako diri? Don't ask."},
+        {"Anyways, once you enter that door", "there's no turning back."},
+        {"Goodluck bro!", "Beat whoever is behind all this!"},
+        {"Huwat lang ko diris gawas lods ❤"}
     };
 
     public static final String[][] POP_UP_DIALOGUES = {
@@ -37,8 +42,17 @@ public class Dialogues {
         {"STAGE 1: Defeat 10 Slimes to proceed."},
         {"STAGE 2: Defeat 10 Viruses to proceed."},
         {"FINAL STAGE: Defeat 20 enemies to proceed."},
-        {"You obtained a ranged weapon! Using it allows you to", "shoot projectiles in the direction you're facing."}
+        {"BOSS BATTLE: Defeat Defeat the Professor!"},
+        {"You obtained a ranged weapon! Using it allows you to", "shoot projectiles in the direction you're facing."},
+        {"Stage complete! Proceed to the next"}
     };
+
+    public static void initializeValues(){
+        FONT_SIZE = 35;
+        DIALOGUE_NUMBERS = new int[]{0, 0};
+        PHASE_STATE = 0;
+        LIMIT = 99;
+    }
 
     public static void display(Graphics g, String[] dialogues, int font_size, int x, int y){
 
@@ -94,6 +108,10 @@ public class Dialogues {
     }
 
     public static void handlePopUpDialogues(Graphics g, int seconds){
+
+        int font_size = 45;
+        int x = (GamePanel.SCREEN_WIDTH / 2) - 425;
+        int y = 0;
         
         //handle different states
         if(PHASE_STATE == 0) intitialSequence(g, seconds);
@@ -107,13 +125,27 @@ public class Dialogues {
                     }
                 }
                 case 3 -> DIALOGUE_NUMBERS[1] = 2;
+                case 4 -> DIALOGUE_NUMBERS[1] = 3;
+                case 5 -> DIALOGUE_NUMBERS[1] = 4;
+            }
+
+            if(PlayerData.cleared_stage) {
+                DIALOGUE_NUMBERS[1] = POP_UP_DIALOGUES.length - 1;
             }
 
             if(seconds > 0 && seconds < 3){
-                int size = (calculateLength(Dialogues.POP_UP_DIALOGUES[Dialogues.DIALOGUE_NUMBERS[1]]) > 75) ? 30 : 45;
+                font_size = (calculateLength(Dialogues.POP_UP_DIALOGUES[Dialogues.DIALOGUE_NUMBERS[1]]) > 75) ? 30 : 45;
+
+                if(PHASE_STATE == 4){
+                    font_size = 42;
+                    y = 180;
+                    x = (GamePanel.SCREEN_WIDTH / 2) - 450;
+                }
+                else y = (font_size >= 45) ? 185 : 150;
+
                 Dialogues.display(
                     g, Dialogues.POP_UP_DIALOGUES[Dialogues.DIALOGUE_NUMBERS[1]], 
-                    size, (GamePanel.SCREEN_WIDTH / 2) - 425, (size == 45) ? 185 : 150
+                    font_size, x, y
                 );
             }
         }
@@ -124,9 +156,10 @@ public class Dialogues {
 
         if(Dialogues.DIALOGUE_NUMBERS[0] == 9){
             Dialogues.PHASE_STATE = 2;
+            LIMIT = 11;
         }
 
-        if(Dialogues.DIALOGUE_NUMBERS[0] < 11) {
+        if(Dialogues.DIALOGUE_NUMBERS[0] < LIMIT){
             Dialogues.display(g, Dialogues.NPC_DIALOGUES[Dialogues.DIALOGUE_NUMBERS[0]]);
             NPC.drawHead(g);
         }
@@ -138,6 +171,7 @@ public class Dialogues {
         switch(PHASE_STATE){
             case 1 -> Dialogues.DIALOGUE_NUMBERS[0] = 0;
             case 2 -> Dialogues.DIALOGUE_NUMBERS[0] = 9;
+            case 5 -> Dialogues.DIALOGUE_NUMBERS[0] = 15;
         }
 
     }

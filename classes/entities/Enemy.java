@@ -148,16 +148,14 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
         deltaX = (int) Math.round(Math.cos(angle) * speed/2);
     }
 
-    //for enemies
-    public int attack(){
-        return 5;
-    }
-
     @Override
     public void onEntityCollision(PanelEntity e){
         EntityCollidable.super.onEntityCollision(e);
         if(e instanceof ProjectileEntity && ((ProjectileEntity) e).is_player_friendly){
             damage(((ProjectileEntity) e).dealDamage());
+        }
+        if(e instanceof MeleeAttackEntity){
+            damage(((MeleeAttackEntity) e).dealDamage());
         }
     }
 
@@ -261,6 +259,27 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             }
         }
 
+    }
+
+    public static class Peashooter extends Enemy implements RangedAttacker{
+        List<ProjectileEntity> projectiles;
+        double angle;
+        public Peashooter(int x, int y, int side, long key, List<ProjectileEntity> projectiles){
+            super("Peashooter", 0, 10, x, y, side, "Ranged", key);
+            int rand = new Random().nextInt();
+
+        }
+
+        @Override
+        public void shootProjectile(PanelEntity target) {
+            if(attack_cooldown == attack_cooldown_max - 50){
+                ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,target);
+                projectiles.add(projectile);
+            }
+            if(attack_cooldown == 0){
+                initiateAttackTimer();
+            }
+        }
     }
 
     public static class Boss extends Enemy {

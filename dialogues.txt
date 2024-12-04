@@ -34,7 +34,7 @@ BOSS AREA NPC:
 "You've made it! That was some really good fighting you did back there!"
 "Yano naa nako diri? Don't ask."
 "Anyways, once you enter that door there's no turning back."
-"Goodluck bro! Beat whoever is behind all this!"	//change lang ninyo kung unsa HAHAHAHA
+"Goodluck bro! Beat whoever is behind all this!"
 "Huwat lang ko diris gawas lods ❤"
 
 ???:	//silhouette version of sprite

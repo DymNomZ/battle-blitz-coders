@@ -47,17 +47,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_4 -> four_pressed = true;
             case KeyEvent.VK_5 -> five_pressed = true;
             case KeyEvent.VK_X -> purge = true;
-            case KeyEvent.VK_ESCAPE -> {
-                General.Panels.MAIN.remove(0);
-                General.Panels.GAME = null;
-                General.Panels.MAIN.add(General.Panels.HOME, 0);
-                General.Buttons.START.setIcon(new ImageIcon(
-				GUISprites.Buttons.START_U.getScaledInstance(
-                        General.DEF_BTN_DIMENSIONS[0], General.DEF_BTN_DIMENSIONS[1], Image.SCALE_SMOOTH)
-                    )
-                );
-                System.gc();
-            }
+            case KeyEvent.VK_ESCAPE -> Utils.resetGame();
             case KeyEvent.VK_ENTER -> skip_dialogue = true;
         }
     }

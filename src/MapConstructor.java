@@ -12,8 +12,8 @@ public class MapConstructor {
     MapLoader map_loader;
 
     ArrayList<Tile> tile_data;
-    ArrayList<Integer> door_coords;
     Tile tiles[][];
+    int door_coords[] = {47, 18, 48, 18, 84, 17, 85, 17, 153, 20, 154, 20, 153, 21, 154, 21, 195, 30, 196, 30, 195, 31, 196, 31};
     int map_indexes[][];
     int map_height, map_length, door_index = 0;
 
@@ -41,11 +41,10 @@ public class MapConstructor {
 
         loadMapTiles();
 
-        door_coords = new ArrayList<>();
-        //locate door coords
+        //locate door coords, debug purposes only
         locateDoors();
 
-        System.out.println("Door coords: " + door_coords);
+        // System.out.println("Door coords: " + door_coords);
 
         camera = new CameraEntity(screenWidth, screenHeight);
     }
@@ -65,13 +64,12 @@ public class MapConstructor {
     private void locateDoors(){
         for(int i = 0; i < tiles.length; i++){
             for(int j = 0; j < tiles[0].length; j++){
-                if(tiles[i][j].getName().equals("stone_wall_door_left_closed.png") 
-                || tiles[i][j].getName().equals("stone_wall_door_right_closed.png")){
-                    door_coords.add(j);
-                    door_coords.add(i);
+                if(Utils.doorChecker(tiles[i][j].getName())){
+                    System.out.print(j + " " + i + " ");
                 }
             }
         }
+        System.out.println();
     }
 
     public void loadMapTiles(){
@@ -318,7 +316,10 @@ public class MapConstructor {
                 int tileX = (i * GamePanel.TILE_SIZE) - camera.x;
                 int tileY = (topStart * GamePanel.TILE_SIZE) - camera.y;
 
-                if(PlayerData.kill_count >= 10) handleDoors();
+                if(PlayerData.kill_count >= PlayerData.required_kills){
+                    PlayerData.cleared_stage = true;
+                    handleDoors();
+                }
 
                 tiles[topStart][i].image.display(g, tileX, tileY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
             }
@@ -328,81 +329,35 @@ public class MapConstructor {
 
     //door system
     public void handleDoors(){
-        if(PlayerData.kill_count >= 10){
-            int x = door_coords.get(door_index);
-            int y = door_coords.get(door_index+1);
-            replaceTile(y, x, "stone_wall_door_left_open.png", "door_left_open", 409, false, false);
-            replaceTile(y, x+1, "stone_wall_door_right_open.png", "door_right_open",410, false, false);
+        int x = door_coords[door_index];
+        int y = door_coords[door_index+1];
+
+        if(Dialogues.PHASE_STATE < 4){
+            replaceTile(y, x, Utils.doors_opened[0], false, false);
+            replaceTile(y, x+1, Utils.doors_opened[1], false, false);
             door_index += 4;
-            PlayerData.kill_count = 0;
-            if(PlayerData.check_pointer < PlayerData.position_checks.length - 1){
-                PlayerData.check_pointer++;
-            }
-            Dialogues.PHASE_STATE++;
         }
+        else if(Dialogues.PHASE_STATE == 4){
+            replaceTile(y, x, Utils.doors_opened[2], false, false);
+            replaceTile(y, x+1, Utils.doors_opened[3], false, false);
+            replaceTile(y+1, x, Utils.doors_opened[4], false, false);
+            replaceTile(y+1, x+1, Utils.doors_opened[5], false, false);
+            door_index += 8;
+        }
+
+        PlayerData.kill_count = 0;
+        if(PlayerData.check_pointer < PlayerData.position_checks.length - 1){
+            PlayerData.check_pointer++;
+        }
+        Dialogues.PHASE_STATE++;
     }
 
-    private void replaceTile(int j, int i, String path, String name, int idx, boolean solid_state, boolean animated_state){
+    private void replaceTile(int j, int i, String path, boolean solid_state, boolean animated_state){
+
+        int idx = tiles[j][i].index;
+        String name = path.substring(0, path.lastIndexOf(".")+1);
+
         tiles[j][i] = new Tile(path, name, idx, solid_state, animated_state);
     }
 
-    @Deprecated
-    void displayTiles(
-        Graphics g, int TILE_SIZE, Dummy d, 
-        int SCREEN_HEIGHT, int SCREEN_WIDTH){
-
-        int map_tile_row = 0, map_tile_col = 0;
-        int tile_x, tile_y, screen_x, screen_y;
-
-        while(map_tile_row < map_height){
-
-            tile_y = map_tile_row * TILE_SIZE; 
-
-            while(map_tile_col < map_length){
-
-                tile_x = map_tile_col * TILE_SIZE;
-
-                if ((d.x_pos >= d.screen_x && d.x_pos <= ((map_length * TILE_SIZE) - (d.screen_x + TILE_SIZE))
-                && (d.y_pos >= d.screen_y && d.y_pos <= ((map_height * TILE_SIZE) - (d.screen_y + TILE_SIZE))))) {
-                    recent_x = d.x_pos;
-                    recent_y = d.y_pos;
-                    
-                    if ((tile_x + TILE_SIZE > d.x_pos - d.screen_x && tile_x - TILE_SIZE < d.x_pos + d.screen_x) &&
-                    (tile_y + TILE_SIZE > d.y_pos - d.screen_y && tile_y - TILE_SIZE < d.y_pos + d.screen_y)) {
-
-                        screen_x = tile_x - d.x_pos + d.screen_x;    
-                        screen_y = tile_y - d.y_pos + d.screen_y; 
-
-                        g.drawImage(
-                            tiles[map_tile_row][map_tile_col].getSprite(),
-                            screen_x, 
-                            screen_y, 
-                            TILE_SIZE, TILE_SIZE, 
-                            null
-                        );
-                    }
-                } else {
-
-                    if(d.y_pos < recent_y - (SCREEN_HEIGHT/2)) recent_y -= d.getSpeed();
-                    else if (d.y_pos > recent_y + (SCREEN_HEIGHT/2)) recent_y += d.getSpeed();
-                    
-                    if (d.x_pos < recent_x - (SCREEN_WIDTH/2)) recent_x -= d.getSpeed();
-                    else if (d.x_pos > recent_x + (SCREEN_WIDTH/2)) recent_x += d.getSpeed();
-
-                    screen_x = tile_x - recent_x + d.screen_x;    
-                    screen_y = tile_y - recent_y + d.screen_y; 
-                    g.drawImage(
-                        tiles[map_tile_row][map_tile_col].getSprite(),
-                        screen_x, 
-                        screen_y, 
-                        TILE_SIZE, TILE_SIZE, 
-                        null
-                    );
-                }
-                map_tile_col++;
-            }
-            map_tile_col = 0;
-            map_tile_row++;
-        }
-    }
 }

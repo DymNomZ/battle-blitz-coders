@@ -14,7 +14,7 @@ public abstract class MapEntity extends PanelEntity {
         this.name = name;
     }
 
-    protected void setHit_points(int hit_points){
+    public void setHit_points(int hit_points){
         this.hit_points = hit_points;
     }
 
@@ -47,6 +47,10 @@ public abstract class MapEntity extends PanelEntity {
         this.haste = 1;
         this.defense_stat = 1;
         this.id = 1;
+    }
+
+    public int attack(){
+        return attack_stat;
     }
 
     public String getName() {
