@@ -28,7 +28,6 @@ public class MeleeAttackEntity extends PanelEntity implements EntityCollidable {
     public static class PlayerMeleeAttack extends MeleeAttackEntity{
         public PlayerMeleeAttack(PanelEntity attacker, int x, int y) {
             super(attacker);
-            //temporary damage
             damage = 5;
             super.setBuffer(Sprite.load("sprites/special_effects/melee_whoosh.png"));
             super.setDimensions(GamePanel.TILE_SIZE,2 * GamePanel.TILE_SIZE);
