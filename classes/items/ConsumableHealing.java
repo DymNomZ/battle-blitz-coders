@@ -1,8 +1,7 @@
 package classes.items;
 
-import classes.sprites.ItemSprites;
 import classes.Asset.Sprite.Sprite;
-
+import classes.sprites.ItemSprites;
 import java.util.Random;
 
 public class ConsumableHealing extends Consumable
@@ -45,7 +44,6 @@ public class ConsumableHealing extends Consumable
             return this.heal_amount;
         } else
         {
-            //how to heal for HoT? - FV
             return this.heal_amount;
         }
     }

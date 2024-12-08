@@ -39,6 +39,9 @@ public class Player extends MapEntity implements EntityCollidable{
 			((ProjectileEntity) e).onCollision();
 		}
 		if(e instanceof Enemy){
+			if(e instanceof Enemy.Squash && ((Enemy.Squash) e).isDropping){
+				damage(((Enemy)e).attack() * 20);
+			}
 			damage(((Enemy)e).attack());
 		}
 	}
@@ -143,7 +146,7 @@ public class Player extends MapEntity implements EntityCollidable{
 	private void findNextFree(){
 		//traverse until stick
 		while((hotbar_items[curr_slot] != null)){
-			//System.out.println("Traversing");
+			System.out.println("Traversing");
 			curr_slot++;
 			if(curr_slot >= 5) curr_slot = 0;
 		}
@@ -161,7 +164,7 @@ public class Player extends MapEntity implements EntityCollidable{
 	}
 
 	public void displayHotbarItems(Graphics g){
-		int draw_start = 448;
+		int draw_start = 500;
 		int count = 0;
 		for(Item i : hotbar_items){
 			if(count == selected_slot){
@@ -199,7 +202,7 @@ public class Player extends MapEntity implements EntityCollidable{
 			deltaX = speed;
 
 		if (inputs.lShift_pressed) {
-			speed = 96;
+			speed = 9;
 		} else {
 			speed = 6;
 		}

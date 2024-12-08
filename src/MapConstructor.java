@@ -219,21 +219,21 @@ public class MapConstructor {
                 position += deltaTemp;
 
                 for (int i = loopN; i >= 1; i--) {
-                    if (tiles[offYTile][offXTile].is_solid) {
-                        if (offTile < 0) {
-                            position -= offTile;
-                        } else {
-                            if (pixelsOnTile == offPixelOnTile) {
-                                position -= deltaTemp;
-                            } else if (pixelsOnTile > offPixelOnTile) {
-                                position -= offTile - offPixelOnTile - GamePanel.TILE_SIZE;
+                        if (tiles[offYTile][offXTile].is_solid) {
+                            if (offTile < 0) {
+                                position -= offTile;
                             } else {
-                                position -= offTile - offPixelOnTile;
+                                if (pixelsOnTile == offPixelOnTile) {
+                                    position -= deltaTemp;
+                                } else if (pixelsOnTile > offPixelOnTile) {
+                                    position -= offTile - offPixelOnTile - GamePanel.TILE_SIZE;
+                                } else {
+                                    position -= offTile - offPixelOnTile;
+                                }
                             }
+                            deltaPosition = 0;
+                            break;
                         }
-                        deltaPosition = 0;
-                        break;
-                    }
 
                     offYTile += nextOffYTile;
                     offXTile += nextOffXTile;
@@ -305,6 +305,7 @@ public class MapConstructor {
             }
         }
     }
+
     public void displayTiles(Graphics g) {
         int leftStart = Math.max((camera.x / GamePanel.TILE_SIZE) - 1, 0);
         int topStart = Math.max((camera.y / GamePanel.TILE_SIZE) - 1, 0);
@@ -316,10 +317,14 @@ public class MapConstructor {
                 int tileX = (i * GamePanel.TILE_SIZE) - camera.x;
                 int tileY = (topStart * GamePanel.TILE_SIZE) - camera.y;
 
-                if(PlayerData.kill_count >= PlayerData.required_kills){
-                    PlayerData.cleared_stage = true;
+                if(PlayerData.kill_count >= PlayerData.required_kills && Dialogues.PHASE_STATE != 6){
+                    //trigger cleared stage dialogue in Dialogues class
+                    PlayerData.trigger_spawning = false;
+                    if(Dialogues.PHASE_STATE < 5) PlayerData.cleared_stage = true;
                     handleDoors();
                 }
+
+                if(PlayerData.boss_ready) handleDoors();
 
                 tiles[topStart][i].image.display(g, tileX, tileY, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
             }
@@ -329,27 +334,34 @@ public class MapConstructor {
 
     //door system
     public void handleDoors(){
-        int x = door_coords[door_index];
-        int y = door_coords[door_index+1];
+        int x = 0, y = 0;
+        
+        if(door_index < door_coords.length){
+            x = door_coords[door_index];
+            y = door_coords[door_index+1];
+        }
 
         if(Dialogues.PHASE_STATE < 4){
             replaceTile(y, x, Utils.doors_opened[0], false, false);
             replaceTile(y, x+1, Utils.doors_opened[1], false, false);
             door_index += 4;
         }
-        else if(Dialogues.PHASE_STATE == 4){
+        else if(Dialogues.PHASE_STATE >= 4 && Dialogues.PHASE_STATE < 7){
             replaceTile(y, x, Utils.doors_opened[2], false, false);
             replaceTile(y, x+1, Utils.doors_opened[3], false, false);
             replaceTile(y+1, x, Utils.doors_opened[4], false, false);
             replaceTile(y+1, x+1, Utils.doors_opened[5], false, false);
-            door_index += 8;
+            if(door_index < door_coords.length) door_index += 8;
         }
 
         PlayerData.kill_count = 0;
-        if(PlayerData.check_pointer < PlayerData.position_checks.length - 1){
+        if(PlayerData.check_pointer < PlayerData.CHECK_LIMIT){
+            //update check pointer and move to next state
             PlayerData.check_pointer++;
+            Dialogues.PHASE_STATE++;
         }
-        Dialogues.PHASE_STATE++;
+        PlayerData.boss_ready = false;
+        
     }
 
     private void replaceTile(int j, int i, String path, boolean solid_state, boolean animated_state){

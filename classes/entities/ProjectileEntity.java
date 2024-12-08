@@ -41,8 +41,8 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 
 	public abstract void executeProjectileBehavior();
 
-	public static class TemporaryBullet extends ProjectileEntity{
-		public TemporaryBullet(int x, int y, int mouse_location_x, int mouse_location_y){
+	public static class PlayerBullet extends ProjectileEntity{
+		public PlayerBullet(int x, int y, int mouse_location_x, int mouse_location_y){
 			super(x,y,32,32,10,true,10, "sprites/projectile_entity/temp_bullet.png");
 			this.angle = calculateAngle(x,y,mouse_location_x,mouse_location_y);
 		}
@@ -53,9 +53,9 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 	}
 	public static class VirusSpit extends ProjectileEntity{
 		public VirusSpit(int x, int y, PanelEntity player){
-			super(x, y+16, 32, 32, 10, false, 10, "sprites/projectile_entity/virus_projectile.png");
+			super(x, y+16, 32, 32, 5, false, 10, "sprites/projectile_entity/virus_projectile.png");
 			this.angle = calculateAngle(player);
-			this.angle += ((new Random().nextDouble(0,11) - 5) * 0.174533);
+			this.angle += ((new Random().nextDouble(0,11) - 5) * 0.104533);
 		}
 
 
@@ -68,11 +68,25 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 	}
 	public static class Pea extends ProjectileEntity{
 		public Pea(int x, int y, double angle){
-			super(x, y+16, 32, 32, 10, false, 10, "sprites/projectile_entity/peashooter_bullet.png");
+			super(x, y, 24, 24, 5, false, 10, "sprites/projectile_entity/peashooter_bullet.png");
 			this.angle = angle;
 		}
 		@Override
-		public void executeProjectileBehavior(){}
+		public void executeProjectileBehavior(){
+			deltaY = (int) Math.round(Math.sin(angle) * speed);
+			deltaX = (int) Math.round(Math.cos(angle) * speed);
+		}
+	}
+	public static class Fireball extends ProjectileEntity{
+		public Fireball(int x, int y, double angle){
+			super(x, y, 32, 32, 3, false, 20, "sprites/enemies/serato_fireball.png");
+			this.angle = angle;
+		}
+		@Override
+		public void executeProjectileBehavior(){
+			deltaY = (int) Math.round(Math.sin(angle) * speed);
+			deltaX = (int) Math.round(Math.cos(angle) * speed);
+		}
 	}
 
 }

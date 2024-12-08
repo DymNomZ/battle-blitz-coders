@@ -3,11 +3,10 @@ package src;
 import classes.GUI.General;
 import classes.dialogues.Dialogues;
 import classes.sprites.GUISprites;
-
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.*;
 
 public abstract class Utils {
 
@@ -75,5 +74,13 @@ public abstract class Utils {
                 )
         );
         System.gc();
+    }
+
+    public static void endOverlay(Graphics g, int SCREEN_WIDTH, int SCREEN_HEIGHT){
+        g.setColor(new Color(0, 0, 0, 100));
+        g.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        ((GamePanel)General.Panels.GAME).add(General.Buttons.END);
+        ((GamePanel)General.Panels.GAME).main_thread.interrupt();
     }
 }

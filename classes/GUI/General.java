@@ -15,7 +15,7 @@ import src.MouseHandler;
 
 public class General {
 
-    public static final int[] SCALE_VALUES = {256, 96, 1000, 184, 256};
+    public static final int[] SCALE_VALUES = {256, 96, 1000, 184, 256, 384};
     public static final int[] DEF_BTN_DIMENSIONS = {192, 64};
 
     public static class Panels {

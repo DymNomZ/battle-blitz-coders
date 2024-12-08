@@ -20,6 +20,10 @@ public class CharacterHandler {
         return selected_character;
     }
 
+    public static String getSelected_NPC(){
+        return selected_NPC;
+    }
+
     public static void setSelected_character(String selected_character){
         CharacterHandler.selected_character = selected_character;
         System.out.println(CharacterHandler.selected_character);

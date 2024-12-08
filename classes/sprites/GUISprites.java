@@ -57,7 +57,29 @@ public class GUISprites {
             }catch(IOException e){
                 System.out.println("Error loading enemy health bar amount display");
             }
+        }
+    }
 
+    public static class BossHealthBar{
+        public static BufferedImage boss_health_bar;
+        public static BufferedImage boss_health_bar_amount_display;
+        public static BufferedImage boss_portrait;
+        static{
+            try{
+                boss_health_bar = ImageIO.read(Hotbar.class.getResourceAsStream("../../assets/sprites/enemy_GUI/boss_health_bar.png"));
+            }catch(IOException e){
+                System.out.println("Error loading boss health bar");
+            }
+            try{
+                boss_health_bar_amount_display = ImageIO.read(Hotbar.class.getResourceAsStream("../../assets/sprites/enemy_GUI/boss_health_bar_amount_display.png"));
+            }catch(IOException e){
+                System.out.println("Error loading boss health bar amount display");
+            }
+            try{
+                boss_portrait = ImageIO.read(Hotbar.class.getResourceAsStream("../../assets/sprites/enemy_GUI/boss_portrait_health_bar_serato.png"));
+            } catch (IOException e) {
+                System.out.println("Error loading boss portrait");
+            }
         }
     }
     public static class Backgrounds {

@@ -1,6 +1,8 @@
 package classes.entities;
 
+import classes.Asset.Audio.Audio;
 import classes.sprites.EnemySprite;
+import classes.sprites.EntitySprite;
 import interfaces.CollisionHandler;
 import interfaces.EntityCollidable;
 import interfaces.RangedAttacker;
@@ -8,6 +10,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public abstract class Enemy extends MapEntity implements EntityCollidable, CollisionHandler{
     private final String enemy_type;
@@ -36,15 +40,16 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
         this.enemy_type = enemy_type;
     }
 
-    public Enemy(String name, int speed, int hit_points, int x, int y, int side, String enemy_type, long key) {
+    public Enemy(String name, int speed, int attack_stat, int hit_points, int x, int y, int width, int height, String enemy_type, long key) {
         super();
         super.setName(name);
         super.setHit_points(hit_points);
         super.setMax_hit_points(hit_points);
         super.setX(x);
         super.setY(y);
-        super.setDimensions(side,side);
+        super.setDimensions(width,height);
         super.setKey(key);
+        super.setAttack_stat(attack_stat);
 
         this.enemy_type = enemy_type;
         this.speed = speed;
@@ -68,10 +73,6 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             attack_cooldown = 0;
             is_attacking = false;
         }
-    }
-
-    public enum EnemySpecies{
-        VIRUS, SLIME
     }
 
     public void initiateMovementInternalTimer(){
@@ -144,8 +145,8 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
     }
 
     public void move(double angle){
-        deltaY = (int) Math.round(Math.sin(angle) * speed/2);
-        deltaX = (int) Math.round(Math.cos(angle) * speed/2);
+        deltaY = (int) Math.round(Math.sin(angle) * Math.ceil((double)speed/2));
+        deltaX = (int) Math.round(Math.cos(angle) * Math.ceil((double)speed/2));
     }
 
     @Override
@@ -170,7 +171,7 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
     public static class Slime extends Enemy {
 
         public Slime(int x, int y, int side, long key){
-            super("Slime",1 , 50, x, y, side, "Melee",key);
+            super("Slime",1, 5 , 50, x, y, side,side, "Melee",key);
             buffer = EnemyHandler.SLIME();
         }
         
@@ -197,8 +198,10 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
 
     public static class Virus extends Enemy implements RangedAttacker{
         List<ProjectileEntity> projectiles;
+        private Audio attack_audio = new Audio().load("effects/Virus Spit.wav");
+
         public Virus(int x, int y, int side, long key, List<ProjectileEntity> projectiles){
-            super("Virus", 2, 100, x, y, side, "Ranged", key);
+            super("Virus", 2, 2, 100, x, y, side,side, "Ranged", key);
             this.projectiles = projectiles;
             buffer = EnemyHandler.VIRUS();
         }
@@ -228,21 +231,21 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
                     is_attacking = false; // Stops the timer after the task is executed
                 }
             }, 500);
-
             is_attacking = true;
+            attack_audio.play();
             this.attack_cooldown = attack_cooldown_max;
         }
 
         @Override
         public void executeEnemyBehavior(PanelEntity e){
 
-            if(isWithinRange(200,100,e)){
+            if(isWithinRange(200,-1,e) || is_attacking){
                 shootProjectile(e);
                 deltaX = 0;
                 deltaY = 0;
-            } else if(isWithinRange(300,200,e)){
+            } else if(isWithinRange(400,200,e)){
                 moveAtAngle(calculateAngle(e));
-            } else if(isWithinRange(1000,300,e) && super.movement_internal_cooldown == 0){
+            } else if(isWithinRange(1000,400,e) && super.movement_internal_cooldown == 0){
                 roamRandom();
             }
             checkEntitySprites();
@@ -264,34 +267,141 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
     public static class Peashooter extends Enemy implements RangedAttacker{
         List<ProjectileEntity> projectiles;
         double angle;
-        public Peashooter(int x, int y, int side, long key, List<ProjectileEntity> projectiles){
-            super("Peashooter", 0, 10, x, y, side, "Ranged", key);
-            int rand = new Random().nextInt();
+        PeashooterDirection direction;
+        public Peashooter(int x, int y, int side, long key, List<ProjectileEntity> projectiles, PeashooterDirection direction){
+            super("Peashooter", 0,2, 20, x, y, side,side, "Ranged", key);
+            this.direction = direction;
+            this.projectiles = projectiles;
+            switch(direction){
+                case DOWN:
+                    angle = calculateAngle(x,y,x,y+5);
+                    break;
+                case LEFT:
+                    angle = calculateAngle(x,y,x-5,y);
+                    break;
+                case RIGHT:
+                    angle = calculateAngle(x,y,x+5,y);
+            }
+            buffer = EnemyHandler.PEASHOOTER(direction);
 
+        }
+
+
+        public enum PeashooterDirection{
+            DOWN, LEFT, RIGHT
         }
 
         @Override
         public void shootProjectile(PanelEntity target) {
             if(attack_cooldown == attack_cooldown_max - 50){
-                ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,target);
+                int x = this.x;
+                int y = this.y;
+                x += 16;
+                y += 8;
+                ProjectileEntity projectile = new ProjectileEntity.Pea(x,y,angle);
                 projectiles.add(projectile);
             }
             if(attack_cooldown == 0){
                 initiateAttackTimer();
             }
         }
+
+        @Override
+        public void executeEnemyBehavior(PanelEntity e) {
+            shootProjectile(e);
+            checkEntitySprites();
+        }
+
+        @Override
+        public void initiateAttackTimer(){
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    is_attacking = false; // Stops the timer after the task is executed
+                }
+            }, 500);
+            is_attacking = true;
+            this.attack_cooldown = attack_cooldown_max;
+        }
+        @Override
+        public void checkEntitySprites(){
+            EnemySprite sprite = (EnemySprite) buffer;
+            super.checkEntitySprites();
+            sprite.setAttacking(is_attacking);
+        }
     }
 
-    public static class Boss extends Enemy {
-        // sample
-        public Boss(String name,
-                String enemy_type,
-                int hit_points,
-                int attack_stat,
-                float haste,
-                int defense_stat,
-                int id) {
-            super("The Shining", "boss", 100, 50, 25.0f, 50, 502);
+    public static class Squash extends Enemy {
+        boolean isDropping = false;
+        boolean isJumping = false; // To track if jumping is in progress
+
+        int target_x = -1;
+        int target_y = -1;
+
+        public Squash(int x, int y, int side, long key){
+            super("Squash", 0,2, 30, x, y, side,side, "Melee", key);
+            buffer = EnemyHandler.SQUASH();
+        }
+
+        void jump(PanelEntity e){
+            if (!isJumping) return;
+            moveToXandY(target_x, target_y, 8);
+
+            if (this.x == target_x && this.y == target_y) {
+
+
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                scheduler.schedule(() -> drop(e), 800, java.util.concurrent.TimeUnit.MILLISECONDS);
+            }
+        }
+
+        void drop(PanelEntity e){
+            isDropping = true;
+            moveToXandY(target_x, target_y + 96, 10);
+
+            if(x == target_x && y == target_y + 96){
+
+                this.setHit_points(0);
+            }
+        }
+
+        @Override
+        public void executeEnemyBehavior(PanelEntity e) {
+            if ((isWithinRange(120, -1, e) && !isDropping && !isJumping)){
+                is_attacking = true;
+                if (e.x > this.x) {
+                    ((EntitySprite)buffer).toRight();
+                } else {
+                    ((EntitySprite)buffer).toLeft();
+                }
+
+                EnemySprite sprite = (EnemySprite) buffer;
+                super.checkEntitySprites();
+                sprite.setAttacking(is_attacking);
+                Timer jump_wind_timer = new Timer();
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(target_x == -1)
+                            target_x = e.x;
+                        if(target_y == -1)
+                            target_y = e.y - 120;
+                    }
+                },200);
+                jump_wind_timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        isJumping = true;
+                        jump(e);
+                    }
+                }, 500);
+            } else if (!isDropping && isJumping) {
+                jump(e);
+            } else if (isDropping) {
+                drop(e);
+            }
         }
     }
 

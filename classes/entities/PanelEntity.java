@@ -102,6 +102,35 @@ public abstract class PanelEntity {
         this.y = y;
     }
 
+    public void moveToXandY(int x, int y, int speed) {
+        double x_diff = x - this.x;
+        double y_diff = y - this.y;
+
+        double distance = Math.sqrt(Math.pow(x_diff, 2) + Math.pow(y_diff, 2));
+
+        // Threshold to decide when to snap to the position - Set H
+        double snapThreshold = 5.0;
+
+        if (distance < snapThreshold) {
+            // Snap directly to the target if within threshold - Set H
+            this.x = x;
+            this.y = y;
+        } else {
+            double stepX = (x_diff) / distance;
+            double stepY = (y_diff) / distance;
+
+            this.deltaX = (int) Math.round(stepX * speed);
+            this.deltaY = (int) Math.round(stepY * speed);
+
+            this.x += deltaX;
+            this.y += deltaY;
+
+            // Reset delta values if needed for other calculations
+            deltaX = 0;
+            deltaY = 0;
+        }
+    }
+
     public void display(Graphics g, CameraEntity cam) {
         buffer.display(g, x - cam.x, y - cam.y, width, height);
     }

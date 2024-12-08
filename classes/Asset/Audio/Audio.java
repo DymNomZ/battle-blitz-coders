@@ -1,9 +1,6 @@
 package classes.Asset.Audio;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.*;
 
 import static src.Utils.showError;
 
@@ -13,6 +10,7 @@ public class Audio {
     private Clip stream = null;
     private float volume = DEFAULT_VOLUME;
     private FloatControl controller;
+    private boolean isRepeat;
 
     public Audio play() {
         if (stream == null) return this;
@@ -40,6 +38,15 @@ public class Audio {
             stream.open(AudioSystem.getAudioInputStream(Audio.class.getResourceAsStream("../../../assets/sounds/" + filePath)));
             controller = (FloatControl) stream.getControl(FloatControl.Type.MASTER_GAIN);
             controller.setValue(volume);
+
+            Audio parent = this;
+
+            stream.addLineListener(new LineListener() {
+                @Override
+                public void update(LineEvent event) {
+                    if (isRepeat && event.getType() == LineEvent.Type.STOP) parent.play();
+                }
+            });
         } catch (Exception e) {
             showError("[AUDIO LOADER] Error at opening audio file" + filePath + " with Error Message:\n" + e.getMessage());
             return this;
@@ -66,6 +73,11 @@ public class Audio {
         if (stream == null) return this;
         volume = decibels;
         controller.setValue(decibels);
+        return this;
+    }
+
+    public Audio setRepeat(boolean isRepeat) {
+        this.isRepeat = isRepeat;
         return this;
     }
 
