@@ -12,6 +12,13 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 	public boolean is_player_friendly, is_colliding = false;
 	int damage;
 
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
 
 	public ProjectileEntity(int x, int y, int width, int height, int speed, boolean is_player_friendly, int damage, String spritePath){
 		super();
