@@ -21,6 +21,25 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
     public boolean is_attacking = false;
     boolean is_going_to_move = false;
 
+    public Enemy(String name,
+            String enemy_type,
+            int hit_points,
+            int attack_stat,
+            float haste,
+            int defense_stat,
+            long id) {
+        super();
+        super.setName(name);
+        super.setHit_points(hit_points);
+        super.setMax_hit_points(hit_points);
+        super.setAttack_stat(attack_stat);
+        super.setHaste(haste);
+        super.setDefense_stat(defense_stat);
+        super.setId(id);
+
+        this.enemy_type = enemy_type;
+    }
+
     public Enemy(String name, int speed, int attack_stat, int hit_points, int x, int y, int width, int height, String enemy_type, long key) {
         super();
         super.setName(name);
@@ -193,7 +212,6 @@ public abstract class Enemy extends MapEntity implements EntityCollidable, Colli
             if(attack_cooldown == attack_cooldown_max - 50){
 
                 ProjectileEntity projectile = new ProjectileEntity.VirusSpit(this.x,this.y,target);
-                projectile.setDamage(projectile.getDamage() + super.getAttack_stat());
 
                 projectiles.add(projectile);
             }

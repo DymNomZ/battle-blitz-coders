@@ -12,13 +12,6 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 	public boolean is_player_friendly, is_colliding = false;
 	int damage;
 
-	public int getDamage() {
-		return damage;
-	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
 
 	public ProjectileEntity(int x, int y, int width, int height, int speed, boolean is_player_friendly, int damage, String spritePath){
 		super();
@@ -50,7 +43,7 @@ public abstract class ProjectileEntity extends PanelEntity implements CollisionH
 
 	public static class PlayerBullet extends ProjectileEntity{
 		public PlayerBullet(int x, int y, int mouse_location_x, int mouse_location_y){
-			super(x,y,32,32,10,true,10, "sprites/projectile_entity/temp_bullet.png");
+			super(x,y,32,32,10,true,15, "sprites/projectile_entity/temp_bullet.png");
 			this.angle = calculateAngle(x,y,mouse_location_x,mouse_location_y);
 		}
 		public void executeProjectileBehavior(){

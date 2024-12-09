@@ -46,7 +46,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_3 -> three_pressed = true;
             case KeyEvent.VK_4 -> four_pressed = true;
             case KeyEvent.VK_5 -> five_pressed = true;
-            case KeyEvent.VK_X -> purge = true;
+            //case KeyEvent.VK_X -> purge = true;
             case KeyEvent.VK_ESCAPE -> Utils.resetGame();
             case KeyEvent.VK_ENTER -> skip_dialogue = true;
         }

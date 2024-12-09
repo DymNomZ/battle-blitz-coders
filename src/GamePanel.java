@@ -182,7 +182,7 @@ public class GamePanel extends JPanel implements Runnable {
             } else if(d1.getCurrentItem() instanceof Ranged){
                 if(d1.shooting_cooldown == 0){
                     projectiles.add(new ProjectileEntity.PlayerBullet(d1.x, d1.y, d1.x + mouse_handler.mouse_x, d1.y + mouse_handler.mouse_y));
-                    d1.initiateShootingCooldown(60);
+                    d1.initiateShootingCooldown(40);
                 }
             }
         }
@@ -589,10 +589,14 @@ public class GamePanel extends JPanel implements Runnable {
             if (music_last_handled == Music_State.Level3) return;
             music_last_handled = Music_State.Level3;
             next_song = "background/Gregorian Chant.wav";
-        } else if (p.x == 160 && p.y == 14) {
+        } else if ((p.x == 160 && p.y == 14) || ((p.x == 196 || p.x == 195) && p.y == 31)) {
             if (music_last_handled == Music_State.Hallway) return;
             music_last_handled = Music_State.Hallway;
             next_song = "background/Anxiety.wav";
+        } else if ((p.x == 196 || p.x == 195) && p.y == 26) {
+            if (music_last_handled == Music_State.Boss) return;
+            music_last_handled = Music_State.Boss;
+            next_song = "background/Dragon Castle.wav";
         }
     }
 

@@ -46,7 +46,7 @@ public class BossEnemy extends Enemy{
         int tile_y = 0;
 
         public SirSerato(int x, int y,int side,long key, GamePanel gamePanelpointer, List<ProjectileEntity> projectiles_pointer){
-            super("Sir Serato",0,10,1000,x,y,side,side,"Boss Enemy",key);
+            super("Sir Serato",0,20,1000,x,y,side,side,"Boss Enemy",key);
             this.actionTimer = new Timer();
             buffer = EnemyHandler.SIR_SERATO();
             this.gamePanelpointer = gamePanelpointer;

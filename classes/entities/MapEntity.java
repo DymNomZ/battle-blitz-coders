@@ -38,11 +38,6 @@ public abstract class MapEntity extends PanelEntity {
         this.max_hit_points = max_hit_points;
     }
 
-
-    public int getAttack_stat() {
-        return attack_stat;
-    }
-
     public MapEntity(){
         super();
         this.name = "Default";
@@ -72,7 +67,7 @@ public abstract class MapEntity extends PanelEntity {
 
     //hit point test - dym
     public void damage(int damage) {
-        hit_points -= (damage);
+        hit_points -= damage;
     }
 
     public long getId() {
