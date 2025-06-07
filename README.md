@@ -1,18 +1,8 @@
-# ☕ Java-2D-Game-Collab ☕
-A Simple 2D Game made with friends just for fun and learning purposes.
+# 🍀 Map Tile Exporter 📝:
 
-# 🍀 Map Editor Info 📝:
-❗**Instructions:**
-
-**Set an index for each tile**<br>
-The default is 0. Leaving the index as is will render it void.<br>
-**Use different indexes for each tile**<br>
-Having tiles with the same indexes will cause conflicts. Only the first tile with the same index will be read.<br>
-For now, you are responsible for keeping track of the latest index. I may or may not add a feature to automatically increment an index in the future.<br>
-
-**Repo Link:**<br>
+**For more details click on repo Link:**<br>
 Made by yours truly
-<a href="https://github.com/DymNomZ/j2dc-map-editor">https://github.com/DymNomZ/j2dc-map-editor</a>
+https://github.com/DymNomZ/java-map-tile-exporter/
 
 🕹**Controls:**
 
@@ -22,3 +12,4 @@ Middle-click = toggle paint mode hotkey<br>
 Mouse-wheel = zoom<br>
 Ctrl + Z = Undo<br>
 Ctrl + X = Redo<br>
+
