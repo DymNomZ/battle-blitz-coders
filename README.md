@@ -34,7 +34,7 @@ Forget swords and shields; real coders fight with school supplies!
 *   Bandaids
 *   Pizza
 *   Grab Food Box (The ultimate delivery of health)
-*(There's even a legendary smelly sock in there somewhere, handle with care!)*
+* (There's even a legendary smelly sock in there somewhere, handle with care!)*
 
 ## ⌨️ Controls
 *   **Move:** Standard Movement keys.
