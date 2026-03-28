@@ -7,7 +7,9 @@ Welcome to **Battle Blitz Coders**, an action-packed, story-driven 2D RPG made d
 
 The title screen greets you with the iconic **GLE Building**, playing a beautiful piano arrangement of **Maroon and Gold** by our very own team member, **Zillion**. 
 
-As you progress through, you will fight slimes and viruses. But the true nightmare awaits in the _Final Stage_. Where Sir Serato himself will actively spawn **Peashooters** and **Squashes** to stop you from passing the course XD. You think you got what it takes? Try our game now!
+As you progress through, you will fight slimes and viruses. But the true nightmare awaits in the _Final Stage_. Where Sir Serato himself will actively spawn **Peashooters** and **Squashes** to stop you from passing the course XD. 
+
+You think you got what it takes? Try our game now!
 
 ## 🎮 Playable Characters
 Choose your fighter from the class roster:
